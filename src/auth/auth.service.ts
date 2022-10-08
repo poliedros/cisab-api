@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from 'src/enums/role.enum';
 import { UsersService } from './../users/users.service';
 
 export type UserValidation = {
   id: string;
   username: string;
+  roles: Role[];
 };
 
 export type Payload = {
   username: string;
   sub: string;
+  roles: Role[];
 };
 
 @Injectable()
@@ -34,7 +37,11 @@ export class AuthService {
   }
 
   async login(user: UserValidation) {
-    const payload: Payload = { username: user.username, sub: user.id };
+    const payload: Payload = {
+      username: user.username,
+      sub: user.id,
+      roles: user.roles,
+    };
 
     return {
       access_token: this.jwtService.sign(payload),
