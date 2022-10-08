@@ -1,6 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from '../users/users.service';
+import { UsersService } from './../users/users.service';
 import { AuthService } from './auth.service';
 import { User } from './../users/users.service';
 import { Role } from './../enums/role.enum';
@@ -59,7 +59,11 @@ describe('AuthService', () => {
   it('should login user', async () => {
     signMock.mockReturnValue('3a');
 
-    const token = await service.login({ id: '3', username: 'carlos' });
+    const token = await service.login({
+      id: '3',
+      username: 'carlos',
+      roles: [Role.Cisab],
+    });
 
     expect(token).toEqual({ access_token: '3a' });
   });
