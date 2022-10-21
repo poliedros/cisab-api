@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 import { TimeoutInterceptor } from './interceptors/timeout.interceptor';
 
 function printRoutes(app: INestApplication) {
-  console.log(`Routes available for api-gateway: \n`);
+  console.log(`Routes available for cisab-api: \n`);
 
   const server = app.getHttpServer();
   const router = server._events.request._router;
