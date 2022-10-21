@@ -1,6 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken, InjectModel } from '@nestjs/mongoose';
+import { getModelToken } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from './../users/users.service';
 import { AuthService } from './auth.service';
@@ -9,9 +9,9 @@ import { User } from './../users/schemas/user.schema';
 
 describe('AuthService', () => {
   let service: AuthService;
-  const findOneMock = jest.fn();
-  const signMock = jest.fn();
-  const userModelMock = jest.fn();
+  const findOneMockFn = jest.fn();
+  const signMockFn = jest.fn();
+  const userModelMockFn = jest.fn();
   const bcryptSpy = jest.spyOn(bcrypt, 'compare');
 
   beforeEach(async () => {
@@ -23,18 +23,18 @@ describe('AuthService', () => {
         {
           provide: UsersService,
           useValue: {
-            findOne: findOneMock,
+            findOne: findOneMockFn,
           },
         },
         {
           provide: JwtService,
           useValue: {
-            sign: signMock,
+            sign: signMockFn,
           },
         },
         {
           provide: getModelToken(User.name),
-          useValue: userModelMock,
+          useValue: userModelMockFn,
         },
       ],
     }).compile();
@@ -50,7 +50,7 @@ describe('AuthService', () => {
       roles: [Role.Cisab],
     };
 
-    findOneMock.mockReturnValue(Promise.resolve(user));
+    findOneMockFn.mockReturnValue(Promise.resolve(user));
     bcryptSpy.mockReturnValue(true);
 
     const validateUser = await service.validateUser('carlos', 'test');
@@ -60,7 +60,7 @@ describe('AuthService', () => {
   });
 
   it('should return null', async () => {
-    findOneMock.mockReturnValue({});
+    findOneMockFn.mockReturnValue({});
     bcryptSpy.mockReturnValue(false);
     const validateUser = await service.validateUser('carlos', 'test');
 
@@ -68,7 +68,7 @@ describe('AuthService', () => {
   });
 
   it('should login user', async () => {
-    signMock.mockReturnValue('3a');
+    signMockFn.mockReturnValue('3a');
 
     const token = await service.login({
       id: '3',
