@@ -31,12 +31,12 @@ async function bootstrap() {
   app.useGlobalInterceptors(new TimeoutInterceptor());
 
   const config = new DocumentBuilder()
-    .setTitle('CZAR+ Api Gateway')
-    .setDescription('Api Gateway from CZAR+')
+    .setTitle('Cisab Api Swagger')
+    .setDescription('Cisab Api from CZAR+')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('swagger', app, document);
 
   await app.listen(3000);
 
