@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from 'src/enums/role.enum';
+import { Role } from './../enums/role.enum';
+import * as bcrypt from 'bcrypt';
 import { UsersService } from './../users/users.service';
 
 export type UserValidation = {
@@ -22,15 +23,16 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(
-    username: string,
-    password: string,
-  ): Promise<UserValidation> {
+  async validateUser(username: string, password: string) {
     const user = await this.usersService.findOne(username);
 
-    if (user && user.password == password) {
-      const { password, ...result } = user;
-      return result;
+    const userPassword = user.password ? user.password : '';
+
+    const isTheSamePassword = await bcrypt.compare(password, userPassword);
+
+    if (user && isTheSamePassword) {
+      delete user.password;
+      return user;
     }
 
     return null;

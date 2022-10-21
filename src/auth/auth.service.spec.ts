@@ -1,14 +1,18 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getModelToken, InjectModel } from '@nestjs/mongoose';
+import * as bcrypt from 'bcrypt';
 import { UsersService } from './../users/users.service';
 import { AuthService } from './auth.service';
-import { User } from './../users/users.service';
 import { Role } from './../enums/role.enum';
+import { User } from './../users/schemas/user.schema';
 
 describe('AuthService', () => {
   let service: AuthService;
   const findOneMock = jest.fn();
   const signMock = jest.fn();
+  const userModelMock = jest.fn();
+  const bcryptSpy = jest.spyOn(bcrypt, 'compare');
 
   beforeEach(async () => {
     jest.resetAllMocks();
@@ -28,6 +32,10 @@ describe('AuthService', () => {
             sign: signMock,
           },
         },
+        {
+          provide: getModelToken(User.name),
+          useValue: userModelMock,
+        },
       ],
     }).compile();
 
@@ -43,6 +51,7 @@ describe('AuthService', () => {
     };
 
     findOneMock.mockReturnValue(Promise.resolve(user));
+    bcryptSpy.mockReturnValue(true);
 
     const validateUser = await service.validateUser('carlos', 'test');
 
@@ -51,6 +60,8 @@ describe('AuthService', () => {
   });
 
   it('should return null', async () => {
+    findOneMock.mockReturnValue({});
+    bcryptSpy.mockReturnValue(false);
     const validateUser = await service.validateUser('carlos', 'test');
 
     expect(validateUser).toBeNull();
