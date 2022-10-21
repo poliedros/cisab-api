@@ -7,10 +7,10 @@ import { CreateUserDto } from './dtos/create.user.dto';
 
 describe('User Service', () => {
   let usersService: UsersService;
-  const findOneMock = jest.fn();
-  const newUserModelMock = jest.fn();
+  const findOneMockFn = jest.fn();
+  const newUserModelMockFn = jest.fn();
 
-  beforeEach(async () => {});
+  beforeEach(() => {});
 
   it('should find user', async () => {
     const module = await Test.createTestingModule({
@@ -19,7 +19,7 @@ describe('User Service', () => {
         {
           provide: getModelToken(User.name),
           useValue: {
-            findOne: findOneMock,
+            findOne: findOneMockFn,
           },
         },
       ],
@@ -34,7 +34,7 @@ describe('User Service', () => {
       roles: [Role.Cisab],
     };
 
-    findOneMock.mockReturnValue({ exec: () => user });
+    findOneMockFn.mockReturnValue({ exec: () => user });
 
     const expectedUser = await usersService.findOne('carlos');
 
@@ -44,7 +44,7 @@ describe('User Service', () => {
   it('should create user with valid data', async () => {
     function mockUserModel(dto: any) {
       this.data = dto;
-      this.findOne = findOneMock;
+      this.findOne = findOneMockFn;
       this.save = () => {
         return this.data;
       };
@@ -68,7 +68,7 @@ describe('User Service', () => {
       roles: [Role.Admin],
     };
 
-    newUserModelMock.mockReturnValue({
+    newUserModelMockFn.mockReturnValue({
       save: () => createUserDto,
     });
 
