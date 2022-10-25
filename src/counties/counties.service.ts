@@ -30,11 +30,11 @@ export class CountiesService {
     }
   }
 
-  update(id: number, updateCountyDto: UpdateCountyDto) {
-    return this.countyModel.updateOne({ id }, updateCountyDto).exec();
+  update(id: string, updateCountyDto: UpdateCountyDto) {
+    return this.countyModel.updateOne({ _id: id }, updateCountyDto).exec();
   }
 
-  remove(id: number) {
-    return this.countyModel.remove({ id }).exec();
+  remove(id: string) {
+    return this.countyModel.deleteOne({ _id: id }).exec();
   }
 }

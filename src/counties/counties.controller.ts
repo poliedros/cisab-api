@@ -74,7 +74,7 @@ export class CountiesController {
   @Roles(Role.Cisab)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateCountyDto: UpdateCountyDto) {
-    return this.countiesService.update(+id, updateCountyDto);
+    return this.countiesService.update(id, updateCountyDto);
   }
 
   @ApiOperation({ summary: 'Remove county', description: 'forbidden' })
@@ -82,6 +82,6 @@ export class CountiesController {
   @Roles(Role.Cisab)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.countiesService.remove(+id);
+    return this.countiesService.remove(id);
   }
 }
