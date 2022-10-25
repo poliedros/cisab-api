@@ -1,26 +1,40 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import e from 'express';
+import { Model } from 'mongoose';
 import { CreateCountyDto } from './dto/create-county.dto';
 import { UpdateCountyDto } from './dto/update-county.dto';
+import { County, CountyDocument } from './schemas/county.schema';
 
 @Injectable()
 export class CountiesService {
+  constructor(
+    @InjectModel(County.name)
+    private readonly countyModel: Model<CountyDocument>,
+  ) {}
+
   create(createCountyDto: CreateCountyDto) {
-    return 'This action adds a new county';
+    const county = new this.countyModel(createCountyDto);
+    return county.save();
   }
 
   findAll() {
-    return `This action returns all counties`;
+    return this.countyModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} county`;
+  findOne(id: string) {
+    try {
+      return this.countyModel.findOne({ _id: id }).exec();
+    } catch (e: any) {
+      throw e;
+    }
   }
 
   update(id: number, updateCountyDto: UpdateCountyDto) {
-    return `This action updates a #${id} county`;
+    return this.countyModel.updateOne({ id }, updateCountyDto).exec();
   }
 
   remove(id: number) {
-    return `This action removes a #${id} county`;
+    return this.countyModel.remove({ id }).exec();
   }
 }

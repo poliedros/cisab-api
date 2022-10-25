@@ -4,10 +4,12 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
+  Put,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CountiesService } from './counties.service';
@@ -38,8 +40,12 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Get()
-  findAll() {
-    return this.countiesService.findAll();
+  async findAll() {
+    const counties = await this.countiesService.findAll();
+
+    if (counties) return counties;
+
+    throw new NotFoundException();
   }
 
   @ApiOperation({ summary: 'Find one county', description: 'forbidden' })
@@ -47,8 +53,18 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.countiesService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      throw new BadRequestException({
+        message: 'Id is not valid',
+      });
+    }
+
+    const county = await this.countiesService.findOne(id);
+
+    if (county) return county;
+
+    throw new NotFoundException();
   }
 
   @ApiOperation({ summary: 'Update one county', description: 'forbidden' })
@@ -56,7 +72,7 @@ export class CountiesController {
   @ApiResponse({ type: GetCountyDto })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateCountyDto: UpdateCountyDto) {
     return this.countiesService.update(+id, updateCountyDto);
   }

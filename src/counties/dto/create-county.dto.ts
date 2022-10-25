@@ -19,7 +19,7 @@ export class CreateCountyCountyDto {
   mayor: string;
 
   @ApiProperty()
-  population: number;
+  population: string;
 
   @ApiProperty()
   flag: string;
@@ -28,7 +28,7 @@ export class CreateCountyCountyDto {
   anniversary: string;
 
   @ApiProperty()
-  distanceToCisab: number;
+  distanceToCisab: string;
 
   @ApiProperty()
   note: string;
