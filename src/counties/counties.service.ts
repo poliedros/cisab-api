@@ -35,7 +35,7 @@ export class CountiesService {
   }
 
   update(id: string, updateCountyDto: UpdateCountyDto) {
-    return this.countyRepository.upsert({ _id: id }, updateCountyDto);
+    return this.countyRepository.findOneAndUpdate({ _id: id }, updateCountyDto);
   }
 
   remove(id: string) {

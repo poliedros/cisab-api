@@ -74,6 +74,12 @@ export class CountiesController {
   @Roles(Role.Cisab)
   @Put(':id')
   update(@Param('id') id: string, @Body() updateCountyDto: UpdateCountyDto) {
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      throw new BadRequestException({
+        message: 'Id is not valid',
+      });
+    }
+
     return this.countiesService.update(id, updateCountyDto);
   }
 
@@ -82,6 +88,12 @@ export class CountiesController {
   @Roles(Role.Cisab)
   @Delete(':id')
   remove(@Param('id') id: string) {
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      throw new BadRequestException({
+        message: 'Id is not valid',
+      });
+    }
+
     return this.countiesService.remove(id);
   }
 }

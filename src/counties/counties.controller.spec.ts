@@ -86,6 +86,7 @@ describe('CountiesController', () => {
 
   it('should throw not found if there is no counties', async () => {
     try {
+      findAllMockFn.mockReturnValue(undefined);
       await controller.findAll();
     } catch (e: any) {
       expect(e).toBeInstanceOf(NotFoundException);
@@ -126,9 +127,10 @@ describe('CountiesController', () => {
     }
   });
 
-  it('should throw not found with valid id', async () => {
+  it('should throw not when finding one found with valid id', async () => {
     try {
       const idStub = '63599affb40135010840911b';
+      findOneMockFn.mockReturnValue(undefined);
       await controller.findOne(idStub);
     } catch (e: any) {
       expect(e).toBeInstanceOf(NotFoundException);
@@ -155,5 +157,25 @@ describe('CountiesController', () => {
     const response = await controller.remove(idString);
 
     expect(response).toBeDefined();
+  });
+
+  it('should throw bad request when updating with invalid id', async () => {
+    try {
+      const idString = '63599affb4013501084091';
+      const idStub = new Types.ObjectId('63599affb40135010840911b');
+      const county = { _id: idStub, ...buildCounty() };
+      await controller.update(idString, county);
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
+  });
+
+  it('should throw bad request when deleting with invalid id', async () => {
+    try {
+      const idString = '63599affb40135010840911';
+      await controller.remove(idString);
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
   });
 });
