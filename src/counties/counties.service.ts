@@ -1,40 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import e from 'express';
-import { Model } from 'mongoose';
+import { CountiesRepository } from './counties.repository';
 import { CreateCountyDto } from './dto/create-county.dto';
 import { UpdateCountyDto } from './dto/update-county.dto';
-import { County, CountyDocument } from './schemas/county.schema';
 
 @Injectable()
 export class CountiesService {
-  constructor(
-    @InjectModel(County.name)
-    private readonly countyModel: Model<CountyDocument>,
-  ) {}
+  constructor(private readonly countyRepository: CountiesRepository) {}
 
-  create(createCountyDto: CreateCountyDto) {
-    const county = new this.countyModel(createCountyDto);
-    return county.save();
+  async create(createCountyDto: CreateCountyDto) {
+    const session = await this.countyRepository.startTransaction();
+    try {
+      const county = await this.countyRepository.create(createCountyDto, {
+        session,
+      });
+      await session.commitTransaction();
+
+      return county;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    }
   }
 
   findAll() {
-    return this.countyModel.find().exec();
+    return this.countyRepository.find({});
   }
 
   findOne(id: string) {
     try {
-      return this.countyModel.findOne({ _id: id }).exec();
+      return this.countyRepository.findOne({ _id: id });
     } catch (e: any) {
       throw e;
     }
   }
 
   update(id: string, updateCountyDto: UpdateCountyDto) {
-    return this.countyModel.updateOne({ _id: id }, updateCountyDto).exec();
+    return this.countyRepository.upsert({ _id: id }, updateCountyDto);
   }
 
   remove(id: string) {
-    return this.countyModel.deleteOne({ _id: id }).exec();
+    return this.countyRepository.deleteOne({ _id: id });
   }
 }

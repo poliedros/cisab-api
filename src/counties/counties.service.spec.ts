@@ -1,7 +1,7 @@
-import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Types } from 'mongoose';
+import { CountiesRepository } from './counties.repository';
 import { CountiesService } from './counties.service';
-import { County } from './schemas/county.schema';
 
 function buildCounty() {
   return {
@@ -39,12 +39,20 @@ function buildCounty() {
   };
 }
 
+function buildIdCountyMock() {
+  const idString = '63599affb40135010840911b';
+  const idStub = new Types.ObjectId(idString);
+  const county = { _id: idStub, ...buildCounty() };
+
+  return [idStub, county];
+}
+
 async function buildService(useValue) {
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       CountiesService,
       {
-        provide: getModelToken(County.name),
+        provide: CountiesRepository,
         useValue: useValue,
       },
     ],
@@ -55,20 +63,36 @@ async function buildService(useValue) {
 
 describe('CountiesService', () => {
   let service: CountiesService;
+  const createMockFn = jest.fn();
   const findOneMockFn = jest.fn();
   const findMockFn = jest.fn();
+  const upsertMockFn = jest.fn();
+  const deleteOneMockFn = jest.fn();
+  const startTransactionMockFn = jest.fn();
+  startTransactionMockFn.mockReturnValue(
+    Promise.resolve({
+      abortTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+    }),
+  );
 
-  function mockUserModel(dto: any) {
-    this.data = dto;
-    this.findOne = findOneMockFn;
-    this.find = findMockFn;
-    this.save = () => {
-      return this.data;
+  beforeEach(async () => {
+    const useValue = {
+      create: createMockFn,
+      find: findMockFn,
+      findOne: findOneMockFn,
+      upsert: upsertMockFn,
+      deleteOne: deleteOneMockFn,
+      startTransaction: startTransactionMockFn,
     };
-  }
+
+    service = await buildService(useValue);
+  });
 
   it('should create with valid data', async () => {
-    service = await buildService(mockUserModel);
+    const [_, county] = buildIdCountyMock();
+
+    createMockFn.mockReturnValue(Promise.resolve(county));
 
     const response = await service.create(buildCounty());
 
@@ -81,15 +105,14 @@ describe('CountiesService', () => {
     };
     service = await buildService(useValue);
 
-    const idStub = '63599affb40135010840911b';
-    const countiesStub = { id: idStub, ...buildCounty() };
+    const [idStub, county] = buildIdCountyMock();
+    const countiesStub = [county];
 
-    findMockFn.mockReturnValue({
-      exec: () => [countiesStub],
-    });
+    findMockFn.mockReturnValue(Promise.resolve(countiesStub));
 
-    const counties = await service.findAll();
+    const response = await service.findAll();
+    console.log(response);
 
-    expect(counties[0].id).toEqual(idStub);
+    expect(response[0]._id).toEqual(idStub);
   });
 });

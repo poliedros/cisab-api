@@ -1,7 +1,8 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateCountyDto } from './create-county.dto';
+import { Types } from 'mongoose';
 
 export class UpdateCountyDto extends PartialType(CreateCountyDto) {
   @ApiProperty()
-  id: string;
+  _id: Types.ObjectId;
 }

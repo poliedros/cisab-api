@@ -3,5 +3,5 @@ import { CreateCountyDto } from './create-county.dto';
 
 export class GetCountyDto extends PartialType(CreateCountyDto) {
   @ApiProperty()
-  id: string;
+  _id: string;
 }

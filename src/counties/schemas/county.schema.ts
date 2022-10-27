@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { AbstractDocument } from './../../database/abstract.schema';
 
 export type CountyDocument = County & Document;
 
@@ -37,11 +38,8 @@ export class CountyInfo {
   note: string;
 }
 
-@Schema()
-export class County {
-  @Prop()
-  id: string;
-
+@Schema({ versionKey: false })
+export class County extends AbstractDocument {
   @Prop({ type: Account })
   account: Account;
 

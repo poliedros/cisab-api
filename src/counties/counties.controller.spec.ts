@@ -1,5 +1,6 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Types } from 'mongoose';
 import { CountiesController } from './counties.controller';
 import { CountiesService } from './counties.service';
 import { CreateCountyDto } from './dto/create-county.dto';
@@ -70,13 +71,17 @@ describe('CountiesController', () => {
   });
 
   it('should get all', async () => {
-    const county: County = { id: '63599affb40135010840911b', ...buildCounty() };
+    const id = new Types.ObjectId('63599affb40135010840911b');
+    const county: County = {
+      _id: id,
+      ...buildCounty(),
+    };
 
     findAllMockFn.mockReturnValue(Promise.resolve([county]));
 
     const counties = await controller.findAll();
 
-    expect(counties[0].id).toEqual('63599affb40135010840911b');
+    expect(counties[0]._id).toEqual(id);
   });
 
   it('should throw not found if there is no counties', async () => {
@@ -90,23 +95,26 @@ describe('CountiesController', () => {
   it('should create county', async () => {
     const countyDto: CreateCountyDto = buildCounty();
 
-    const idStub = '63599affb40135010840911b';
-    createMockFn.mockReturnValue(Promise.resolve({ id: idStub, ...countyDto }));
+    const idStub = new Types.ObjectId('63599affb40135010840911b');
+    createMockFn.mockReturnValue(
+      Promise.resolve({ _id: idStub, ...countyDto }),
+    );
 
     const result = await controller.create(countyDto);
 
-    expect(result.id).toEqual(idStub);
+    expect(result._id).toEqual(idStub);
   });
 
   it('should return one county with valid id', async () => {
-    const idStub = '63599affb40135010840911b';
-    const county = { id: idStub, ...buildCounty() };
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+    const county = { _id: idStub, ...buildCounty() };
 
     findOneMockFn.mockReturnValue(county);
 
-    const response = await controller.findOne(idStub);
+    const response = await controller.findOne(idString);
 
-    expect(response.id).toEqual(idStub);
+    expect(response._id).toEqual(idStub);
   });
 
   it('should throw bad request with invalid id', async () => {
@@ -129,20 +137,22 @@ describe('CountiesController', () => {
 
   it('should update county with valid data', async () => {
     updateMockFn.mockReturnValue(Promise.resolve(true));
-    const idStub = '63599affb40135010840911b';
-    const county = { id: idStub, ...buildCounty() };
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
 
-    const response = await controller.update(idStub, county);
+    const county = { _id: idStub, ...buildCounty() };
+
+    const response = await controller.update(idString, county);
 
     expect(response).toBeDefined();
   });
 
   it('should remove county with valid id', async () => {
     updateMockFn.mockReturnValue(Promise.resolve(true));
-    const idStub = '63599affb40135010840911b';
+    const idString = '63599affb40135010840911b';
     removeMockFn.mockReturnValue(Promise.resolve(true));
 
-    const response = await controller.remove(idStub);
+    const response = await controller.remove(idString);
 
     expect(response).toBeDefined();
   });
