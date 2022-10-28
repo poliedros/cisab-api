@@ -1,9 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 
 export class CreateCountyAccountDto {
+  @IsNotEmpty()
+  @IsString()
   @ApiProperty()
   user: string;
 
+  @IsNotEmpty()
+  @IsString()
   @ApiProperty()
   password: string;
 }
@@ -83,6 +89,9 @@ export class CreateCountyAccountableDto {
 
 export class CreateCountyDto {
   @ApiProperty()
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateCountyAccountDto)
   account: CreateCountyAccountDto;
 
   @ApiProperty()
