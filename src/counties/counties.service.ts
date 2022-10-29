@@ -1,21 +1,35 @@
 import { Injectable } from '@nestjs/common';
+import { lastValueFrom } from 'rxjs';
 import { CountiesRepository } from './counties.repository';
 import { CreateCountyDto } from './dto/create-county.dto';
 import { UpdateCountyDto } from './dto/update-county.dto';
+import { NotifierService } from './../notifier/notifier.service';
 
 @Injectable()
 export class CountiesService {
-  constructor(private readonly countyRepository: CountiesRepository) {}
+  constructor(
+    private readonly countyRepository: CountiesRepository,
+    private readonly notifierService: NotifierService,
+  ) {}
 
   async create(createCountyDto: CreateCountyDto) {
     const session = await this.countyRepository.startTransaction();
     try {
-      const county = await this.countyRepository.create(createCountyDto, {
-        session,
-      });
+      // const county = await this.countyRepository.create(createCountyDto, {
+      //   session,
+      // });
+
+      await lastValueFrom(
+        this.notifierService.emit({
+          type: 'email',
+          message: { body: 'message' },
+        }),
+      );
+
       await session.commitTransaction();
 
-      return county;
+      return {};
+      // return county;
     } catch (err) {
       await session.abortTransaction();
       throw err;

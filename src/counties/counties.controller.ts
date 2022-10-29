@@ -1,4 +1,3 @@
-import { GetCountyDto } from './dto/get-county.dto';
 import {
   Controller,
   Get,
@@ -13,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CountiesService } from './counties.service';
+import { GetCountyDto } from './dto/get-county.dto';
 import { CreateCountyDto } from './dto/create-county.dto';
 import { UpdateCountyDto } from './dto/update-county.dto';
 import { JwtAuthGuard } from './../auth/jwt-auth.guard';
