@@ -15,9 +15,9 @@ export class CountiesService {
   async create(createCountyDto: CreateCountyDto) {
     const session = await this.countyRepository.startTransaction();
     try {
-      // const county = await this.countyRepository.create(createCountyDto, {
-      //   session,
-      // });
+      const county = await this.countyRepository.create(createCountyDto, {
+        session,
+      });
 
       await lastValueFrom(
         this.notifierService.emit({
@@ -28,8 +28,7 @@ export class CountiesService {
 
       await session.commitTransaction();
 
-      return {};
-      // return county;
+      return county;
     } catch (err) {
       await session.abortTransaction();
       throw err;

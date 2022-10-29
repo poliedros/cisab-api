@@ -1,7 +1,10 @@
+import { NotifierService } from './../notifier/notifier.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 import { CountiesRepository } from './counties.repository';
 import { CountiesService } from './counties.service';
+import { emit } from 'process';
+import { Observable, of } from 'rxjs';
 
 function buildCounty() {
   return {
@@ -46,6 +49,7 @@ function buildIdCountyMock() {
 
   return [idStub, county];
 }
+const emitMockFn = jest.fn();
 
 async function buildService(useValue) {
   const module: TestingModule = await Test.createTestingModule({
@@ -54,6 +58,12 @@ async function buildService(useValue) {
       {
         provide: CountiesRepository,
         useValue: useValue,
+      },
+      {
+        provide: NotifierService,
+        useValue: {
+          emit: emitMockFn,
+        },
       },
     ],
   }).compile();
@@ -92,6 +102,7 @@ describe('CountiesService', () => {
   it('should create with valid data', async () => {
     const [_, county] = buildIdCountyMock();
 
+    emitMockFn.mockReturnValue(of(Promise.resolve(true)));
     createMockFn.mockReturnValue(Promise.resolve(county));
 
     const response = await service.create(buildCounty());
