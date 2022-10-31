@@ -15,6 +15,8 @@ import { notifierConstants } from './notify.constants';
           queueOptions: {
             durable: false,
           },
+          noAck: false,
+          persistent: true,
         },
       },
     ]),
