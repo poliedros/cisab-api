@@ -21,8 +21,8 @@ export class CountiesService {
 
       await lastValueFrom(
         this.notifierService.emit({
-          type: 'email',
-          message: { body: 'message' },
+          type: 'county_created',
+          message: { body: `county created id ${county._id}` },
         }),
       );
 

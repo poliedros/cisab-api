@@ -9,6 +9,6 @@ export class NotifierService {
   ) {}
 
   emit({ type, message }: { type: string; message: any }) {
-    return this.client.emit(notifierConstants.NOTIFY, { type, message });
+    return this.client.emit(type, { message });
   }
 }
