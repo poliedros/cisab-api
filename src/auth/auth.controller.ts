@@ -1,4 +1,11 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -21,6 +28,8 @@ class LoginDto {
 @ApiTags('auth')
 @Controller()
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
@@ -28,6 +37,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user', description: 'forbidden' })
   @ApiBody({ type: LoginDto })
   async login(@Request() req) {
+    this.logger.log(`User ${req.user.email} trying to login...`);
     return this.authService.login(req.user);
   }
 

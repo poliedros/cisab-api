@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from './../enums/role.enum';
 import * as bcrypt from 'bcrypt';
@@ -18,6 +18,8 @@ export type Payload = {
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
@@ -31,6 +33,7 @@ export class AuthService {
     const isTheSamePassword = await bcrypt.compare(password, userPassword);
 
     if (user && isTheSamePassword) {
+      this.logger.log(`User ${user.username} logged in successfully...`);
       delete user.password;
       return user;
     }
