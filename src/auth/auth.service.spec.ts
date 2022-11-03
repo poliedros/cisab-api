@@ -51,7 +51,7 @@ describe('AuthService', () => {
     };
 
     findOneMockFn.mockReturnValue(Promise.resolve(user));
-    bcryptSpy.mockReturnValue(true);
+    bcryptSpy.mockReturnValue(Promise.resolve(true));
 
     const validateUser = await service.validateUser('carlos', 'test');
 
@@ -61,7 +61,7 @@ describe('AuthService', () => {
 
   it('should return null', async () => {
     findOneMockFn.mockReturnValue({});
-    bcryptSpy.mockReturnValue(false);
+    bcryptSpy.mockReturnValue(Promise.resolve(false));
     const validateUser = await service.validateUser('carlos', 'test');
 
     expect(validateUser).toBeNull();
