@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { CountiesRepository } from './counties.repository';
 import { CreateCountyDto } from './dto/create-county.dto';
@@ -7,6 +7,8 @@ import { NotifierService } from './../notifier/notifier.service';
 
 @Injectable()
 export class CountiesService {
+  private readonly logger = new Logger(CountiesService.name);
+
   constructor(
     private readonly countyRepository: CountiesRepository,
     private readonly notifierService: NotifierService,
@@ -25,8 +27,10 @@ export class CountiesService {
           message: { body: `county created id ${county._id}` },
         }),
       );
+      this.logger.log(`county_created notifier event emitted!`);
 
       await session.commitTransaction();
+      this.logger.log(`county id ${county._id} saved`);
 
       return county;
     } catch (err) {
@@ -48,10 +52,13 @@ export class CountiesService {
   }
 
   update(id: string, updateCountyDto: UpdateCountyDto) {
+    this.logger.log(`county id: ${id} will be updated...`);
+    // TODO: session here
     return this.countyRepository.findOneAndUpdate({ _id: id }, updateCountyDto);
   }
 
   remove(id: string) {
+    this.logger.log(`county id: ${id} will be deleted...`);
     return this.countyRepository.deleteOne({ _id: id });
   }
 }
