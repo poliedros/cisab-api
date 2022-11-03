@@ -37,7 +37,6 @@ export class AuthController {
   @ApiOperation({ summary: 'Login user', description: 'forbidden' })
   @ApiBody({ type: LoginDto })
   async login(@Request() req) {
-    this.logger.log(`User ${req.user.email} trying to login...`);
     return this.authService.login(req.user);
   }
 
