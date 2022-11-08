@@ -37,7 +37,7 @@ export class UnitsController {
   @ApiBody({ type: CreateUnitRequest })
   @ApiResponse({ type: GetUnitResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.County, Role.Admin)
+  @Roles(Role.Cisab, Role.Admin)
   @Post()
   async create(@Body() req: CreateUnitRequest) {
     return this.unitsService.create(req);
@@ -47,7 +47,7 @@ export class UnitsController {
   @ApiBody({ type: CreateUnitRequest })
   @ApiResponse({ type: GetUnitResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.County)
+  @Roles(Role.Cisab)
   @Delete(':id')
   remove(@Param('id') id: string) {
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
