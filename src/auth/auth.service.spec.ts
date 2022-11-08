@@ -4,7 +4,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from './../users/users.service';
 import { AuthService } from './auth.service';
-import { Role } from './../enums/role.enum';
+import { Role } from './role.enum';
 import { User } from './../users/schemas/user.schema';
 
 describe('AuthService', () => {

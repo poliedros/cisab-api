@@ -1,6 +1,6 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
-import { Role } from './../enums/role.enum';
+import { Role } from '../auth/role.enum';
 import { User } from './schemas/user.schema';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create.user.dto';

@@ -13,10 +13,10 @@ import {
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateUnitRequest } from './dto/create-unit-request.dto';
 import { UnitsService } from './units.service';
-import { JwtAuthGuard } from './../../src/auth/jwt-auth.guard';
-import { RolesGuard } from './../guards/roles.guard';
-import { Roles } from './../decorators/roles.decorator';
-import { Role } from './../enums/role.enum';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
+import { Role } from '../auth/role.enum';
 
 @ApiTags('units')
 @Controller('units')
