@@ -69,3 +69,11 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ steps.prep.outputs.tags }}
+
+      - name: Update version
+        uses: hmanzur/actions-set-secret@v2.0.0
+        with:
+          name: 'VERSION'
+          value: $((${{ secrets.VERSION }}+1))
+          repository: poliedros/cisab-api
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
