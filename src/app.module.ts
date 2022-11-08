@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { HealthModule } from './health/health.module';
 import { CountiesModule } from './counties/counties.module';
 import { NotifierModule } from './notifier/notifier.module';
+import { UnitsModule } from './units/units.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { NotifierModule } from './notifier/notifier.module';
     HealthModule,
     CountiesModule,
     NotifierModule,
+    UnitsModule,
   ],
   controllers: [],
   providers: [],
