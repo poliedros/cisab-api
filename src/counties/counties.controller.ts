@@ -9,6 +9,7 @@ import {
   Put,
   NotFoundException,
   BadRequestException,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CountiesService } from './counties.service';
@@ -21,7 +22,7 @@ import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
 import { CountyUserResponse } from './dto/response/county-user-response.dto';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
-import { CreateUserRequest } from 'src/users/dtos/create-user.request.dto';
+import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 
 @ApiTags('counties')
 @Controller('counties')
@@ -34,8 +35,12 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Post()
-  create(@Body() createCountyDto: CreateCountyDto) {
-    return this.countiesService.create(createCountyDto);
+  async create(@Body() createCountyDto: CreateCountyDto) {
+    try {
+      return await this.countiesService.create(createCountyDto);
+    } catch (err) {
+      throw new BadRequestException('Can`t save counties now');
+    }
   }
 
   @ApiOperation({ summary: 'Find all counties', description: 'forbidden' })
@@ -56,13 +61,7 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-      throw new BadRequestException({
-        message: 'Id is not valid',
-      });
-    }
-
+  async findOne(@Param('id', ParseObjectIdPipe) id: string) {
     const county = await this.countiesService.findOne(id);
 
     if (county) return county;
@@ -76,13 +75,10 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateCountyDto: UpdateCountyDto) {
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-      throw new BadRequestException({
-        message: 'Id is not valid',
-      });
-    }
-
+  update(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @Body() updateCountyDto: UpdateCountyDto,
+  ) {
     return this.countiesService.update(id, updateCountyDto);
   }
 
@@ -90,13 +86,7 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-      throw new BadRequestException({
-        message: 'Id is not valid',
-      });
-    }
-
+  remove(@Param('id', ParseObjectIdPipe) id: string) {
     return this.countiesService.remove(id);
   }
 
@@ -107,7 +97,7 @@ export class CountiesController {
   @Roles(Role.Cisab)
   @Post(':id/users')
   async createCountyUser(
-    @Param('id') countyId: string,
+    @Param('id', ParseObjectIdPipe) countyId: string,
     @Body() createCountyUserRequest: CreateCountyUserRequest,
   ): Promise<CountyUserResponse> {
     const countyUser = await this.countiesService.createCountyUser(
