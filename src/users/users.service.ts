@@ -9,19 +9,19 @@ export class UsersService {
 
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async findOne(username: string) {
-    return this.usersRepository.findOne({ username });
+  async findOne(email: string) {
+    return this.usersRepository.findOne({ email });
   }
 
   async create(createUserRequest: CreateUserRequest) {
     const { password } = createUserRequest;
 
     const user = await this.usersRepository.find({
-      username: createUserRequest.username,
+      email: createUserRequest.email,
     });
 
     if (user.length !== 0) {
-      throw new ConflictException('Username already exists');
+      throw new ConflictException('Email already exists');
     }
 
     createUserRequest.password = await this.hashPassword(password);

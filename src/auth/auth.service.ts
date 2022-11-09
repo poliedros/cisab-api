@@ -7,12 +7,12 @@ import { Types } from 'mongoose';
 
 export type UserValidation = {
   _id: Types.ObjectId;
-  username: string;
+  email: string;
   roles: Role[];
 };
 
 export type Payload = {
-  username: string;
+  email: string;
   sub: string;
   roles: Role[];
 };
@@ -26,8 +26,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, password: string) {
-    const user = await this.usersService.findOne(username);
+  async validateUser(email: string, password: string) {
+    const user = await this.usersService.findOne(email);
 
     if (!user) return null;
 
@@ -36,7 +36,7 @@ export class AuthService {
     const isTheSamePassword = await bcrypt.compare(password, userPassword);
 
     if (user && isTheSamePassword) {
-      this.logger.log(`User ${user.username} logged in successfully...`);
+      this.logger.log(`User ${user.email} logged in successfully...`);
       delete user.password;
       return user;
     }
@@ -46,7 +46,7 @@ export class AuthService {
 
   async login(user: UserValidation) {
     const payload: Payload = {
-      username: user.username,
+      email: user.email,
       sub: user._id.toString(),
       roles: user.roles,
     };

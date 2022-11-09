@@ -8,14 +8,15 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new Logger(LocalStrategy.name);
 
   constructor(private authService: AuthService) {
-    super();
+    super({ usernameField: 'email' });
   }
 
-  async validate(username: string, password: string): Promise<UserValidation> {
-    const user = await this.authService.validateUser(username, password);
+  async validate(email: string, password: string): Promise<UserValidation> {
+    console.log(email, password);
+    const user = await this.authService.validateUser(email, password);
 
     if (!user) {
-      this.logger.log(`User id ${username} has tried to log in and failed.`);
+      this.logger.log(`User id ${email} has tried to log in and failed.`);
       throw new UnauthorizedException();
     }
 

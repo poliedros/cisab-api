@@ -148,7 +148,9 @@ describe('CountiesService', () => {
     const properties: Map<string, string> = new Map<string, string>();
     properties['profession'] = 'software engineer';
     const req: CreateCountyUserRequest = {
-      username: 'carlos',
+      email: 'carlos@czar.dev',
+      name: 'carlos',
+      surname: 'zansavio',
       password: 'changeme',
       properties,
     };

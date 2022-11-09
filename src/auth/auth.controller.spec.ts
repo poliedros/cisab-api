@@ -27,7 +27,7 @@ describe('AuthController', () => {
 
     loginMockFn.mockReturnValue(Promise.resolve(loginResult));
 
-    const req: any = { user: { username: 'carlos', pasword: '3' } };
+    const req: any = { user: { email: 'carlos', pasword: '3' } };
 
     const login = await controller.login(req);
 
@@ -36,9 +36,9 @@ describe('AuthController', () => {
 
   it('should get profile', async () => {
     const profile = await controller.getProfile({
-      user: { username: 'carlos' },
+      user: { email: 'carlos' },
     });
 
-    expect(profile).toEqual({ username: 'carlos' });
+    expect(profile).toEqual({ email: 'carlos' });
   });
 });

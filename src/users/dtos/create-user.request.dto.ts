@@ -3,7 +3,13 @@ import { Role } from '../../auth/role.enum';
 
 export class CreateUserRequest {
   @ApiProperty()
-  username: string;
+  email: string;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  surname: string;
 
   @ApiProperty()
   password: string;

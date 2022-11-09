@@ -19,7 +19,7 @@ import { LocalAuthGuard } from './local-auth.guard';
 
 class LoginDto {
   @ApiProperty()
-  username: string;
+  email: string;
 
   @ApiProperty()
   password: string;

@@ -5,7 +5,17 @@ export class CreateCountyUserRequest {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  username: string;
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  surname: string;
 
   @IsNotEmpty()
   @IsString()

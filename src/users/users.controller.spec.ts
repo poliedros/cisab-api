@@ -26,13 +26,15 @@ describe('UserController', () => {
 
   it('should create user', async () => {
     const createUserDto: CreateUserRequest = {
-      username: 'carlos',
+      email: 'carlos@czar.dev',
+      name: 'carlos',
+      surname: 'zansavio',
       password: 'changeme',
       roles: [Role.Admin],
     };
     const result = await controller.create(createUserDto);
 
-    expect(result.username).toEqual('carlos');
+    expect(result.email).toEqual('carlos@czar.dev');
     expect(result.roles).toEqual([Role.Admin]);
   });
 });

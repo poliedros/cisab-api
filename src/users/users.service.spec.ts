@@ -40,21 +40,23 @@ describe('User Service', () => {
   it('should find user', async () => {
     const user = {
       _id: '1',
-      username: 'carlos',
+      email: 'carlos@czar.dev',
       password: 'changeme',
       roles: [Role.Cisab],
     };
 
     findOneMockFn.mockReturnValue(user);
 
-    const expectedUser = await service.findOne('carlos');
+    const expectedUser = await service.findOne('carlos@czar.dev');
 
     expect(expectedUser).toEqual(user);
   });
 
   it('should create user with valid data', async () => {
     const createUserDto: CreateUserRequest = {
-      username: 'carlos',
+      email: 'carlos@czar.dev',
+      name: 'carlos',
+      surname: 'zansavio',
       password: 'changeme',
       roles: [Role.Admin],
     };
@@ -68,16 +70,18 @@ describe('User Service', () => {
 
     const savedUser = await service.create(createUserDto);
 
-    const { _id, username, roles } = savedUser;
+    const { _id, email, roles } = savedUser;
 
     expect(_id).toEqual('1');
-    expect(username).toEqual('carlos');
+    expect(email).toEqual('carlos@czar.dev');
     expect(roles).toEqual([Role.Admin]);
   });
 
   it('should throw an exception if it cant save', async () => {
     const createUserDto: CreateUserRequest = {
-      username: 'carlos',
+      email: 'carlos@czar.dev',
+      name: 'carlos',
+      surname: 'zansavio',
       password: 'changeme',
       roles: [Role.Admin],
     };
@@ -95,15 +99,17 @@ describe('User Service', () => {
     }
   });
 
-  it('shouldnt create user with duplicated username', async () => {
+  it('shouldnt create user with duplicated email', async () => {
     const createUserDto: CreateUserRequest = {
-      username: 'carlos',
+      email: 'carlos@czar.dev',
+      name: 'carlos',
+      surname: 'zansavio',
       password: 'changeme',
       roles: [Role.Admin],
     };
 
     findMockFn.mockReturnValue(
-      Promise.resolve([{ _id: '1', username: 'carlos' }]),
+      Promise.resolve([{ _id: '1', email: 'carlos@czar.dev' }]),
     );
 
     try {

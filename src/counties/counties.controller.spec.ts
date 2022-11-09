@@ -190,7 +190,9 @@ describe('CountiesController', () => {
     properties['profession'] = 'software engineer';
     properties['county_id'] = '1';
     const req: CreateCountyUserRequest = {
-      username: 'carlos',
+      email: 'carlos@czar.dev',
+      name: 'carlos',
+      surname: 'zansavio',
       password: 'changeme',
       properties,
     };

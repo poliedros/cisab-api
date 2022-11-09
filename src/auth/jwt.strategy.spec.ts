@@ -9,13 +9,13 @@ describe('JwtStrategy', () => {
   it('should validate', async () => {
     const payload = await jwtStrategy.validate({
       sub: '3',
-      username: 'carlos',
+      email: 'carlos@czar.dev',
       roles: [Role.Cisab],
     });
 
     expect(payload).toEqual({
       id: payload.id,
-      username: payload.username,
+      email: payload.email,
       roles: [Role.Cisab],
     });
   });

@@ -107,7 +107,7 @@ export class CountiesController {
 
     const response: CountyUserResponse = {
       _id: countyUser._id,
-      username: countyUser.username,
+      email: countyUser.email,
       properties: countyUser.properties,
     };
 

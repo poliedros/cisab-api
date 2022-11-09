@@ -48,7 +48,9 @@ describe('AuthService', () => {
     const id = new Types.ObjectId(idString);
     const user: User = {
       _id: id,
-      username: 'carlos',
+      email: 'carlos@czar.dev',
+      name: 'carlos',
+      surname: 'zansavio',
       password: 'test',
       roles: [Role.Cisab],
     };
@@ -59,7 +61,7 @@ describe('AuthService', () => {
     const validateUser = await service.validateUser('carlos', 'test');
 
     expect(validateUser._id).toEqual(user._id);
-    expect(validateUser.username).toEqual(user.username);
+    expect(validateUser.email).toEqual(user.email);
   });
 
   it('should return null', async () => {
@@ -77,7 +79,7 @@ describe('AuthService', () => {
     const id = new Types.ObjectId(idString);
     const token = await service.login({
       _id: id,
-      username: 'carlos',
+      email: 'carlos@czar.dev',
       roles: [Role.Cisab],
     });
 
