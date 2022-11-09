@@ -3,8 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 import { CountiesController } from './counties.controller';
 import { CountiesService } from './counties.service';
-import { CreateCountyDto } from './dto/create-county.dto';
+import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
+import { CreateCountyDto } from './dto/request/create-county.dto';
 import { County } from './schemas/county.schema';
+import { UsersService } from './../users/users.service';
 
 function buildCounty() {
   return {
@@ -43,12 +45,15 @@ function buildCounty() {
 }
 
 describe('CountiesController', () => {
+  jest.resetAllMocks();
+
   let controller: CountiesController;
   const createMockFn = jest.fn();
   const findAllMockFn = jest.fn();
   const findOneMockFn = jest.fn();
   const updateMockFn = jest.fn();
   const removeMockFn = jest.fn();
+  const createCountyUserMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -62,6 +67,7 @@ describe('CountiesController', () => {
             findOne: findOneMockFn,
             update: updateMockFn,
             remove: removeMockFn,
+            createCountyUser: createCountyUserMockFn,
           },
         },
       ],
@@ -177,5 +183,25 @@ describe('CountiesController', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(BadRequestException);
     }
+  });
+
+  it('should create a county user', async () => {
+    const properties: Map<string, string> = new Map<string, string>();
+    properties['profession'] = 'software engineer';
+    properties['county_id'] = '1';
+    const req: CreateCountyUserRequest = {
+      username: 'carlos',
+      password: 'changeme',
+      properties,
+    };
+
+    createCountyUserMockFn.mockReturnValue(
+      Promise.resolve({ _id: '12', ...req }),
+    );
+
+    const response = await controller.createCountyUser('1', req);
+
+    expect(response._id).toEqual('12');
+    expect(response.properties['county_id']).toEqual('1');
   });
 });

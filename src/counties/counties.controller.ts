@@ -12,13 +12,16 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CountiesService } from './counties.service';
-import { GetCountyDto } from './dto/get-county.dto';
-import { CreateCountyDto } from './dto/create-county.dto';
-import { UpdateCountyDto } from './dto/update-county.dto';
+import { GetCountyDto } from './dto/response/get-county.dto';
+import { CreateCountyDto } from './dto/request/create-county.dto';
+import { UpdateCountyDto } from './dto/request/update-county.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
+import { CountyUserResponse } from './dto/response/county-user-response.dto';
+import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
+import { CreateUserDto } from 'src/users/dtos/create.user.dto';
 
 @ApiTags('counties')
 @Controller('counties')
@@ -95,5 +98,29 @@ export class CountiesController {
     }
 
     return this.countiesService.remove(id);
+  }
+
+  @ApiOperation({ summary: 'Create county user', description: 'forbidden' })
+  @ApiBody({ type: CreateCountyUserRequest })
+  @ApiResponse({ type: CountyUserResponse })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Post(':id/users')
+  async createCountyUser(
+    @Param('id') countyId: string,
+    @Body() createCountyUserRequest: CreateCountyUserRequest,
+  ): Promise<CountyUserResponse> {
+    const countyUser = await this.countiesService.createCountyUser(
+      countyId,
+      createCountyUserRequest,
+    );
+
+    const response: CountyUserResponse = {
+      _id: countyUser._id,
+      username: countyUser.username,
+      properties: countyUser.properties,
+    };
+
+    return response;
   }
 }

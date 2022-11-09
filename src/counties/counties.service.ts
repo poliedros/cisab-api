@@ -1,9 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { CountiesRepository } from './counties.repository';
-import { CreateCountyDto } from './dto/create-county.dto';
-import { UpdateCountyDto } from './dto/update-county.dto';
+import { CreateCountyDto } from './dto/request/create-county.dto';
+import { UpdateCountyDto } from './dto/request/update-county.dto';
 import { NotifierService } from './../notifier/notifier.service';
+import { CreateUserDto } from 'src/users/dtos/create.user.dto';
+import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
+import { Role } from '../auth/role.enum';
+import { CountyUserResponse } from './dto/response/county-user-response.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class CountiesService {
@@ -12,6 +17,7 @@ export class CountiesService {
   constructor(
     private readonly countyRepository: CountiesRepository,
     private readonly notifierService: NotifierService,
+    private readonly usersService: UsersService,
   ) {}
 
   async create(createCountyDto: CreateCountyDto) {
@@ -60,5 +66,16 @@ export class CountiesService {
   remove(id: string) {
     this.logger.log(`county id: ${id} will be deleted...`);
     return this.countyRepository.deleteOne({ _id: id });
+  }
+
+  async createCountyUser(
+    countyId: string,
+    createCountyUserRequest: CreateCountyUserRequest,
+  ): Promise<CountyUserResponse> {
+    createCountyUserRequest.properties['county_id'] = countyId;
+
+    const serviceRequest = createCountyUserRequest as CreateUserDto;
+    serviceRequest.roles = [Role.County];
+    return this.usersService.create(serviceRequest);
   }
 }

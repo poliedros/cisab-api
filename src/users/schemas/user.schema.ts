@@ -17,6 +17,9 @@ export class User {
 
   @Prop()
   roles: Role[];
+
+  @Prop({ type: Map<string, string>, default: null })
+  properties?: Map<string, string>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

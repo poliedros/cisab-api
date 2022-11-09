@@ -4,6 +4,9 @@ import { Types } from 'mongoose';
 import { CountiesRepository } from './counties.repository';
 import { CountiesService } from './counties.service';
 import { of } from 'rxjs';
+import { UsersService } from '../users/users.service';
+import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
+import { Role } from '../auth/role.enum';
 
 function buildCounty() {
   return {
@@ -50,19 +53,26 @@ function buildIdCountyMock() {
 }
 const emitMockFn = jest.fn();
 
-async function buildService(useValue) {
+async function buildService(
+  countyRepositoryMocksValue,
+  usersServiceMocksValue,
+) {
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       CountiesService,
       {
         provide: CountiesRepository,
-        useValue: useValue,
+        useValue: countyRepositoryMocksValue,
       },
       {
         provide: NotifierService,
         useValue: {
           emit: emitMockFn,
         },
+      },
+      {
+        provide: UsersService,
+        useValue: usersServiceMocksValue,
       },
     ],
   }).compile();
@@ -85,8 +95,10 @@ describe('CountiesService', () => {
     }),
   );
 
+  const createCountyUserMockFn = jest.fn();
+
   beforeEach(async () => {
-    const useValue = {
+    const countyRepositoryMocksValue = {
       create: createMockFn,
       find: findMockFn,
       findOne: findOneMockFn,
@@ -95,7 +107,14 @@ describe('CountiesService', () => {
       startTransaction: startTransactionMockFn,
     };
 
-    service = await buildService(useValue);
+    const usersServiceMockValue = {
+      create: createCountyUserMockFn,
+    };
+
+    service = await buildService(
+      countyRepositoryMocksValue,
+      usersServiceMockValue,
+    );
   });
 
   it('should create with valid data', async () => {
@@ -113,7 +132,7 @@ describe('CountiesService', () => {
     const useValue = {
       find: findMockFn,
     };
-    service = await buildService(useValue);
+    service = await buildService(useValue, {});
 
     const [idStub, county] = buildIdCountyMock();
     const countiesStub = [county];
@@ -123,5 +142,28 @@ describe('CountiesService', () => {
     const response = await service.findAll();
 
     expect(response[0]._id).toEqual(idStub);
+  });
+
+  it('should create a county user', async () => {
+    const properties: Map<string, string> = new Map<string, string>();
+    properties['profession'] = 'software engineer';
+    const req: CreateCountyUserRequest = {
+      username: 'carlos',
+      password: 'changeme',
+      properties,
+    };
+
+    createCountyUserMockFn.mockReturnValue(
+      Promise.resolve({ _id: '12', ...req }),
+    );
+
+    const response = await service.createCountyUser('1', req);
+
+    expect(response._id).toEqual('12');
+    expect(response.properties['county_id']).toEqual('1');
+    expect(createCountyUserMockFn.mock.calls[0][0]['roles']).toEqual([
+      Role.County,
+    ]);
+    expect(createCountyUserMockFn).toBeCalledTimes(1);
   });
 });

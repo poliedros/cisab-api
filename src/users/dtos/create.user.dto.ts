@@ -10,4 +10,7 @@ export class CreateUserDto {
 
   @ApiProperty()
   roles: Role[];
+
+  @ApiProperty()
+  properties?: Map<string, string>;
 }
