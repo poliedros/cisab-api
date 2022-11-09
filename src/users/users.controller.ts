@@ -4,7 +4,7 @@ import { JwtAuthGuard } from './../auth/jwt-auth.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
 import { RolesGuard } from '../auth/roles.guard';
-import { CreateUserDto } from './dtos/create.user.dto';
+import { CreateUserRequest } from './dtos/create-user.request.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
@@ -13,11 +13,11 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiOperation({ summary: 'Create new user', description: 'forbidden' })
-  @ApiBody({ type: CreateUserDto })
+  @ApiBody({ type: CreateUserRequest })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   @Roles(Role.Admin)
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(@Body() createUserDto: CreateUserRequest) {
     await this.usersService.create(createUserDto);
     const { username, roles } = createUserDto;
     return { username, roles };

@@ -6,6 +6,7 @@ import { UsersService } from './../users/users.service';
 import { AuthService } from './auth.service';
 import { Role } from './role.enum';
 import { User } from './../users/schemas/user.schema';
+import { Types } from 'mongoose';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -43,8 +44,10 @@ describe('AuthService', () => {
   });
 
   it('should validate user', async () => {
+    const idString = '63599affb40135010840911b';
+    const id = new Types.ObjectId(idString);
     const user: User = {
-      id: '3',
+      _id: id,
       username: 'carlos',
       password: 'test',
       roles: [Role.Cisab],
@@ -55,7 +58,7 @@ describe('AuthService', () => {
 
     const validateUser = await service.validateUser('carlos', 'test');
 
-    expect(validateUser.id).toEqual(user.id);
+    expect(validateUser._id).toEqual(user._id);
     expect(validateUser.username).toEqual(user.username);
   });
 
@@ -70,8 +73,10 @@ describe('AuthService', () => {
   it('should login user', async () => {
     signMockFn.mockReturnValue('3a');
 
+    const idString = '63599affb40135010840911b';
+    const id = new Types.ObjectId(idString);
     const token = await service.login({
-      id: '3',
+      _id: id,
       username: 'carlos',
       roles: [Role.Cisab],
     });

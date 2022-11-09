@@ -1,25 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from './dtos/create.user.dto';
-import { User, UserDocument } from './schemas/user.schema';
+import { CreateUserRequest } from './dtos/create-user.request.dto';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  protected readonly logger = new Logger(UsersService.name);
+
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async findOne(username: string) {
-    return this.userModel.findOne({ username }).exec();
+    return this.usersRepository.findOne({ username });
   }
 
-  async create(createUserDto: CreateUserDto) {
-    const { password } = createUserDto;
+  async create(createUserRequest: CreateUserRequest) {
+    const { password } = createUserRequest;
 
-    createUserDto.password = await this.hashPassword(password);
+    const user = await this.usersRepository.find({
+      username: createUserRequest.username,
+    });
 
-    const createdUser = new this.userModel(createUserDto);
-    return createdUser.save();
+    if (user.length !== 0) {
+      throw new ConflictException('Username already exists');
+    }
+
+    createUserRequest.password = await this.hashPassword(password);
+
+    const session = await this.usersRepository.startTransaction();
+    try {
+      const user = await this.usersRepository.create(createUserRequest, {
+        session,
+      });
+
+      await session.commitTransaction();
+      this.logger.log(`user id ${user._id} saved`);
+
+      return user;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    }
   }
 
   async hashPassword(password: string) {

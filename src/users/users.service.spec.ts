@@ -1,83 +1,122 @@
-import { getModelToken } from '@nestjs/mongoose';
+import { ConflictException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Role } from '../auth/role.enum';
-import { User } from './schemas/user.schema';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dtos/create.user.dto';
+import { CreateUserRequest } from './dtos/create-user.request.dto';
+import { UsersRepository } from './users.repository';
 
 describe('User Service', () => {
-  let usersService: UsersService;
+  let service: UsersService;
   const findOneMockFn = jest.fn();
-  const newUserModelMockFn = jest.fn();
+  const findMockFn = jest.fn();
+  const createMockFn = jest.fn();
+  const startTransactionMockFn = jest.fn();
+  startTransactionMockFn.mockReturnValue(
+    Promise.resolve({
+      abortTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+    }),
+  );
 
-  beforeEach(() => {});
-
-  it('should find user', async () => {
+  beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         UsersService,
         {
-          provide: getModelToken(User.name),
+          provide: UsersRepository,
           useValue: {
             findOne: findOneMockFn,
+            create: createMockFn,
+            find: findMockFn,
+            startTransaction: startTransactionMockFn,
           },
         },
       ],
     }).compile();
 
-    usersService = module.get<UsersService>(UsersService);
+    service = module.get<UsersService>(UsersService);
+  });
 
+  it('should find user', async () => {
     const user = {
-      id: '1',
+      _id: '1',
       username: 'carlos',
       password: 'changeme',
       roles: [Role.Cisab],
     };
 
-    findOneMockFn.mockReturnValue({ exec: () => user });
+    findOneMockFn.mockReturnValue(user);
 
-    const expectedUser = await usersService.findOne('carlos');
+    const expectedUser = await service.findOne('carlos');
 
     expect(expectedUser).toEqual(user);
   });
 
   it('should create user with valid data', async () => {
-    function mockUserModel(dto: any) {
-      this.data = dto;
-      this.findOne = findOneMockFn;
-      this.save = () => {
-        return this.data;
-      };
-    }
-
-    const module = await Test.createTestingModule({
-      providers: [
-        UsersService,
-        {
-          provide: getModelToken(User.name),
-          useValue: mockUserModel,
-        },
-      ],
-    }).compile();
-
-    usersService = module.get<UsersService>(UsersService);
-
-    const createUserDto: CreateUserDto = {
+    const createUserDto: CreateUserRequest = {
       username: 'carlos',
       password: 'changeme',
       roles: [Role.Admin],
     };
 
-    newUserModelMockFn.mockReturnValue({
-      save: () => createUserDto,
+    findMockFn.mockReturnValue(() => Promise.resolve([]));
+    createMockFn.mockReturnValue({
+      _id: '1',
+      password: '%4432',
+      ...createUserDto,
     });
 
-    const savedUser = await usersService.create(createUserDto);
+    const savedUser = await service.create(createUserDto);
 
-    const { username, password, roles } = savedUser;
+    const { _id, username, roles } = savedUser;
 
+    expect(_id).toEqual('1');
     expect(username).toEqual('carlos');
-    expect(password).not.toEqual('changeme');
     expect(roles).toEqual([Role.Admin]);
+  });
+
+  it('should throw an exception if it cant save', async () => {
+    const createUserDto: CreateUserRequest = {
+      username: 'carlos',
+      password: 'changeme',
+      roles: [Role.Admin],
+    };
+
+    findMockFn.mockReturnValue(() => Promise.resolve([]));
+    createMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await service.create(createUserDto);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error);
+    }
+  });
+
+  it('shouldnt create user with duplicated username', async () => {
+    const createUserDto: CreateUserRequest = {
+      username: 'carlos',
+      password: 'changeme',
+      roles: [Role.Admin],
+    };
+
+    findMockFn.mockReturnValue(
+      Promise.resolve([{ _id: '1', username: 'carlos' }]),
+    );
+
+    try {
+      await service.create(createUserDto);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(ConflictException);
+    }
+  });
+
+  it('should hash a password', async () => {
+    const result = await service.hashPassword('changeme');
+
+    expect(result).not.toEqual('changeme');
   });
 });

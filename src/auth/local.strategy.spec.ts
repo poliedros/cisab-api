@@ -26,12 +26,12 @@ describe('Local Strategy', () => {
   });
 
   it('should validate username, password', async () => {
-    const userValidation = { id: '3', username: 'carlos' };
+    const userValidation = { _id: '3', username: 'carlos' };
     validateUserMockFn.mockReturnValue(Promise.resolve(userValidation));
 
     const response = await localStrategy.validate('carlos', 'changeme');
 
-    expect(response).toEqual({ id: '3', username: 'carlos' });
+    expect(response).toEqual({ _id: '3', username: 'carlos' });
   });
 
   it('should throw unauthorized exception', async () => {

@@ -3,9 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { Role } from './role.enum';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from './../users/users.service';
+import { Types } from 'mongoose';
 
 export type UserValidation = {
-  id: string;
+  _id: Types.ObjectId;
   username: string;
   roles: Role[];
 };
@@ -46,7 +47,7 @@ export class AuthService {
   async login(user: UserValidation) {
     const payload: Payload = {
       username: user.username,
-      sub: user.id,
+      sub: user._id.toString(),
       roles: user.roles,
     };
 

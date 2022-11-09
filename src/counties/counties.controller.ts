@@ -21,7 +21,7 @@ import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
 import { CountyUserResponse } from './dto/response/county-user-response.dto';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
-import { CreateUserDto } from 'src/users/dtos/create.user.dto';
+import { CreateUserRequest } from 'src/users/dtos/create-user.request.dto';
 
 @ApiTags('counties')
 @Controller('counties')
