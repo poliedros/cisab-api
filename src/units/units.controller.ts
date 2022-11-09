@@ -1,6 +1,4 @@
-import { GetUnitResponse } from './dto/get-unit-response.dto';
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -18,6 +16,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
 import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
+import { GetUnitResponse } from './dto/get-unit-response.dto';
 
 @ApiTags('units')
 @Controller('units')

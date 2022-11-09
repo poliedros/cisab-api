@@ -6,7 +6,6 @@ import { CountiesService } from './counties.service';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { CreateCountyDto } from './dto/request/create-county.dto';
 import { County } from './schemas/county.schema';
-import { UsersService } from './../users/users.service';
 
 function buildCounty() {
   return {

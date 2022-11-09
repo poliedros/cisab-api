@@ -118,7 +118,7 @@ describe('CountiesService', () => {
   });
 
   it('should create with valid data', async () => {
-    const [_, county] = buildIdCountyMock();
+    const [, county] = buildIdCountyMock();
 
     emitMockFn.mockReturnValue(of(Promise.resolve(true)));
     createMockFn.mockReturnValue(Promise.resolve(county));
