@@ -17,6 +17,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
+import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 
 @ApiTags('units')
 @Controller('units')
@@ -43,18 +44,13 @@ export class UnitsController {
     return this.unitsService.create(req);
   }
 
-  @ApiOperation({ summary: 'Create new unit', description: 'forbidden' })
+  @ApiOperation({ summary: 'delete unit', description: 'forbidden' })
   @ApiBody({ type: CreateUnitRequest })
   @ApiResponse({ type: GetUnitResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-      throw new BadRequestException({
-        message: 'Id is not valid',
-      });
-    }
+  remove(@Param('id', ParseObjectIdPipe) id: string) {
     return this.unitsService.remove(id);
   }
 }
