@@ -27,6 +27,13 @@ export class HealthController {
             password: `${process.env.REDIS_AUTH_PASS}`,
           },
         }),
+      () =>
+        this.microserviceHealthCheck.pingCheck('rabbitmq', {
+          transport: Transport.RMQ,
+          options: {
+            urls: [process.env.RMQ_URL],
+          },
+        }),
     ]);
   }
 }
