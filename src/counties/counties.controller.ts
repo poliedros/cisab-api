@@ -9,7 +9,6 @@ import {
   Put,
   NotFoundException,
   BadRequestException,
-  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CountiesService } from './counties.service';

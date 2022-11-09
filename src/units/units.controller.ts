@@ -38,7 +38,7 @@ export class UnitsController {
   @ApiBody({ type: CreateUnitRequest })
   @ApiResponse({ type: GetUnitResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab, Role.Admin)
+  @Roles(Role.Cisab)
   @Post()
   async create(@Body() req: CreateUnitRequest) {
     return this.unitsService.create(req);

@@ -14,9 +14,9 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Create new user', description: 'forbidden' })
   @ApiBody({ type: CreateUserRequest })
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
-  // @Roles(Role.Admin)
+  @Roles(Role.Admin)
   async create(@Body() createUserDto: CreateUserRequest) {
     await this.usersService.create(createUserDto);
     const { email, roles } = createUserDto;
