@@ -125,4 +125,37 @@ describe('User Service', () => {
 
     expect(result).not.toEqual('changeme');
   });
+
+  it('should find county users', async () => {
+    const countyUsers = {
+      _id: '6363d75a63e9deb5a8e1c6cd',
+      email: 'vicosa@cisab.com',
+      name: 'cisab',
+      surname: 'cisab',
+      password: '*12ef/',
+      properties: {
+        profession: 'software developer',
+        county_id: '6363c2f363e9deb5a8e1c672',
+      },
+    };
+
+    findMockFn.mockReturnValue(Promise.resolve([countyUsers]));
+    const response = await service.findByCountyId('6363c2f363e9deb5a8e1c672');
+
+    expect(response[0]._id).toEqual('6363d75a63e9deb5a8e1c6cd');
+    expect(response[0].email).toEqual('vicosa@cisab.com');
+    expect(response[0].name).toEqual('cisab');
+    expect(response[0].surname).toEqual('cisab');
+    expect(response[0].surname).toEqual('cisab');
+    expect(response[0].properties).not.toBeUndefined();
+  });
+
+  it('should return null if it catches some error', async () => {
+    findOneMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+    const res = await service.findOne('crazyemail@undefined.com');
+
+    expect(res).toBeNull();
+  });
 });

@@ -134,6 +134,19 @@ describe('CountiesController', () => {
     }
   });
 
+  it('should throw bad request in creation if service throws an error', async () => {
+    createMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await controller.create({} as CreateCountyDto);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
+  });
+
   it('should throw not when finding one found with valid id', async () => {
     try {
       const idStub = '63599affb40135010840911b';
