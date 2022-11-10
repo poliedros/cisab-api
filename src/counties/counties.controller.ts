@@ -44,7 +44,7 @@ export class CountiesController {
   }
 
   @ApiOperation({ summary: 'Find all counties', description: 'forbidden' })
-  @ApiResponse({ type: GetCountyDto })
+  @ApiResponse({ type: [GetCountyDto] })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Get()
@@ -57,7 +57,7 @@ export class CountiesController {
   }
 
   @ApiOperation({ summary: 'Find one county', description: 'forbidden' })
-  @ApiResponse({ type: [GetCountyDto] })
+  @ApiResponse({ type: GetCountyDto })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Get(':id')

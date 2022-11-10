@@ -26,7 +26,7 @@ export class UnitsController {
 
   @ApiOperation({ summary: 'Find all units', description: 'forbidden' })
   @ApiBody({ type: CreateUnitRequest })
-  @ApiResponse({ type: GetUnitResponse })
+  @ApiResponse({ type: [GetUnitResponse] })
   @UseGuards(JwtAuthGuard)
   @Get()
   async getAll() {
@@ -44,8 +44,6 @@ export class UnitsController {
   }
 
   @ApiOperation({ summary: 'delete unit', description: 'forbidden' })
-  @ApiBody({ type: CreateUnitRequest })
-  @ApiResponse({ type: GetUnitResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Delete(':id')
