@@ -53,6 +53,7 @@ describe('CountiesController', () => {
   const updateMockFn = jest.fn();
   const removeMockFn = jest.fn();
   const createCountyUserMockFn = jest.fn();
+  const findCountyUsersMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -67,6 +68,7 @@ describe('CountiesController', () => {
             update: updateMockFn,
             remove: removeMockFn,
             createCountyUser: createCountyUserMockFn,
+            findCountyUsers: findCountyUsersMockFn,
           },
         },
       ],
@@ -204,5 +206,30 @@ describe('CountiesController', () => {
 
     expect(response._id).toEqual('12');
     expect(response.properties['county_id']).toEqual('1');
+  });
+
+  it('should find all county users', async () => {
+    const countyUsers = {
+      _id: '6363d75a63e9deb5a8e1c6cd',
+      email: 'vicosa@cisab.com',
+      name: 'cisab',
+      surname: 'cisab',
+      password: '*12ef/',
+      properties: {
+        profession: 'software developer',
+      },
+    };
+
+    findCountyUsersMockFn.mockReturnValue(Promise.resolve([countyUsers]));
+    const response = await controller.findCountiesUser(
+      '6363c2f363e9deb5a8e1c672',
+    );
+
+    expect(response[0]._id).toEqual('6363d75a63e9deb5a8e1c6cd');
+    expect(response[0].email).toEqual('vicosa@cisab.com');
+    expect(response[0].name).toEqual('cisab');
+    expect(response[0].surname).toEqual('cisab');
+    expect(response[0].surname).toEqual('cisab');
+    expect(response[0].properties).not.toBeUndefined();
   });
 });

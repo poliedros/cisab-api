@@ -88,6 +88,7 @@ describe('CountiesService', () => {
   const upsertMockFn = jest.fn();
   const deleteOneMockFn = jest.fn();
   const startTransactionMockFn = jest.fn();
+  const findByCountyIdMockFn = jest.fn();
   startTransactionMockFn.mockReturnValue(
     Promise.resolve({
       abortTransaction: jest.fn(),
@@ -109,6 +110,7 @@ describe('CountiesService', () => {
 
     const usersServiceMockValue = {
       create: createCountyUserMockFn,
+      findByCountyId: findByCountyIdMockFn,
     };
 
     service = await buildService(
@@ -167,5 +169,25 @@ describe('CountiesService', () => {
       Role.County,
     ]);
     expect(createCountyUserMockFn).toBeCalledTimes(1);
+  });
+
+  it('should find all county users', async () => {
+    const countyUser = {
+      _id: '6363c4be63e9deb5a8e1c674',
+      email: 'vicosa@cisab.com',
+      name: 'cisab',
+      surname: 'cisab',
+      password: 'admin',
+      properties: {
+        profession: 'software developer',
+      },
+    };
+    findByCountyIdMockFn.mockReturnValue(Promise.resolve([countyUser]));
+
+    const countyUserRes = await service.findCountyUsers(
+      '6363c2f363e9deb5a8e1c672',
+    );
+
+    expect(countyUserRes[0]._id).toEqual('6363c4be63e9deb5a8e1c674');
   });
 });

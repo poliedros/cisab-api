@@ -50,4 +50,10 @@ export class UsersService {
     const salt = await bcrypt.genSalt();
     return bcrypt.hash(password, salt);
   }
+
+  async findByCountyId(countyId: string) {
+    return await this.usersRepository.find({
+      'properties.county_id': countyId,
+    });
+  }
 }

@@ -22,6 +22,7 @@ import { Role } from '../auth/role.enum';
 import { CountyUserResponse } from './dto/response/county-user-response.dto';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
+import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
 
 @ApiTags('counties')
 @Controller('counties')
@@ -109,6 +110,31 @@ export class CountiesController {
       email: countyUser.email,
       properties: countyUser.properties,
     };
+
+    return response;
+  }
+
+  @ApiOperation({ summary: 'Find county user', description: 'forbidden' })
+  @ApiBody({ type: CreateCountyUserRequest })
+  @ApiResponse({ type: GetCountyUserResponse })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Get(':id/users')
+  async findCountiesUser(
+    @Param('id', ParseObjectIdPipe) countyId: string,
+  ): Promise<GetCountyUserResponse[]> {
+    const countyUsers = await this.countiesService.findCountyUsers(countyId);
+
+    const response = countyUsers.map((countyUser) => {
+      return {
+        _id: countyUser._id,
+        email: countyUser.email,
+        name: countyUser.name,
+        surname: countyUser.surname,
+        password: countyUser.password,
+        properties: countyUser.properties,
+      } as GetCountyUserResponse;
+    });
 
     return response;
   }

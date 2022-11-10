@@ -78,4 +78,8 @@ export class CountiesService {
     serviceRequest.roles = [Role.County];
     return this.usersService.create(serviceRequest);
   }
+
+  async findCountyUsers(countyId: string) {
+    return this.usersService.findByCountyId(countyId);
+  }
 }
