@@ -7,8 +7,9 @@ import { NotifierService } from './../notifier/notifier.service';
 import { CreateUserRequest } from 'src/users/dtos/create-user.request.dto';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { Role } from '../auth/role.enum';
-import { CountyUserResponse } from './dto/response/county-user-response.dto';
+import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
 import { UsersService } from '../users/users.service';
+import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 
 @Injectable()
 export class CountiesService {
@@ -71,7 +72,7 @@ export class CountiesService {
   async createCountyUser(
     countyId: string,
     createCountyUserRequest: CreateCountyUserRequest,
-  ): Promise<CountyUserResponse> {
+  ): Promise<GetCountyUserResponse> {
     createCountyUserRequest.properties['county_id'] = countyId;
 
     const serviceRequest = createCountyUserRequest as CreateUserRequest;
@@ -81,5 +82,9 @@ export class CountiesService {
 
   async findCountyUsers(countyId: string) {
     return this.usersService.findByCountyId(countyId);
+  }
+
+  async updateCountyUser(updateCountyUser: UpdateCountyUserRequest) {
+    return this.usersService.update(updateCountyUser);
   }
 }

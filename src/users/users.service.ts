@@ -1,6 +1,13 @@
-import { ConflictException, Injectable, Logger } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { UpdateCountyUserRequest } from 'src/counties/dto/request/update-county-user-request.dto';
 import { CreateUserRequest } from './dtos/create-user.request.dto';
+import { User } from './schemas/user.schema';
 import { UsersRepository } from './users.repository';
 
 @Injectable()
@@ -20,11 +27,11 @@ export class UsersService {
   async create(createUserRequest: CreateUserRequest) {
     const { password } = createUserRequest;
 
-    const user = await this.usersRepository.find({
+    const users = await this.usersRepository.find({
       email: createUserRequest.email,
     });
 
-    if (user.length !== 0) {
+    if (users.length !== 0) {
       throw new ConflictException('Email already exists');
     }
 
@@ -55,5 +62,40 @@ export class UsersService {
     return await this.usersRepository.find({
       'properties.county_id': countyId,
     });
+  }
+
+  async update(updateCountyUser: UpdateCountyUserRequest) {
+    const { _id, password } = updateCountyUser;
+    console.log(_id);
+
+    const users = await this.usersRepository.find({
+      _id,
+    });
+
+    if (users.length === 0) {
+      throw new NotFoundException('User doesnt exist');
+    }
+
+    updateCountyUser.password = await this.hashPassword(password);
+
+    const userToUpdate = users[0];
+    userToUpdate.email = updateCountyUser.email;
+    userToUpdate.name = updateCountyUser.name;
+    userToUpdate.surname = updateCountyUser.surname;
+    userToUpdate.password = updateCountyUser.password;
+    delete userToUpdate._id;
+
+    // const session = await this.usersRepository.startTransaction();
+    try {
+      const user = await this.usersRepository.upsert({ _id }, userToUpdate);
+
+      // await session.commitTransaction();
+      this.logger.log(`user id ${user._id} updated`);
+
+      return user;
+    } catch (err) {
+      // await session.abortTransaction();
+      throw err;
+    }
   }
 }

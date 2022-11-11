@@ -5,6 +5,7 @@ import { CountiesController } from './counties.controller';
 import { CountiesService } from './counties.service';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { CreateCountyDto } from './dto/request/create-county.dto';
+import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 import { County } from './schemas/county.schema';
 
 function buildCounty() {
@@ -54,6 +55,7 @@ describe('CountiesController', () => {
   const removeMockFn = jest.fn();
   const createCountyUserMockFn = jest.fn();
   const findCountyUsersMockFn = jest.fn();
+  const updateCountyUserMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -69,6 +71,7 @@ describe('CountiesController', () => {
             remove: removeMockFn,
             createCountyUser: createCountyUserMockFn,
             findCountyUsers: findCountyUsersMockFn,
+            updateCountyUser: updateCountyUserMockFn,
           },
         },
       ],
@@ -222,19 +225,18 @@ describe('CountiesController', () => {
   });
 
   it('should find all county users', async () => {
-    const countyUsers = {
+    const countyUser = {
       _id: '6363d75a63e9deb5a8e1c6cd',
       email: 'vicosa@cisab.com',
       name: 'cisab',
       surname: 'cisab',
-      password: '*12ef/',
       properties: {
         profession: 'software developer',
       },
     };
 
-    findCountyUsersMockFn.mockReturnValue(Promise.resolve([countyUsers]));
-    const response = await controller.findCountiesUser(
+    findCountyUsersMockFn.mockReturnValue(Promise.resolve([countyUser]));
+    const response = await controller.findCountyUser(
       '6363c2f363e9deb5a8e1c672',
     );
 
@@ -244,5 +246,32 @@ describe('CountiesController', () => {
     expect(response[0].surname).toEqual('cisab');
     expect(response[0].surname).toEqual('cisab');
     expect(response[0].properties).not.toBeUndefined();
+  });
+
+  it('should update county user', async () => {
+    const id = new Types.ObjectId('63599affb40135010840911b');
+
+    const countyUser = {
+      _id: id,
+      email: 'vicosa2@cisab.com',
+      name: 'cisab',
+      surname: 'cisab',
+      properties: new Map<string, string>(),
+    };
+    countyUser.properties.set('profession', 'software engineer');
+
+    updateCountyUserMockFn.mockReturnValue(Promise.resolve(countyUser));
+
+    const response = await controller.updateCountyUser(
+      '6363d75a63e9deb3a9e1c2cj',
+      countyUser,
+    );
+
+    expect(response._id).toEqual(id);
+    expect(response.email).toEqual('vicosa2@cisab.com');
+    expect(response.name).toEqual('cisab');
+    expect(response.surname).toEqual('cisab');
+    expect(response.surname).toEqual('cisab');
+    expect(response.properties).not.toBeUndefined();
   });
 });

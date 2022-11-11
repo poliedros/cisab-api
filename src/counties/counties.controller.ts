@@ -19,10 +19,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
-import { CountyUserResponse } from './dto/response/county-user-response.dto';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
+import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 
 @ApiTags('counties')
 @Controller('counties')
@@ -92,20 +92,20 @@ export class CountiesController {
 
   @ApiOperation({ summary: 'Create county user', description: 'forbidden' })
   @ApiBody({ type: CreateCountyUserRequest })
-  @ApiResponse({ type: CountyUserResponse })
+  @ApiResponse({ type: GetCountyUserResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Post(':id/users')
   async createCountyUser(
     @Param('id', ParseObjectIdPipe) countyId: string,
     @Body() createCountyUserRequest: CreateCountyUserRequest,
-  ): Promise<CountyUserResponse> {
+  ): Promise<GetCountyUserResponse> {
     const countyUser = await this.countiesService.createCountyUser(
       countyId,
       createCountyUserRequest,
     );
 
-    const response: CountyUserResponse = {
+    const response: GetCountyUserResponse = {
       _id: countyUser._id,
       email: countyUser.email,
       properties: countyUser.properties,
@@ -120,7 +120,7 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Get(':id/users')
-  async findCountiesUser(
+  async findCountyUser(
     @Param('id', ParseObjectIdPipe) countyId: string,
   ): Promise<GetCountyUserResponse[]> {
     const countyUsers = await this.countiesService.findCountyUsers(countyId);
@@ -131,10 +131,34 @@ export class CountiesController {
         email: countyUser.email,
         name: countyUser.name,
         surname: countyUser.surname,
-        password: countyUser.password,
         properties: countyUser.properties,
       } as GetCountyUserResponse;
     });
+
+    return response;
+  }
+
+  @ApiOperation({ summary: 'Update county user', description: 'forbidden' })
+  @ApiBody({ type: UpdateCountyUserRequest })
+  @ApiResponse({ type: GetCountyUserResponse })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Put(':id/users')
+  async updateCountyUser(
+    @Param('id', ParseObjectIdPipe) countyId: string,
+    @Body() updateCountyUserRequest: UpdateCountyUserRequest,
+  ): Promise<GetCountyUserResponse> {
+    const countyUser = await this.countiesService.updateCountyUser(
+      updateCountyUserRequest,
+    );
+
+    const response: GetCountyUserResponse = {
+      _id: countyUser._id,
+      email: countyUser.email,
+      name: countyUser.name,
+      surname: countyUser.surname,
+      properties: countyUser.properties,
+    };
 
     return response;
   }
