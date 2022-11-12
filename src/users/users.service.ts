@@ -4,14 +4,12 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { Role } from '../auth/role.enum';
-import { UpdateCountyUserRequest } from 'src/counties/dto/request/update-county-user-request.dto';
-import { CreateUserRequest } from './dtos/create-user.request.dto';
-import { UserEntity } from './entities/user.entity';
+import { CreateUserRequest } from './dtos/create-user-request.dto';
 import { UserEntityFactory } from './factories/user-entity.factory';
 import { UserSchemaFactory } from './factories/user-schema.factory';
 import { UsersRepository } from './users.repository';
+import { UpdateUserRequest } from './dtos/update-user-request.dto';
 
 @Injectable()
 export class UsersService {
@@ -77,9 +75,8 @@ export class UsersService {
     });
   }
 
-  async updateCountyUser(updateCountyUser: UpdateCountyUserRequest) {
-    const { _id, email, name, surname, password, properties } =
-      updateCountyUser;
+  async update(updateUser: UpdateUserRequest) {
+    const { _id, email, name, surname, password, properties } = updateUser;
 
     const users = await this.usersRepository.find({
       _id,
@@ -100,7 +97,6 @@ export class UsersService {
     });
 
     for (const property in properties) {
-      console.log(`key: ${property} value: ${properties[property]}`);
       userEntity.addProperty(property, properties[property]);
     }
 
@@ -120,8 +116,4 @@ export class UsersService {
       throw err;
     }
   }
-}
-
-function isEmpty(str) {
-  return !str || str.length === 0;
 }

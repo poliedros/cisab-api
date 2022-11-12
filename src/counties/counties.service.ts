@@ -4,7 +4,7 @@ import { CountiesRepository } from './counties.repository';
 import { CreateCountyDto } from './dto/request/create-county.dto';
 import { UpdateCountyDto } from './dto/request/update-county.dto';
 import { NotifierService } from './../notifier/notifier.service';
-import { CreateUserRequest } from 'src/users/dtos/create-user.request.dto';
+import { CreateUserRequest } from 'src/users/dtos/create-user-request.dto';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { Role } from '../auth/role.enum';
 import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
@@ -99,7 +99,7 @@ export class CountiesService {
     updateCountyUserRequest.properties['county_id'] = countyId;
 
     const serviceRequest = updateCountyUserRequest as UpdateCountyUserRequest;
-    const user = await this.usersService.updateCountyUser(serviceRequest);
+    const user = await this.usersService.update(serviceRequest);
 
     return {
       _id: user._id,

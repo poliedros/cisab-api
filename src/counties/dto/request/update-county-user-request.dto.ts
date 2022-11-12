@@ -1,12 +1,32 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { Types } from 'mongoose';
-import { CreateCountyUserRequest } from './create-county-user-request.dto';
 
-export class UpdateCountyUserRequest extends PartialType(
-  CreateCountyUserRequest,
-) {
+export class UpdateCountyUserRequest {
   @IsNotEmpty()
   @ApiProperty()
   _id: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  surname: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  password: string;
+
+  @ApiProperty()
+  properties: Map<string, string>;
 }

@@ -1,7 +1,6 @@
 import { Types } from 'mongoose';
 import { Role } from '../../auth/role.enum';
 import { UserEntity } from '../entities/user.entity';
-import { User } from '../schemas/user.schema';
 
 type UserEntityFactoryProps = {
   _id: Types.ObjectId | undefined;

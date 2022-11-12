@@ -2,7 +2,7 @@ import { ConflictException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Role } from '../auth/role.enum';
 import { UsersService } from './users.service';
-import { CreateUserRequest } from './dtos/create-user.request.dto';
+import { CreateUserRequest } from './dtos/create-user-request.dto';
 import { UsersRepository } from './users.repository';
 
 describe('User Service', () => {
