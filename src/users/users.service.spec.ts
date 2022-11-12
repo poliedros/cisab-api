@@ -4,12 +4,16 @@ import { Role } from '../auth/role.enum';
 import { UsersService } from './users.service';
 import { CreateUserRequest } from './dtos/create-user-request.dto';
 import { UsersRepository } from './users.repository';
+import { UpdateUserRequest } from './dtos/update-user-request.dto';
+import { Types } from 'mongoose';
+import { User } from './schemas/user.schema';
 
 describe('User Service', () => {
   let service: UsersService;
   const findOneMockFn = jest.fn();
   const findMockFn = jest.fn();
   const createMockFn = jest.fn();
+  const upsertMockFn = jest.fn();
   const startTransactionMockFn = jest.fn();
   startTransactionMockFn.mockReturnValue(
     Promise.resolve({
@@ -28,6 +32,7 @@ describe('User Service', () => {
             findOne: findOneMockFn,
             create: createMockFn,
             find: findMockFn,
+            upsert: upsertMockFn,
             startTransaction: startTransactionMockFn,
           },
         },
@@ -151,5 +156,45 @@ describe('User Service', () => {
     const res = await service.findOne('crazyemail@undefined.com');
 
     expect(res).toBeNull();
+  });
+
+  it('should update a user', async () => {
+    const id = new Types.ObjectId('6363c2f363e9deb5a8e1c672');
+    const email = 'updatedemail@czar.dev';
+    const name = 'updated name';
+    const surname = 'updated surname';
+    const password = 'f#c>_b0ts';
+    const roles = [Role.Admin];
+    const properties = new Map<string, string>();
+    properties.set('profession', 'software engineer');
+
+    const updateUser: UpdateUserRequest = {
+      _id: id,
+      email,
+      name,
+      surname,
+      password,
+      properties,
+    };
+
+    const user: User = {
+      _id: id,
+      email,
+      name,
+      surname,
+      password: 'hashed_password',
+      roles,
+      properties,
+    };
+    upsertMockFn.mockReturnValue(Promise.resolve(user));
+
+    const res = await service.update(updateUser);
+
+    expect(res._id).toEqual(id);
+    expect(res.email).toEqual(email);
+    expect(res.name).toEqual(name);
+    expect(res.surname).toEqual(surname);
+    expect(res.password).not.toEqual(password);
+    expect(res.properties).toEqual(properties);
   });
 });
