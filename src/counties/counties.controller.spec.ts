@@ -256,6 +256,7 @@ describe('CountiesController', () => {
       email: 'vicosa2@cisab.com',
       name: 'cisab',
       surname: 'cisab',
+      password: 'f4C1_b0ts',
       properties: new Map<string, string>(),
     };
     countyUser.properties.set('profession', 'software engineer');
