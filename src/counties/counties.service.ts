@@ -77,14 +77,36 @@ export class CountiesService {
 
     const serviceRequest = createCountyUserRequest as CreateUserRequest;
     serviceRequest.roles = [Role.County];
-    return this.usersService.create(serviceRequest);
+    const user = await this.usersService.create(serviceRequest);
+
+    return {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      surname: user.surname,
+      properties: user.properties,
+    } as GetCountyUserResponse;
   }
 
   async findCountyUsers(countyId: string) {
     return this.usersService.findByCountyId(countyId);
   }
 
-  async updateCountyUser(updateCountyUser: UpdateCountyUserRequest) {
-    return this.usersService.update(updateCountyUser);
+  async updateCountyUser(
+    countyId: string,
+    updateCountyUserRequest: UpdateCountyUserRequest,
+  ): Promise<GetCountyUserResponse> {
+    updateCountyUserRequest.properties['county_id'] = countyId;
+
+    const serviceRequest = updateCountyUserRequest as UpdateCountyUserRequest;
+    const user = await this.usersService.updateCountyUser(serviceRequest);
+
+    return {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      surname: user.surname,
+      properties: user.properties,
+    } as GetCountyUserResponse;
   }
 }

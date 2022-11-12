@@ -120,12 +120,6 @@ describe('User Service', () => {
     }
   });
 
-  it('should hash a password', async () => {
-    const result = await service.hashPassword('changeme');
-
-    expect(result).not.toEqual('changeme');
-  });
-
   it('should find county users', async () => {
     const countyUsers = {
       _id: '6363d75a63e9deb5a8e1c6cd',

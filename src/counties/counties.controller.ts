@@ -149,6 +149,7 @@ export class CountiesController {
     @Body() updateCountyUserRequest: UpdateCountyUserRequest,
   ): Promise<GetCountyUserResponse> {
     const countyUser = await this.countiesService.updateCountyUser(
+      countyId,
       updateCountyUserRequest,
     );
 
