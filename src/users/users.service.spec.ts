@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Role } from '../auth/role.enum';
 import { UsersService } from './users.service';
@@ -186,6 +186,9 @@ describe('User Service', () => {
       roles,
       properties,
     };
+
+    findMockFn.mockReturnValue(Promise.resolve([user]));
+
     upsertMockFn.mockReturnValue(Promise.resolve(user));
 
     const res = await service.update(updateUser);
@@ -196,5 +199,77 @@ describe('User Service', () => {
     expect(res.surname).toEqual(surname);
     expect(res.password).not.toEqual(password);
     expect(res.properties).toEqual(properties);
+  });
+
+  it('should throw not found exception on update method', async () => {
+    const id = new Types.ObjectId('6363c2f363e9deb5a8e1c672');
+    const email = 'updatedemail@czar.dev';
+    const name = 'updated name';
+    const surname = 'updated surname';
+    const password = 'f#c>_b0ts';
+    const roles = [Role.Admin];
+    const properties = new Map<string, string>();
+    properties.set('profession', 'software engineer');
+
+    const updateUser: UpdateUserRequest = {
+      _id: id,
+      email,
+      name,
+      surname,
+      password,
+      roles,
+      properties,
+    };
+
+    findMockFn.mockReturnValue(Promise.resolve([]));
+
+    try {
+      await service.update(updateUser);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(NotFoundException);
+    }
+  });
+
+  it('should throw error if it cant update user in database', async () => {
+    const id = new Types.ObjectId('6363c2f363e9deb5a8e1c672');
+    const email = 'updatedemail@czar.dev';
+    const name = 'updated name';
+    const surname = 'updated surname';
+    const password = 'f#c>_b0ts';
+    const properties = new Map<string, string>();
+    properties.set('profession', 'software engineer');
+
+    const updateUser: UpdateUserRequest = {
+      _id: id,
+      email,
+      name,
+      surname,
+      password,
+      properties,
+    };
+
+    const user: User = {
+      _id: id,
+      email,
+      name,
+      surname,
+      password: 'hashed_password',
+      roles: [Role.Admin],
+      properties,
+    };
+
+    findMockFn.mockReturnValue(Promise.resolve([user]));
+
+    upsertMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await service.update(updateUser);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error);
+    }
   });
 });
