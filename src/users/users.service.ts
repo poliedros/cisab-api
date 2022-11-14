@@ -10,6 +10,8 @@ import { UserEntityFactory } from './factories/user-entity.factory';
 import { UserSchemaFactory } from './factories/user-schema.factory';
 import { UsersRepository } from './users.repository';
 import { UpdateUserRequest } from './dtos/update-user-request.dto';
+import { FilterQuery } from 'mongoose';
+import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
@@ -17,9 +19,17 @@ export class UsersService {
 
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async findOne(email: string) {
+  async findOne(filterQuery: FilterQuery<User>) {
     try {
-      return await this.usersRepository.findOne({ email });
+      return await this.usersRepository.findOne(filterQuery);
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async find(filterQuery: FilterQuery<User>) {
+    try {
+      return await this.usersRepository.find(filterQuery);
     } catch (err) {
       return null;
     }
@@ -67,12 +77,6 @@ export class UsersService {
       await session.abortTransaction();
       throw err;
     }
-  }
-
-  async findByCountyId(countyId: string) {
-    return await this.usersRepository.find({
-      'properties.county_id': countyId,
-    });
   }
 
   async update(updateUser: UpdateUserRequest) {

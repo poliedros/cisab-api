@@ -89,7 +89,9 @@ export class CountiesService {
   }
 
   async findCountyUsers(countyId: string) {
-    return this.usersService.findByCountyId(countyId);
+    return this.usersService.find({
+      'properties.county_id': countyId,
+    });
   }
 
   async updateCountyUser(

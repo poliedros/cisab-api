@@ -88,7 +88,7 @@ describe('CountiesService', () => {
   const upsertMockFn = jest.fn();
   const deleteOneMockFn = jest.fn();
   const startTransactionMockFn = jest.fn();
-  const findByCountyIdMockFn = jest.fn();
+  const findUsersServiceMockFn = jest.fn();
   startTransactionMockFn.mockReturnValue(
     Promise.resolve({
       abortTransaction: jest.fn(),
@@ -110,7 +110,7 @@ describe('CountiesService', () => {
 
     const usersServiceMockValue = {
       create: createCountyUserMockFn,
-      findByCountyId: findByCountyIdMockFn,
+      find: findUsersServiceMockFn,
     };
 
     service = await buildService(
@@ -182,7 +182,8 @@ describe('CountiesService', () => {
         profession: 'software developer',
       },
     };
-    findByCountyIdMockFn.mockReturnValue(Promise.resolve([countyUser]));
+
+    findUsersServiceMockFn.mockReturnValue(Promise.resolve([countyUser]));
 
     const countyUserRes = await service.findCountyUsers(
       '6363c2f363e9deb5a8e1c672',

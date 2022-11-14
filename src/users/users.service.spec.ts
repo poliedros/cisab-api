@@ -52,7 +52,7 @@ describe('User Service', () => {
 
     findOneMockFn.mockReturnValue(user);
 
-    const expectedUser = await service.findOne('carlos@czar.dev');
+    const expectedUser = await service.findOne({ email: 'carlos@czar.dev' });
 
     expect(expectedUser).toEqual(user);
   });
@@ -139,7 +139,9 @@ describe('User Service', () => {
     };
 
     findMockFn.mockReturnValue(Promise.resolve([countyUsers]));
-    const response = await service.findByCountyId('6363c2f363e9deb5a8e1c672');
+    const response = await service.find({
+      'properties.county_id': '6363d75a63e9deb5a8e1c6cd',
+    });
 
     expect(response[0]._id).toEqual('6363d75a63e9deb5a8e1c6cd');
     expect(response[0].email).toEqual('vicosa@cisab.com');
@@ -153,7 +155,7 @@ describe('User Service', () => {
     findOneMockFn.mockImplementation(() => {
       throw new Error();
     });
-    const res = await service.findOne('crazyemail@undefined.com');
+    const res = await service.findOne({ email: 'crazyemail@undefined.com' });
 
     expect(res).toBeNull();
   });
@@ -168,6 +170,8 @@ describe('User Service', () => {
     const properties = new Map<string, string>();
     properties.set('profession', 'software engineer update user');
 
+    new UpdateUserRequest();
+
     const updateUser: UpdateUserRequest = {
       _id: id,
       email,
@@ -176,6 +180,7 @@ describe('User Service', () => {
       password,
       properties,
     };
+    console.log(updateUser._id);
 
     const user: User = {
       _id: id,
