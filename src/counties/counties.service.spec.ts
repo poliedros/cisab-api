@@ -91,6 +91,7 @@ describe('CountiesService', () => {
   const startTransactionMockFn = jest.fn();
   const findCountyUserMockFn = jest.fn();
   const updateCountyUserMockFn = jest.fn();
+  const removeCountyUserMockFn = jest.fn();
   startTransactionMockFn.mockReturnValue(
     Promise.resolve({
       abortTransaction: jest.fn(),
@@ -114,6 +115,7 @@ describe('CountiesService', () => {
       create: createCountyUserMockFn,
       find: findCountyUserMockFn,
       update: updateCountyUserMockFn,
+      remove: removeCountyUserMockFn,
     };
 
     service = await buildService(
@@ -231,5 +233,12 @@ describe('CountiesService', () => {
     expect(response.surname).toEqual(surname);
     expect(response.password).not.toEqual(password);
     expect(response.properties).toEqual(properties);
+  });
+
+  it('should remove county user', async () => {
+    removeCountyUserMockFn.mockReturnValue(Promise.resolve(true));
+    const res = await service.removeCountyUser('6363c2f363e9deb5a8e1c672');
+
+    expect(res).toBeDefined();
   });
 });

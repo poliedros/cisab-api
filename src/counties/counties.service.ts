@@ -114,4 +114,8 @@ export class CountiesService {
       properties: user.properties,
     } as GetCountyUserResponse;
   }
+
+  async removeCountyUser(countyUserId: string) {
+    return await this.usersService.remove(countyUserId);
+  }
 }

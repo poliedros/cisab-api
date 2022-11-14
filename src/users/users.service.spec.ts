@@ -14,6 +14,7 @@ describe('User Service', () => {
   const findMockFn = jest.fn();
   const createMockFn = jest.fn();
   const upsertMockFn = jest.fn();
+  const deleteOneMockFn = jest.fn();
   const startTransactionMockFn = jest.fn();
   startTransactionMockFn.mockReturnValue(
     Promise.resolve({
@@ -33,6 +34,7 @@ describe('User Service', () => {
             create: createMockFn,
             find: findMockFn,
             upsert: upsertMockFn,
+            deleteOne: deleteOneMockFn,
             startTransaction: startTransactionMockFn,
           },
         },
@@ -280,6 +282,26 @@ describe('User Service', () => {
 
     try {
       await service.update(updateUser);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error);
+    }
+  });
+
+  it('should remove user', async () => {
+    deleteOneMockFn.mockReturnValue(Promise.resolve(true));
+    const res = await service.remove('6363c2f363e9deb5a8e1c672');
+
+    expect(res).toBeDefined();
+  });
+
+  it('should throw an error in removing user', async () => {
+    deleteOneMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await service.remove('6363c2f363e9deb5a8e1c672');
       expect(false).toBeTruthy();
     } catch (err) {
       expect(err).toBeInstanceOf(Error);

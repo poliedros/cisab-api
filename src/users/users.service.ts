@@ -120,4 +120,18 @@ export class UsersService {
       throw err;
     }
   }
+
+  async remove(userId: string) {
+    try {
+      const res = await this.usersRepository.deleteOne({ _id: userId });
+
+      // await session.commitTransaction();
+      this.logger.log(`user id ${userId} removed`);
+
+      return res;
+    } catch (err) {
+      // await session.abortTransaction();
+      throw err;
+    }
+  }
 }

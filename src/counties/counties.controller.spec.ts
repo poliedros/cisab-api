@@ -5,7 +5,6 @@ import { CountiesController } from './counties.controller';
 import { CountiesService } from './counties.service';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { CreateCountyDto } from './dto/request/create-county.dto';
-import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 import { County } from './schemas/county.schema';
 
 function buildCounty() {
@@ -56,6 +55,7 @@ describe('CountiesController', () => {
   const createCountyUserMockFn = jest.fn();
   const findCountyUsersMockFn = jest.fn();
   const updateCountyUserMockFn = jest.fn();
+  const removeCountyUserMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -72,6 +72,7 @@ describe('CountiesController', () => {
             createCountyUser: createCountyUserMockFn,
             findCountyUsers: findCountyUsersMockFn,
             updateCountyUser: updateCountyUserMockFn,
+            removeCountyUser: removeCountyUserMockFn,
           },
         },
       ],
@@ -274,5 +275,12 @@ describe('CountiesController', () => {
     expect(response.surname).toEqual('cisab');
     expect(response.surname).toEqual('cisab');
     expect(response.properties).not.toBeUndefined();
+  });
+
+  it('should remove county user', async () => {
+    removeCountyUserMockFn.mockReturnValue(Promise.resolve(true));
+    const res = await controller.removeCountyUser('6363c2f363e9deb5a8e1c672');
+
+    expect(res).toBeDefined();
   });
 });

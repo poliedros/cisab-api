@@ -163,4 +163,12 @@ export class CountiesController {
 
     return response;
   }
+
+  @ApiOperation({ summary: 'Remove county user', description: 'forbidden' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Delete(':county_id/users/:id')
+  removeCountyUser(@Param('id', ParseObjectIdPipe) id: string) {
+    return this.countiesService.removeCountyUser(id);
+  }
 }
