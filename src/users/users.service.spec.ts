@@ -189,7 +189,6 @@ describe('User Service', () => {
       password,
       properties,
     };
-    console.log(updateUser._id);
 
     const user: User = {
       _id: id,

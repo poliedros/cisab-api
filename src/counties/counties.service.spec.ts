@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { UsersService } from '../users/users.service';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { Role } from '../auth/role.enum';
+import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 
 function buildCounty() {
   return {
@@ -88,7 +89,8 @@ describe('CountiesService', () => {
   const upsertMockFn = jest.fn();
   const deleteOneMockFn = jest.fn();
   const startTransactionMockFn = jest.fn();
-  const findUsersServiceMockFn = jest.fn();
+  const findCountyUserMockFn = jest.fn();
+  const updateCountyUserMockFn = jest.fn();
   startTransactionMockFn.mockReturnValue(
     Promise.resolve({
       abortTransaction: jest.fn(),
@@ -110,7 +112,8 @@ describe('CountiesService', () => {
 
     const usersServiceMockValue = {
       create: createCountyUserMockFn,
-      find: findUsersServiceMockFn,
+      find: findCountyUserMockFn,
+      update: updateCountyUserMockFn,
     };
 
     service = await buildService(
@@ -183,12 +186,50 @@ describe('CountiesService', () => {
       },
     };
 
-    findUsersServiceMockFn.mockReturnValue(Promise.resolve([countyUser]));
+    findCountyUserMockFn.mockReturnValue(Promise.resolve([countyUser]));
 
     const countyUserRes = await service.findCountyUsers(
       '6363c2f363e9deb5a8e1c672',
     );
 
     expect(countyUserRes[0]._id).toEqual('6363c4be63e9deb5a8e1c674');
+  });
+
+  it('should update county user', async () => {
+    const id = new Types.ObjectId('6363c2f363e9deb5a8e1c672');
+    const email = 'email@email.com';
+    const name = 'carlos';
+    const surname = 'carlosurname';
+    const password = 'f4c3_bots';
+    const properties: Map<string, string> = new Map<string, string>();
+    properties['profession'] = 'software engineer';
+
+    const request: UpdateCountyUserRequest = {
+      _id: id,
+      email,
+      name,
+      surname,
+      password,
+      properties,
+    };
+
+    updateCountyUserMockFn.mockReturnValue(
+      Promise.resolve({
+        _id: id,
+        email: email,
+        name: name,
+        surname: surname,
+        properties: properties,
+      }),
+    );
+
+    const response = await service.updateCountyUser(id.toString(), request);
+
+    expect(response._id).toEqual(id);
+    expect(response.email).toEqual(email);
+    expect(response.name).toEqual(name);
+    expect(response.surname).toEqual(surname);
+    expect(response.password).not.toEqual(password);
+    expect(response.properties).toEqual(properties);
   });
 });
