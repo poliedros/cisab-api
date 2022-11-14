@@ -166,7 +166,7 @@ describe('User Service', () => {
     const password = 'f#c>_b0ts';
     const roles = [Role.Admin];
     const properties = new Map<string, string>();
-    properties.set('profession', 'software engineer');
+    properties.set('profession', 'software engineer update user');
 
     const updateUser: UpdateUserRequest = {
       _id: id,

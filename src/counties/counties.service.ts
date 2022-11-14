@@ -99,6 +99,9 @@ export class CountiesService {
     updateCountyUserRequest.properties['county_id'] = countyId;
 
     const serviceRequest = updateCountyUserRequest as UpdateCountyUserRequest;
+    serviceRequest.properties = new Map(
+      Object.entries(updateCountyUserRequest.properties),
+    );
     const user = await this.usersService.update(serviceRequest);
 
     return {

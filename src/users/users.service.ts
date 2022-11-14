@@ -96,8 +96,8 @@ export class UsersService {
       properties: new Map<string, string>(),
     });
 
-    for (const property in properties) {
-      userEntity.addProperty(property, properties[property]);
+    for (const [key, value] of properties) {
+      userEntity.addProperty(key, value);
     }
 
     const userSchema = UserSchemaFactory.create(userEntity);

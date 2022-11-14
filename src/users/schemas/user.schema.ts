@@ -5,7 +5,7 @@ import { Role } from '../../auth/role.enum';
 
 export type UserDocument = User & Document;
 
-@Schema()
+@Schema({ versionKey: false })
 export class User extends AbstractDocument {
   @Prop()
   email: string;
