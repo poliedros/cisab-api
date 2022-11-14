@@ -151,11 +151,20 @@ describe('User Service', () => {
     expect(response[0].properties).not.toBeUndefined();
   });
 
-  it('should return null if it catches some error', async () => {
+  it('should return null if it catches some error in findone', async () => {
     findOneMockFn.mockImplementation(() => {
       throw new Error();
     });
     const res = await service.findOne({ email: 'crazyemail@undefined.com' });
+
+    expect(res).toBeNull();
+  });
+
+  it('should return null if it catches some error in find', async () => {
+    findMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+    const res = await service.find({ email: 'crazyemail@undefined.com' });
 
     expect(res).toBeNull();
   });
