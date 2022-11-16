@@ -9,7 +9,7 @@ export class MeasureRequest {
   value: string;
 
   @ApiProperty()
-  unity: string;
+  unit: string;
 }
 
 export class CreateProductRequest {

@@ -4,7 +4,7 @@ import { Product } from '../schemas/product.schema';
 type ProductSchemaFactoryProps = {
   id: Types.ObjectId | undefined;
   name: string;
-  measurements: { name: string; value: string; unity: string }[];
+  measurements: { name: string; value: string; unit: string }[];
 };
 
 export class ProductSchemaFactory {

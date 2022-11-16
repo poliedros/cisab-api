@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 export class Measure {
   name: string;
   value: string;
-  unity: string;
+  unit: string;
 }
 
 export class ProductEntity {

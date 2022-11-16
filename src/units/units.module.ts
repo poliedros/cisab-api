@@ -11,5 +11,6 @@ import { Unit, UnitSchema } from './schemas/unit.schema';
   ],
   controllers: [UnitsController],
   providers: [UnitsService, UnitsRepository],
+  exports: [UnitsService],
 })
 export class UnitsModule {}

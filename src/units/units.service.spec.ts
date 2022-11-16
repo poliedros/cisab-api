@@ -9,6 +9,7 @@ import { ConflictException } from '@nestjs/common';
 describe('UnitsService', () => {
   let service: UnitsService;
   const findMockFn = jest.fn();
+  const findOneMock = jest.fn();
   const createMockFn = jest.fn();
   const deleteOneMockFn = jest.fn();
   const startTransactionMockFn = jest.fn();
@@ -27,6 +28,7 @@ describe('UnitsService', () => {
           provide: UnitsRepository,
           useValue: {
             find: findMockFn,
+            findOne: findOneMock,
             create: createMockFn,
             deleteOne: deleteOneMockFn,
             startTransaction: startTransactionMockFn,
@@ -85,5 +87,14 @@ describe('UnitsService', () => {
     await service.remove(idStub);
 
     expect(deleteOneMockFn).toBeCalledTimes(1);
+  });
+
+  it('should find one unit', async () => {
+    findOneMock.mockReturnValue(Promise.resolve({ _id: '1', name: 'cm' }));
+
+    const unit = await service.findOne({ _id: '1' });
+
+    expect(unit._id).toEqual('1');
+    expect(unit.name).toEqual('cm');
   });
 });

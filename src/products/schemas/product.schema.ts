@@ -7,7 +7,7 @@ export type ProductDocument = Product & Document;
 class Measure {
   name: string;
   value: string;
-  unity: string;
+  unit: string;
 }
 
 @Schema({ versionKey: false })

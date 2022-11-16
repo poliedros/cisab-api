@@ -1,6 +1,8 @@
+import { Injectable, ConflictException, Logger } from '@nestjs/common';
+import { FilterQuery } from 'mongoose';
+import { Unit } from './schemas/unit.schema';
 import { CreateUnitRequest } from './dto/create-unit-request.dto';
 import { UnitsRepository } from './units.repository';
-import { Injectable, ConflictException, Logger } from '@nestjs/common';
 
 @Injectable()
 export class UnitsService {
@@ -10,6 +12,10 @@ export class UnitsService {
 
   async find() {
     return this.unitsRepository.find({});
+  }
+
+  async findOne(filterQuery: FilterQuery<Unit>) {
+    return this.unitsRepository.findOne(filterQuery);
   }
 
   async create(createUnitRequest: CreateUnitRequest) {

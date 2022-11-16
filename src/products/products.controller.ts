@@ -16,8 +16,12 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  create(@Body() createProductDto: CreateProductRequest) {
-    return this.productsService.create(createProductDto);
+  async create(@Body() createProductDto: CreateProductRequest) {
+    try {
+      return await this.productsService.create(createProductDto);
+    } catch (err) {
+      throw err;
+    }
   }
 
   @Get()

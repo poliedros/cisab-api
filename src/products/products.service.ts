@@ -1,21 +1,47 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateProductRequest } from './dto/request/create-product-request.dto';
 import { UpdateProductRequest } from './dto/request/update-product-request.dto';
 import { ProductEntity } from './entities/product.entity';
 import { ProductSchemaFactory } from './factories/product-schema.factory';
+import { ProductsRepository } from './products.repository';
+import { UnitsService } from '../units/units.service';
 
 @Injectable()
 export class ProductsService {
   private readonly logger = new Logger(ProductsService.name);
 
-  create({ name, measurements }: CreateProductRequest) {
+  constructor(
+    private readonly productsRepository: ProductsRepository,
+    private readonly unitsService: UnitsService,
+  ) {}
+
+  async create({ name, measurements }: CreateProductRequest) {
     const productEntity = new ProductEntity(name, measurements);
+
+    for (const measure of productEntity.measurements) {
+      try {
+        await this.unitsService.findOne({ name: measure.unit });
+      } catch (err) {
+        throw new BadRequestException("Unit doesn't exist");
+      }
+    }
 
     const productSchema = ProductSchemaFactory.create(productEntity);
 
-    console.log(productSchema);
+    const session = await this.productsRepository.startTransaction();
+    try {
+      const product = await this.productsRepository.create(productSchema, {
+        session,
+      });
 
-    return 'This action adds a new product';
+      await session.commitTransaction();
+      this.logger.log(`product id ${product._id} saved`);
+
+      return product;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    }
   }
 
   findAll() {
