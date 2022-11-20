@@ -12,6 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 import { Express } from 'express';
 import { ProductsService } from './products.service';
 import { CreateProductRequest } from './dto/request/create-product-request.dto';
@@ -19,6 +20,7 @@ import { UpdateProductRequest } from './dto/request/update-product-request.dto';
 
 const TWO_MBs = 2097152;
 
+@ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
