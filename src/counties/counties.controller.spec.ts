@@ -7,38 +7,25 @@ import { CreateCountyUserRequest } from './dto/request/create-county-user-reques
 import { CreateCountyDto } from './dto/request/create-county.dto';
 import { County } from './schemas/county.schema';
 
-function buildCounty() {
+function buildCounty(): CreateCountyDto {
   return {
-    account: {
-      user: 'test',
-      password: 'password',
-    },
-    county: {
-      address: 'address',
-      anniversary: '12/12/1900',
-      contact: '123',
-      distanceToCisab: '12',
-      email: 'email@email.com',
-      flag: 'flag url',
+    name: 'vicosa',
+    info: {
       mayor: 'osvaldo',
-      name: 'New York',
-      note: 'notes',
-      phone: '123',
       population: '55',
-      site: 'site.com',
-      socialMedias: 'socialMedias url',
-      state: 'state',
-      zipCode: '123122-12',
-    },
-    accountable: {
-      address: 'address',
-      email: 'email@email.com',
-      job: 'job',
-      name: 'osvaldo',
+      flag: 'flag',
+      anniversary: '01/01/1970',
+      distanceToCisab: '8km',
       note: 'notes',
-      phone: '12312',
-      socialMedias: 'socialMedias url',
+    },
+    contact: {
+      address: 'address',
       zipCode: '123122-12',
+      phone: '12312',
+      speakTo: 'john',
+      email: 'email@email.com',
+      socialMedia: 'socialMedias url',
+      note: 'notes',
     },
   };
 }

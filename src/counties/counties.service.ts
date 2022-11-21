@@ -10,6 +10,7 @@ import { Role } from '../auth/role.enum';
 import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
 import { UsersService } from '../users/users.service';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
+import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 
 @Injectable()
 export class CountiesService {
@@ -117,5 +118,38 @@ export class CountiesService {
 
   async removeCountyUser(countyUserId: string) {
     return await this.usersService.remove(countyUserId);
+  }
+
+  async createManager({ email, name, county_id }: CreateManagerRequest) {
+    // create county
+    const session = await this.countyRepository.startTransaction();
+    try {
+      const county = await this.countyRepository.create(
+        { name, county_id },
+        {
+          session,
+        },
+      );
+
+      await session.commitTransaction();
+      this.logger.log(`county id ${county._id} saved`);
+
+      // const user = await this.usersService.create({ email });
+
+      await lastValueFrom(
+        this.notifierService.emit({
+          type: 'user_created',
+          message: {
+            body: `you must register your password through this link`,
+          },
+        }),
+      );
+      this.logger.log(`user notified`);
+
+      return county;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    }
   }
 }

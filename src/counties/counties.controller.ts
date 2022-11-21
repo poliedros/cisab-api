@@ -23,6 +23,7 @@ import { CreateCountyUserRequest } from './dto/request/create-county-user-reques
 import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
+import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 
 @ApiTags('counties')
 @Controller('counties')
@@ -170,5 +171,17 @@ export class CountiesController {
   @Delete(':county_id/users/:id')
   removeCountyUser(@Param('id', ParseObjectIdPipe) id: string) {
     return this.countiesService.removeCountyUser(id);
+  }
+
+  @ApiOperation({ summary: 'Create manager', description: 'forbidden' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Post('/manager')
+  createManager(@Body() createManagerRequest: CreateManagerRequest) {
+    try {
+      this.countiesService.createManager(createManagerRequest);
+    } catch (err) {
+      throw err;
+    }
   }
 }
