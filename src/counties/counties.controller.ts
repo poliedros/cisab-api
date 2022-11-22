@@ -177,9 +177,9 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Post('/manager')
-  createManager(@Body() createManagerRequest: CreateManagerRequest) {
+  async createManager(@Body() createManagerRequest: CreateManagerRequest) {
     try {
-      this.countiesService.createManager(createManagerRequest);
+      await this.countiesService.createManager(createManagerRequest);
     } catch (err) {
       throw err;
     }

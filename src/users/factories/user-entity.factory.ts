@@ -3,13 +3,13 @@ import { Role } from '../../auth/role.enum';
 import { UserEntity } from '../entities/user.entity';
 
 type UserEntityFactoryProps = {
-  _id: Types.ObjectId | undefined;
+  _id?: Types.ObjectId | undefined;
   email: string;
-  name: string;
-  surname: string;
-  password: string;
+  name?: string;
+  surname?: string;
+  password?: string;
   roles: Role[];
-  properties: Map<string, string>;
+  properties?: Map<string, string>;
 };
 export class UserEntityFactory {
   static async create({
@@ -30,7 +30,8 @@ export class UserEntityFactory {
     });
 
     if (_id) user.id = _id;
-    await user.setPassword(password);
+
+    if (password) await user.setPassword(password);
 
     return user;
   }

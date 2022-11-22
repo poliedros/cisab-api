@@ -6,13 +6,13 @@ export class CreateUserRequest {
   email: string;
 
   @ApiProperty()
-  name: string;
+  name?: string;
 
   @ApiProperty()
-  surname: string;
+  surname?: string;
 
   @ApiProperty()
-  password: string;
+  password?: string;
 
   @ApiProperty()
   roles: Role[];

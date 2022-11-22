@@ -11,13 +11,13 @@ export class User extends AbstractDocument {
   email: string;
 
   @Prop()
-  name: string;
+  name?: string;
 
   @Prop()
-  surname: string;
+  surname?: string;
 
   @Prop()
-  password: string;
+  password?: string;
 
   @Prop()
   roles: Role[];

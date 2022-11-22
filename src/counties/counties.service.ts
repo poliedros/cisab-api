@@ -121,8 +121,8 @@ export class CountiesService {
   }
 
   async createManager({ email, name, county_id }: CreateManagerRequest) {
-    // create county
     const session = await this.countyRepository.startTransaction();
+
     try {
       const county = await this.countyRepository.create(
         { name, county_id },
@@ -131,20 +131,24 @@ export class CountiesService {
         },
       );
 
-      await session.commitTransaction();
-      this.logger.log(`county id ${county._id} saved`);
-
-      // const user = await this.usersService.create({ email });
+      const user = await this.usersService.create({
+        email,
+        roles: [Role.Manager],
+      });
 
       await lastValueFrom(
         this.notifierService.emit({
-          type: 'user_created',
+          type: 'manager_created',
           message: {
-            body: `you must register your password through this link`,
+            to: email,
+            body: `you must register your password through this link ${process.env.WEBSITE_URL}/confirm/${user._id}`,
           },
         }),
       );
-      this.logger.log(`user notified`);
+      this.logger.log(`an email has been sent to manager ${user.email}`);
+
+      await session.commitTransaction();
+      this.logger.log(`county id ${county._id} saved`);
 
       return county;
     } catch (err) {

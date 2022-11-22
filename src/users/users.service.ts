@@ -37,11 +37,11 @@ export class UsersService {
 
   async create({
     email,
-    name,
-    surname,
-    password,
+    name = undefined,
+    surname = undefined,
+    password = undefined,
     roles,
-    properties,
+    properties = undefined,
   }: CreateUserRequest) {
     const users = await this.usersRepository.find({
       email,
