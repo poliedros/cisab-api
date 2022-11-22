@@ -24,7 +24,7 @@ import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
-import { CreateManagerResponse } from './dto/response/Create-manager-response.dto';
+import { CreateManagerResponse } from './dto/response/create-manager-response.dto';
 
 @ApiTags('counties')
 @Controller('counties')
