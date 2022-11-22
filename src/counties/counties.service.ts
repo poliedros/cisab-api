@@ -165,7 +165,29 @@ export class CountiesService {
   async isManagerActive(id: Types.ObjectId) {
     const user = await this.usersService.findOne({ _id: id });
 
-    if (!user.password) return true;
+    if (user.password) return true;
     return false;
+  }
+
+  async updateManagerPassword(userId: Types.ObjectId, password: string) {
+    try {
+      const { _id, name, surname, email, roles, properties } =
+        await this.usersService.findOne({ _id: userId });
+
+      await this.usersService.update({
+        _id,
+        name,
+        surname,
+        email,
+        roles,
+        password,
+        properties,
+      });
+
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 }

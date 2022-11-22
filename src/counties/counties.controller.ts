@@ -27,6 +27,7 @@ import { UpdateCountyUserRequest } from './dto/request/update-county-user-reques
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { CreateManagerResponse } from './dto/response/create-manager-response.dto';
 import { Types } from 'mongoose';
+import { UpdateManagerPasswordRequest } from './dto/request/update-manager-password-request.dto';
 
 @ApiTags('counties')
 @Controller('counties')
@@ -196,7 +197,10 @@ export class CountiesController {
     }
   }
 
-  @ApiOperation({ summary: 'Create manager', description: 'forbidden' })
+  @ApiOperation({
+    summary: 'Confirm manager creation',
+    description: 'forbidden',
+  })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Post('/manager/:id/confirm')
@@ -211,5 +215,28 @@ export class CountiesController {
     if (active) return true;
 
     throw new UnauthorizedException();
+  }
+
+  @ApiOperation({
+    summary: 'Update manager password',
+    description: 'forbidden',
+  })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Post('/manager/:id')
+  async updateManagerPassword(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @Body() request: UpdateManagerPasswordRequest,
+  ) {
+    if (await this.countiesService.isManagerActive(id)) {
+      throw new UnauthorizedException();
+    }
+
+    const res = await this.countiesService.updateManagerPassword(
+      id,
+      request.password,
+    );
+
+    return res;
   }
 }

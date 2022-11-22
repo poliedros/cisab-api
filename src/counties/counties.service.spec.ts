@@ -272,7 +272,7 @@ describe('CountiesService', () => {
 
     const res = await service.isManagerActive(idStub);
 
-    expect(res).toBeTruthy();
+    expect(res).toBeFalsy();
   });
 
   it('should check if manager is not active', async () => {
@@ -283,6 +283,6 @@ describe('CountiesService', () => {
 
     const res = await service.isManagerActive(idStub);
 
-    expect(res).toBeFalsy();
+    expect(res).toBeTruthy();
   });
 });

@@ -21,7 +21,11 @@ export class UsersService {
 
   async findOne(filterQuery: FilterQuery<User>) {
     try {
-      return await this.usersRepository.findOne(filterQuery);
+      const user = await this.usersRepository.findOne(filterQuery);
+
+      user.properties = new Map(Object.entries(user.properties));
+
+      return user;
     } catch (err) {
       return null;
     }

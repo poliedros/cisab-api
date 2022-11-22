@@ -50,6 +50,7 @@ describe('CountiesController', () => {
   const removeCountyUserMockFn = jest.fn();
   const createManagerMockFn = jest.fn();
   const isManagerActiveMockFn = jest.fn();
+  const updateManagerPasswordMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -69,6 +70,7 @@ describe('CountiesController', () => {
             removeCountyUser: removeCountyUserMockFn,
             createManager: createManagerMockFn,
             isManagerActive: isManagerActiveMockFn,
+            updateManagerPassword: updateManagerPasswordMockFn,
           },
         },
       ],
@@ -346,6 +348,35 @@ describe('CountiesController', () => {
       await controller.confirmManager(idStub);
     } catch (err) {
       expect(err).toBeInstanceOf(BadRequestException);
+    }
+  });
+
+  it('should update manager password if manager is not active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    isManagerActiveMockFn.mockReturnValue(Promise.resolve(false));
+
+    updateManagerPasswordMockFn.mockReturnValue(Promise.resolve(true));
+
+    const res = await controller.updateManagerPassword(idStub, {
+      password: '123',
+    });
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should throw unathourized response if manager is active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    isManagerActiveMockFn.mockReturnValue(Promise.resolve(true));
+
+    try {
+      await controller.updateManagerPassword(idStub, { password: '123' });
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(UnauthorizedException);
     }
   });
 });
