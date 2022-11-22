@@ -5,6 +5,7 @@ import { CountiesController } from './counties.controller';
 import { CountiesService } from './counties.service';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { CreateCountyDto } from './dto/request/create-county.dto';
+import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { County } from './schemas/county.schema';
 
 function buildCounty(): CreateCountyDto {
@@ -43,6 +44,7 @@ describe('CountiesController', () => {
   const findCountyUsersMockFn = jest.fn();
   const updateCountyUserMockFn = jest.fn();
   const removeCountyUserMockFn = jest.fn();
+  const createManagerMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -60,6 +62,7 @@ describe('CountiesController', () => {
             findCountyUsers: findCountyUsersMockFn,
             updateCountyUser: updateCountyUserMockFn,
             removeCountyUser: removeCountyUserMockFn,
+            createManager: createManagerMockFn,
           },
         },
       ],
@@ -269,5 +272,35 @@ describe('CountiesController', () => {
     const res = await controller.removeCountyUser('6363c2f363e9deb5a8e1c672');
 
     expect(res).toBeDefined();
+  });
+
+  it('should return county id when creating a new manager', async () => {
+    const req: CreateManagerRequest = {
+      email: 'email@czar.dev',
+      name: 'Vicosa',
+    };
+
+    createManagerMockFn.mockReturnValue({ _id: '12a' });
+    const county = await controller.createManager(req);
+
+    expect(county.county_id).toEqual('12a');
+  });
+
+  it('should throw error when creating a new manager', async () => {
+    const req: CreateManagerRequest = {
+      email: 'email@czar.dev',
+      name: 'Vicosa',
+    };
+
+    createManagerMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await controller.createManager(req);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error);
+    }
   });
 });

@@ -24,6 +24,7 @@ import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
+import { CreateManagerResponse } from './dto/response/Create-manager-response.dto';
 
 @ApiTags('counties')
 @Controller('counties')
@@ -177,9 +178,17 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Post('/manager')
-  async createManager(@Body() createManagerRequest: CreateManagerRequest) {
+  async createManager(
+    @Body() createManagerRequest: CreateManagerRequest,
+  ): Promise<CreateManagerResponse> {
     try {
-      await this.countiesService.createManager(createManagerRequest);
+      const county = await this.countiesService.createManager(
+        createManagerRequest,
+      );
+
+      return {
+        county_id: county._id,
+      };
     } catch (err) {
       throw err;
     }
