@@ -9,6 +9,7 @@ import { CreateCountyUserRequest } from './dto/request/create-county-user-reques
 import { Role } from '../auth/role.enum';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 import { CreateCountyDto } from './dto/request/create-county.dto';
+import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 
 function buildCounty(): CreateCountyDto {
   return {
@@ -228,5 +229,36 @@ describe('CountiesService', () => {
     const res = await service.removeCountyUser('6363c2f363e9deb5a8e1c672');
 
     expect(res).toBeDefined();
+  });
+
+  it('should create manager', async () => {
+    const req: CreateManagerRequest = {
+      email: 'email@czar.dev',
+      name: 'Vicosa',
+    };
+
+    createMockFn.mockReturnValue({ _id: '12a' });
+
+    const county = await service.createManager(req);
+
+    expect(county._id).toEqual('12a');
+  });
+
+  it('should not create manager', async () => {
+    const req: CreateManagerRequest = {
+      email: 'email@czar.dev',
+      name: 'Vicosa',
+    };
+
+    createMockFn.mockImplementation(() => {
+      throw new Error('error');
+    });
+
+    try {
+      await service.createManager(req);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error);
+    }
   });
 });
