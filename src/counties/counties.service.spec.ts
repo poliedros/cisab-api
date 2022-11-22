@@ -285,4 +285,35 @@ describe('CountiesService', () => {
 
     expect(res).toBeTruthy();
   });
+
+  it('should update manager password', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+    const user = {
+      _id: idStub,
+      name: 'carlos',
+      surname: 'carlos',
+      email: 'email@email.com',
+      roles: [Role.Manager],
+      properties: new Map<string, string>(),
+    };
+
+    findOneCountyUserMock.mockReturnValue(Promise.resolve(user));
+    const res = await service.updateManagerPassword(idStub, 'password');
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should return false if something bad occurs', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    findOneCountyUserMock.mockImplementation(() => {
+      throw new Error();
+    });
+
+    const res = await service.updateManagerPassword(idStub, 'password');
+
+    expect(res).toBeFalsy();
+  });
 });

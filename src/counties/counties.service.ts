@@ -186,7 +186,6 @@ export class CountiesService {
 
       return true;
     } catch (err) {
-      console.log(err);
       return false;
     }
   }
