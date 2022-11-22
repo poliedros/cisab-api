@@ -11,6 +11,7 @@ import { GetCountyUserResponse } from './dto/response/get-county-user-response.d
 import { UsersService } from '../users/users.service';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class CountiesService {
@@ -131,9 +132,13 @@ export class CountiesService {
         },
       );
 
+      const properties = new Map<string, string>();
+      properties.set('county_id', county._id.toString());
+
       const user = await this.usersService.create({
         email,
         roles: [Role.Manager],
+        properties,
       });
 
       await lastValueFrom(
@@ -155,5 +160,12 @@ export class CountiesService {
       await session.abortTransaction();
       throw err;
     }
+  }
+
+  async isManagerActive(id: Types.ObjectId) {
+    const user = await this.usersService.findOne({ _id: id });
+
+    if (!user.password) return true;
+    return false;
   }
 }

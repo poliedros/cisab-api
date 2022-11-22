@@ -9,6 +9,7 @@ import {
   Put,
   NotFoundException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CountiesService } from './counties.service';
@@ -25,6 +26,7 @@ import { GetCountyUserResponse } from './dto/response/get-county-user-response.d
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { CreateManagerResponse } from './dto/response/create-manager-response.dto';
+import { Types } from 'mongoose';
 
 @ApiTags('counties')
 @Controller('counties')
@@ -192,5 +194,22 @@ export class CountiesController {
     } catch (err) {
       throw err;
     }
+  }
+
+  @ApiOperation({ summary: 'Create manager', description: 'forbidden' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Post('/manager/:id/confirm')
+  async confirmManager(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    let active = false;
+    try {
+      active = await this.countiesService.isManagerActive(id);
+    } catch (err) {
+      throw new BadRequestException();
+    }
+
+    if (active) return true;
+
+    throw new UnauthorizedException();
   }
 }

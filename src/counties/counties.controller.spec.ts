@@ -1,4 +1,8 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 import { CountiesController } from './counties.controller';
@@ -45,6 +49,7 @@ describe('CountiesController', () => {
   const updateCountyUserMockFn = jest.fn();
   const removeCountyUserMockFn = jest.fn();
   const createManagerMockFn = jest.fn();
+  const isManagerActiveMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -63,6 +68,7 @@ describe('CountiesController', () => {
             updateCountyUser: updateCountyUserMockFn,
             removeCountyUser: removeCountyUserMockFn,
             createManager: createManagerMockFn,
+            isManagerActive: isManagerActiveMockFn,
           },
         },
       ],
@@ -301,6 +307,45 @@ describe('CountiesController', () => {
       expect(false).toBeTruthy();
     } catch (err) {
       expect(err).toBeInstanceOf(Error);
+    }
+  });
+
+  it('should return 200 OK if manager is active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    isManagerActiveMockFn.mockReturnValue(Promise.resolve(true));
+
+    const res = await controller.confirmManager(idStub);
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should return 401 OK if manager is active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    isManagerActiveMockFn.mockReturnValue(Promise.resolve(false));
+
+    try {
+      await controller.confirmManager(idStub);
+    } catch (err) {
+      expect(err).toBeInstanceOf(UnauthorizedException);
+    }
+  });
+
+  it('should bad request if confirm breaks', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    isManagerActiveMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await controller.confirmManager(idStub);
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
     }
   });
 });

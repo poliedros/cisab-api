@@ -81,6 +81,7 @@ describe('CountiesService', () => {
   const findCountyUserMockFn = jest.fn();
   const updateCountyUserMockFn = jest.fn();
   const removeCountyUserMockFn = jest.fn();
+  const findOneCountyUserMock = jest.fn();
   startTransactionMockFn.mockReturnValue(
     Promise.resolve({
       abortTransaction: jest.fn(),
@@ -105,6 +106,7 @@ describe('CountiesService', () => {
       find: findCountyUserMockFn,
       update: updateCountyUserMockFn,
       remove: removeCountyUserMockFn,
+      findOne: findOneCountyUserMock,
     };
 
     service = await buildService(
@@ -260,5 +262,27 @@ describe('CountiesService', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(Error);
     }
+  });
+
+  it('should check if manager is active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    findOneCountyUserMock.mockReturnValue({});
+
+    const res = await service.isManagerActive(idStub);
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should check if manager is not active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    findOneCountyUserMock.mockReturnValue({ password: '12a' });
+
+    const res = await service.isManagerActive(idStub);
+
+    expect(res).toBeFalsy();
   });
 });
