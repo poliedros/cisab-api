@@ -13,6 +13,7 @@ describe('user entity', () => {
       properties: new Map<string, string>(),
     });
   });
+
   it('should hash a password', async () => {
     const password = 'password';
     await entity.setPassword(password);

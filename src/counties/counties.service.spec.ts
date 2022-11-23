@@ -8,39 +8,28 @@ import { UsersService } from '../users/users.service';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { Role } from '../auth/role.enum';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
+import { CreateCountyDto } from './dto/request/create-county.dto';
+import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 
-function buildCounty() {
+function buildCounty(): CreateCountyDto {
   return {
-    account: {
-      user: 'test',
-      password: 'password',
-    },
-    county: {
-      address: 'address',
-      anniversary: '12/12/1900',
-      contact: '123',
-      distanceToCisab: '12',
-      email: 'email@email.com',
-      flag: 'flag url',
+    name: 'vicosa',
+    info: {
       mayor: 'osvaldo',
-      name: 'New York',
-      note: 'notes',
-      phone: '123',
       population: '55',
-      site: 'site.com',
-      socialMedias: 'socialMedias url',
-      state: 'state',
-      zipCode: '123122-12',
-    },
-    accountable: {
-      address: 'address',
-      email: 'email@email.com',
-      job: 'job',
-      name: 'osvaldo',
+      flag: 'flag',
+      anniversary: '01/01/1970',
+      distanceToCisab: '8km',
       note: 'notes',
-      phone: '12312',
-      socialMedias: 'socialMedias url',
+    },
+    contact: {
+      address: 'address',
       zipCode: '123122-12',
+      phone: '12312',
+      speakTo: 'john',
+      email: 'email@email.com',
+      socialMedia: 'socialMedias url',
+      note: 'notes',
     },
   };
 }
@@ -92,6 +81,7 @@ describe('CountiesService', () => {
   const findCountyUserMockFn = jest.fn();
   const updateCountyUserMockFn = jest.fn();
   const removeCountyUserMockFn = jest.fn();
+  const findOneCountyUserMock = jest.fn();
   startTransactionMockFn.mockReturnValue(
     Promise.resolve({
       abortTransaction: jest.fn(),
@@ -116,6 +106,7 @@ describe('CountiesService', () => {
       find: findCountyUserMockFn,
       update: updateCountyUserMockFn,
       remove: removeCountyUserMockFn,
+      findOne: findOneCountyUserMock,
     };
 
     service = await buildService(
@@ -132,7 +123,7 @@ describe('CountiesService', () => {
 
     const response = await service.create(buildCounty());
 
-    expect(response.county.address).toEqual('address');
+    expect(response.info.distanceToCisab).toEqual('8km');
   });
 
   it('should get all counties', async () => {
@@ -240,5 +231,89 @@ describe('CountiesService', () => {
     const res = await service.removeCountyUser('6363c2f363e9deb5a8e1c672');
 
     expect(res).toBeDefined();
+  });
+
+  it('should create manager', async () => {
+    const req: CreateManagerRequest = {
+      email: 'email@czar.dev',
+      name: 'Vicosa',
+    };
+
+    createMockFn.mockReturnValue({ _id: '12a' });
+
+    const county = await service.createManager(req);
+
+    expect(county._id).toEqual('12a');
+  });
+
+  it('should not create manager', async () => {
+    const req: CreateManagerRequest = {
+      email: 'email@czar.dev',
+      name: 'Vicosa',
+    };
+
+    createMockFn.mockImplementation(() => {
+      throw new Error('error');
+    });
+
+    try {
+      await service.createManager(req);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error);
+    }
+  });
+
+  it('should check if manager is active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    findOneCountyUserMock.mockReturnValue({});
+
+    const res = await service.isManagerActive(idStub);
+
+    expect(res).toBeFalsy();
+  });
+
+  it('should check if manager is not active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    findOneCountyUserMock.mockReturnValue({ password: '12a' });
+
+    const res = await service.isManagerActive(idStub);
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should update manager password', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+    const user = {
+      _id: idStub,
+      name: 'carlos',
+      surname: 'carlos',
+      email: 'email@email.com',
+      roles: [Role.Manager],
+      properties: new Map<string, string>(),
+    };
+
+    findOneCountyUserMock.mockReturnValue(Promise.resolve(user));
+    const res = await service.updateManagerPassword(idStub, 'password');
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should return false if something bad occurs', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    findOneCountyUserMock.mockImplementation(() => {
+      throw new Error();
+    });
+
+    const res = await service.updateManagerPassword(idStub, 'password');
+
+    expect(res).toBeFalsy();
   });
 });

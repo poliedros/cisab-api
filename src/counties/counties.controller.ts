@@ -9,6 +9,7 @@ import {
   Put,
   NotFoundException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CountiesService } from './counties.service';
@@ -23,6 +24,10 @@ import { CreateCountyUserRequest } from './dto/request/create-county-user-reques
 import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
+import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
+import { CreateManagerResponse } from './dto/response/create-manager-response.dto';
+import { Types } from 'mongoose';
+import { UpdateManagerPasswordRequest } from './dto/request/update-manager-password-request.dto';
 
 @ApiTags('counties')
 @Controller('counties')
@@ -170,5 +175,68 @@ export class CountiesController {
   @Delete(':county_id/users/:id')
   removeCountyUser(@Param('id', ParseObjectIdPipe) id: string) {
     return this.countiesService.removeCountyUser(id);
+  }
+
+  @ApiOperation({ summary: 'Create manager', description: 'forbidden' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Post('/manager')
+  async createManager(
+    @Body() createManagerRequest: CreateManagerRequest,
+  ): Promise<CreateManagerResponse> {
+    try {
+      const county = await this.countiesService.createManager(
+        createManagerRequest,
+      );
+
+      return {
+        county_id: county._id,
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Confirm manager creation',
+    description: 'forbidden',
+  })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Post('/manager/:id/confirm')
+  async confirmManager(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
+    let active = false;
+    try {
+      active = await this.countiesService.isManagerActive(id);
+    } catch (err) {
+      throw new BadRequestException();
+    }
+
+    if (active) return true;
+
+    throw new UnauthorizedException();
+  }
+
+  @ApiOperation({
+    summary: 'Update manager password',
+    description: 'forbidden',
+  })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Post('/manager/:id')
+  async updateManagerPassword(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
+    @Body() request: UpdateManagerPasswordRequest,
+  ) {
+    if (await this.countiesService.isManagerActive(id)) {
+      throw new UnauthorizedException();
+    }
+
+    const res = await this.countiesService.updateManagerPassword(
+      id,
+      request.password,
+    );
+
+    return res;
   }
 }

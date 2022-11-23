@@ -10,6 +10,8 @@ import { Role } from '../auth/role.enum';
 import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
 import { UsersService } from '../users/users.service';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
+import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class CountiesService {
@@ -117,5 +119,74 @@ export class CountiesService {
 
   async removeCountyUser(countyUserId: string) {
     return await this.usersService.remove(countyUserId);
+  }
+
+  async createManager({ email, name, county_id }: CreateManagerRequest) {
+    const session = await this.countyRepository.startTransaction();
+
+    try {
+      const county = await this.countyRepository.create(
+        { name, county_id },
+        {
+          session,
+        },
+      );
+
+      const properties = new Map<string, string>();
+      properties.set('county_id', county._id.toString());
+
+      const user = await this.usersService.create({
+        email,
+        roles: [Role.Manager],
+        properties,
+      });
+
+      await lastValueFrom(
+        this.notifierService.emit({
+          type: 'manager_created',
+          message: {
+            to: email,
+            body: `you must register your password through this link <a href="${process.env.WEBSITE_URL}/confirm/${user._id}">click here.</a>`,
+          },
+        }),
+      );
+      this.logger.log(`an email has been sent to manager ${user.email}`);
+
+      await session.commitTransaction();
+      this.logger.log(`county id ${county._id} saved`);
+
+      return county;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    }
+  }
+
+  async isManagerActive(id: Types.ObjectId) {
+    const user = await this.usersService.findOne({ _id: id });
+
+    if (user.password) return true;
+    return false;
+  }
+
+  async updateManagerPassword(userId: Types.ObjectId, password: string) {
+    try {
+      const { _id, name, surname, email, roles, properties } =
+        await this.usersService.findOne({ _id: userId });
+
+      await this.usersService.update({
+        _id,
+        name,
+        surname,
+        email,
+        roles,
+        password,
+        properties,
+      });
+
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 }

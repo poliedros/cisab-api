@@ -1,44 +1,36 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 import { CountiesController } from './counties.controller';
 import { CountiesService } from './counties.service';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { CreateCountyDto } from './dto/request/create-county.dto';
+import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { County } from './schemas/county.schema';
 
-function buildCounty() {
+function buildCounty(): CreateCountyDto {
   return {
-    account: {
-      user: 'test',
-      password: 'password',
-    },
-    county: {
-      address: 'address',
-      anniversary: '12/12/1900',
-      contact: '123',
-      distanceToCisab: '12',
-      email: 'email@email.com',
-      flag: 'flag url',
+    name: 'vicosa',
+    info: {
       mayor: 'osvaldo',
-      name: 'New York',
-      note: 'notes',
-      phone: '123',
       population: '55',
-      site: 'site.com',
-      socialMedias: 'socialMedias url',
-      state: 'state',
-      zipCode: '123122-12',
-    },
-    accountable: {
-      address: 'address',
-      email: 'email@email.com',
-      job: 'job',
-      name: 'osvaldo',
+      flag: 'flag',
+      anniversary: '01/01/1970',
+      distanceToCisab: '8km',
       note: 'notes',
-      phone: '12312',
-      socialMedias: 'socialMedias url',
+    },
+    contact: {
+      address: 'address',
       zipCode: '123122-12',
+      phone: '12312',
+      speakTo: 'john',
+      email: 'email@email.com',
+      socialMedia: 'socialMedias url',
+      note: 'notes',
     },
   };
 }
@@ -56,6 +48,9 @@ describe('CountiesController', () => {
   const findCountyUsersMockFn = jest.fn();
   const updateCountyUserMockFn = jest.fn();
   const removeCountyUserMockFn = jest.fn();
+  const createManagerMockFn = jest.fn();
+  const isManagerActiveMockFn = jest.fn();
+  const updateManagerPasswordMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -73,6 +68,9 @@ describe('CountiesController', () => {
             findCountyUsers: findCountyUsersMockFn,
             updateCountyUser: updateCountyUserMockFn,
             removeCountyUser: removeCountyUserMockFn,
+            createManager: createManagerMockFn,
+            isManagerActive: isManagerActiveMockFn,
+            updateManagerPassword: updateManagerPasswordMockFn,
           },
         },
       ],
@@ -282,5 +280,103 @@ describe('CountiesController', () => {
     const res = await controller.removeCountyUser('6363c2f363e9deb5a8e1c672');
 
     expect(res).toBeDefined();
+  });
+
+  it('should return county id when creating a new manager', async () => {
+    const req: CreateManagerRequest = {
+      email: 'email@czar.dev',
+      name: 'Vicosa',
+    };
+
+    createManagerMockFn.mockReturnValue({ _id: '12a' });
+    const county = await controller.createManager(req);
+
+    expect(county.county_id).toEqual('12a');
+  });
+
+  it('should throw error when creating a new manager', async () => {
+    const req: CreateManagerRequest = {
+      email: 'email@czar.dev',
+      name: 'Vicosa',
+    };
+
+    createManagerMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await controller.createManager(req);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error);
+    }
+  });
+
+  it('should return 200 OK if manager is active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    isManagerActiveMockFn.mockReturnValue(Promise.resolve(true));
+
+    const res = await controller.confirmManager(idStub);
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should return 401 OK if manager is active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    isManagerActiveMockFn.mockReturnValue(Promise.resolve(false));
+
+    try {
+      await controller.confirmManager(idStub);
+    } catch (err) {
+      expect(err).toBeInstanceOf(UnauthorizedException);
+    }
+  });
+
+  it('should bad request if confirm breaks', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    isManagerActiveMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await controller.confirmManager(idStub);
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
+  });
+
+  it('should update manager password if manager is not active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    isManagerActiveMockFn.mockReturnValue(Promise.resolve(false));
+
+    updateManagerPasswordMockFn.mockReturnValue(Promise.resolve(true));
+
+    const res = await controller.updateManagerPassword(idStub, {
+      password: '123',
+    });
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should throw unathourized response if manager is active', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    isManagerActiveMockFn.mockReturnValue(Promise.resolve(true));
+
+    try {
+      await controller.updateManagerPassword(idStub, { password: '123' });
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(UnauthorizedException);
+    }
   });
 });

@@ -50,9 +50,10 @@ describe('User Service', () => {
       email: 'carlos@czar.dev',
       password: 'changeme',
       roles: [Role.Cisab],
+      properties: new Map<string, string>(),
     };
 
-    findOneMockFn.mockReturnValue(user);
+    findOneMockFn.mockReturnValue(Promise.resolve(user));
 
     const expectedUser = await service.findOne({ email: 'carlos@czar.dev' });
 

@@ -1,26 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import { ValidateNested } from 'class-validator';
 
-export class CreateCountyAccountDto {
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  user: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  password: string;
-}
-
-export class CreateCountyCountyDto {
-  @ApiProperty()
-  name: string;
-
-  @ApiProperty()
-  state: string;
-
+export class CreateInfoDto {
   @ApiProperty()
   mayor: string;
 
@@ -38,36 +20,9 @@ export class CreateCountyCountyDto {
 
   @ApiProperty()
   note: string;
-
-  @ApiProperty()
-  address: string;
-
-  @ApiProperty()
-  zipCode: string;
-
-  @ApiProperty()
-  phone: string;
-
-  @ApiProperty()
-  contact: string;
-
-  @ApiProperty()
-  site: string;
-
-  @ApiProperty()
-  email: string;
-
-  @ApiProperty()
-  socialMedias: string;
 }
 
-export class CreateCountyAccountableDto {
-  @ApiProperty()
-  name: string;
-
-  @ApiProperty()
-  job: string;
-
+export class CreateContactDto {
   @ApiProperty()
   address: string;
 
@@ -78,10 +33,13 @@ export class CreateCountyAccountableDto {
   phone: string;
 
   @ApiProperty()
+  speakTo: string;
+
+  @ApiProperty()
   email: string;
 
   @ApiProperty()
-  socialMedias: string;
+  socialMedia: string;
 
   @ApiProperty()
   note: string;
@@ -89,14 +47,15 @@ export class CreateCountyAccountableDto {
 
 export class CreateCountyDto {
   @ApiProperty()
-  @IsNotEmpty()
+  name: string;
+
+  @ApiProperty()
   @ValidateNested()
-  @Type(() => CreateCountyAccountDto)
-  account: CreateCountyAccountDto;
+  @Type(() => CreateInfoDto)
+  info: CreateInfoDto;
 
   @ApiProperty()
-  county: CreateCountyCountyDto;
-
-  @ApiProperty()
-  accountable: CreateCountyAccountableDto;
+  @ValidateNested()
+  @Type(() => CreateContactDto)
+  contact: CreateContactDto;
 }
