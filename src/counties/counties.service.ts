@@ -146,7 +146,7 @@ export class CountiesService {
           type: 'manager_created',
           message: {
             to: email,
-            body: `you must register your password through this link ${process.env.WEBSITE_URL}/confirm/${user._id}`,
+            body: `you must register your password through this link <a href="${process.env.WEBSITE_URL}/confirm/${user._id}">click here.</a>`,
           },
         }),
       );
