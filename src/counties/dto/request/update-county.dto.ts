@@ -1,9 +1,19 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { CreateCountyDto } from './create-county.dto';
-import { Types } from 'mongoose';
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
+import { ContactDto, InfoDto } from './create-county.dto';
 
-// TODO: don't trust partial type to bring validation type through ValidationPipe
-export class UpdateCountyDto extends PartialType(CreateCountyDto) {
+export class UpdateCountyDto {
   @ApiProperty()
-  _id: Types.ObjectId;
+  name: string;
+
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => InfoDto)
+  info: InfoDto;
+
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => ContactDto)
+  contact: ContactDto;
 }
