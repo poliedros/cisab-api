@@ -8,11 +8,11 @@ import { Types } from 'mongoose';
 import { CountiesController } from './counties.controller';
 import { CountiesService } from './counties.service';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
-import { CreateCountyDto } from './dto/request/create-county.dto';
+import { CreateCountyRequest } from './dto/request/create-county-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { County } from './schemas/county.schema';
 
-function buildCounty(): CreateCountyDto {
+function buildCounty(): CreateCountyRequest {
   return {
     name: 'vicosa',
     info: {
@@ -103,7 +103,7 @@ describe('CountiesController', () => {
   });
 
   it('should create county', async () => {
-    const countyDto: CreateCountyDto = buildCounty();
+    const countyDto: CreateCountyRequest = buildCounty();
 
     const idStub = new Types.ObjectId('63599affb40135010840911b');
     createMockFn.mockReturnValue(
@@ -142,7 +142,7 @@ describe('CountiesController', () => {
     });
 
     try {
-      await controller.create({} as CreateCountyDto);
+      await controller.create({} as CreateCountyRequest);
       expect(false).toBeTruthy();
     } catch (err) {
       expect(err).toBeInstanceOf(BadRequestException);

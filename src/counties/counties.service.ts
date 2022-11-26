@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { CountiesRepository } from './counties.repository';
-import { CreateCountyDto } from './dto/request/create-county.dto';
-import { UpdateCountyDto as UpdateCountyRequest } from './dto/request/update-county.dto';
+import { CreateCountyRequest } from './dto/request/create-county-request.dto';
+import { UpdateCountyRequest } from './dto/request/update-county-request.dto';
 import { NotifierService } from './../notifier/notifier.service';
 import { CreateUserRequest } from 'src/users/dtos/create-user-request.dto';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
@@ -24,7 +24,7 @@ export class CountiesService {
     private readonly usersService: UsersService,
   ) {}
 
-  async create(createCountyDto: CreateCountyDto) {
+  async create(createCountyDto: CreateCountyRequest) {
     const session = await this.countyRepository.startTransaction();
     try {
       const county = await this.countyRepository.create(createCountyDto, {

@@ -8,12 +8,12 @@ import { UsersService } from '../users/users.service';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
 import { Role } from '../auth/role.enum';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
-import { CreateCountyDto } from './dto/request/create-county.dto';
+import { CreateCountyRequest } from './dto/request/create-county-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
-import { UpdateCountyDto as UpdateCountyRequest } from './dto/request/update-county.dto';
+import { UpdateCountyRequest } from './dto/request/update-county-request.dto';
 import { County } from './schemas/county.schema';
 
-function buildCounty(): CreateCountyDto {
+function buildCounty(): CreateCountyRequest {
   return {
     name: 'vicosa',
     info: {
