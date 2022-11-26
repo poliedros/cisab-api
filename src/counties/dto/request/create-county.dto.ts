@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
+import { Types } from 'mongoose';
 
-export class CreateInfoDto {
+export class InfoDto {
   @ApiProperty()
   mayor: string;
 
@@ -22,7 +23,7 @@ export class CreateInfoDto {
   note: string;
 }
 
-export class CreateContactDto {
+export class ContactDto {
   @ApiProperty()
   address: string;
 
@@ -51,11 +52,15 @@ export class CreateCountyDto {
 
   @ApiProperty()
   @ValidateNested()
-  @Type(() => CreateInfoDto)
-  info: CreateInfoDto;
+  @Type(() => InfoDto)
+  info: InfoDto;
 
   @ApiProperty()
   @ValidateNested()
-  @Type(() => CreateContactDto)
-  contact: CreateContactDto;
+  @Type(() => ContactDto)
+  contact: ContactDto;
+
+  @ApiProperty()
+  @IsString()
+  county_id?: Types.ObjectId;
 }

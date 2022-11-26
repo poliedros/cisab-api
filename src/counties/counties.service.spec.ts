@@ -10,6 +10,8 @@ import { Role } from '../auth/role.enum';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 import { CreateCountyDto } from './dto/request/create-county.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
+import { UpdateCountyDto as UpdateCountyRequest } from './dto/request/update-county.dto';
+import { County } from './schemas/county.schema';
 
 function buildCounty(): CreateCountyDto {
   return {
@@ -76,6 +78,7 @@ describe('CountiesService', () => {
   const findOneMockFn = jest.fn();
   const findMockFn = jest.fn();
   const upsertMockFn = jest.fn();
+  const findOneAndUpdateMockFn = jest.fn();
   const deleteOneMockFn = jest.fn();
   const startTransactionMockFn = jest.fn();
   const findCountyUserMockFn = jest.fn();
@@ -99,6 +102,7 @@ describe('CountiesService', () => {
       upsert: upsertMockFn,
       deleteOne: deleteOneMockFn,
       startTransaction: startTransactionMockFn,
+      findOneAndUpdate: findOneAndUpdateMockFn,
     };
 
     const usersServiceMockValue = {
@@ -315,5 +319,67 @@ describe('CountiesService', () => {
     const res = await service.updateManagerPassword(idStub, 'password');
 
     expect(res).toBeFalsy();
+  });
+
+  it('should not change original county_id', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    const countyId = '63599affb401350103409112';
+
+    const updateCountyRequest: UpdateCountyRequest = {
+      name: 'county',
+      info: {
+        anniversary: '01/01/1920',
+        distanceToCisab: '2',
+        mayor: 'nivald',
+        note: 'notes',
+        population: '343',
+        flag: 'url',
+      },
+      contact: {
+        address: '123 address',
+        email: 'email@email.com',
+        phone: '12345678',
+        note: 'notes',
+        socialMedia: 'facebbok',
+        speakTo: 'john',
+        zipCode: 'f32',
+      },
+    };
+
+    const updatedCountyId = '637ed84aa43d43b46f0cd1cf';
+    const updatedCountyIdStub = new Types.ObjectId(updatedCountyId);
+
+    const county: County = {
+      _id: idStub,
+      name: 'updated county',
+      info: {
+        anniversary: '01/01/1920',
+        distanceToCisab: '2',
+        mayor: 'nivald',
+        note: 'notes',
+        population: '343',
+        flag: 'url',
+      },
+      contact: {
+        address: '123 address',
+        email: 'email@email.com',
+        phone: '12345678',
+        note: 'notes',
+        socialMedia: 'facebbok',
+        speakTo: 'john',
+        zipCode: 'f32',
+      },
+      county_id: updatedCountyIdStub,
+    };
+
+    findOneMockFn.mockReturnValue(Promise.resolve(county));
+
+    findOneAndUpdateMockFn.mockReturnValue(Promise.resolve(county));
+
+    const res = await service.update(countyId, updateCountyRequest);
+
+    expect(res.county_id).toEqual(updatedCountyIdStub);
   });
 });

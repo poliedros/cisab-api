@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { CountiesRepository } from './counties.repository';
 import { CreateCountyDto } from './dto/request/create-county.dto';
-import { UpdateCountyDto } from './dto/request/update-county.dto';
+import { UpdateCountyDto as UpdateCountyRequest } from './dto/request/update-county.dto';
 import { NotifierService } from './../notifier/notifier.service';
 import { CreateUserRequest } from 'src/users/dtos/create-user-request.dto';
 import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
@@ -12,6 +12,7 @@ import { UsersService } from '../users/users.service';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { Types } from 'mongoose';
+import { CountyEntity } from './entities/county.entity';
 
 @Injectable()
 export class CountiesService {
@@ -60,10 +61,23 @@ export class CountiesService {
     }
   }
 
-  update(id: string, updateCountyDto: UpdateCountyDto) {
+  async update(id: string, updateCountyRequest: UpdateCountyRequest) {
     this.logger.log(`county id: ${id} will be updated...`);
+    const { name, contact, county_id, info } =
+      await this.countyRepository.findOne({ _id: id });
+
+    const county = new CountyEntity(name, info, contact, county_id);
+
+    if (updateCountyRequest.contact) {
+      county.contact = contact;
+    }
+
+    if (updateCountyRequest.info) {
+      county.info = info;
+    }
+
     // TODO: session here
-    return this.countyRepository.findOneAndUpdate({ _id: id }, updateCountyDto);
+    return this.countyRepository.findOneAndUpdate({ _id: id }, county);
   }
 
   remove(id: string) {
