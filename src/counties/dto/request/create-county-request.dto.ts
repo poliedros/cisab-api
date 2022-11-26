@@ -46,7 +46,7 @@ export class ContactDto {
   note: string;
 }
 
-export class CreateCountyDto {
+export class CreateCountyRequest {
   @ApiProperty()
   name: string;
 

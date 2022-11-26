@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import { ContactDto, InfoDto } from './create-county.dto';
+import { ContactDto, InfoDto } from './create-county-request.dto';
 
-export class UpdateCountyDto {
+export class UpdateCountyRequest {
   @ApiProperty()
   name: string;
 
