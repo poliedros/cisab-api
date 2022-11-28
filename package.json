@@ -91,6 +91,7 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s",
       "!**/*.module.ts",
+      "!**/*.repository.ts",
       "!main.ts"
     ],
     "coverageDirectory": "../coverage",
