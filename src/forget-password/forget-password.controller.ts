@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import { ForgetPasswordRequest } from './dto/request/forget-password-request.dto';
 import { NewPasswordRequest } from './dto/request/new-password-request.dto';
 import { ForgetPasswordService } from './forget-password.service';
@@ -12,13 +12,11 @@ export class ForgetPasswordController {
     await this.forgetPasswordService.run(email);
   }
 
-  @Post('/new')
-  async newPassword(
-    @Body() { forgetPasswordId, newPassword }: NewPasswordRequest,
+  @Post('/recovery/:id')
+  async recovery(
+    @Param('id') id: string,
+    @Body() { password }: NewPasswordRequest,
   ) {
-    await this.forgetPasswordService.updatePassword(
-      forgetPasswordId,
-      newPassword,
-    );
+    await this.forgetPasswordService.updatePassword(id, password);
   }
 }

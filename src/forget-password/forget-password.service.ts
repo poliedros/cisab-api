@@ -1,8 +1,15 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { NotifierService } from '../notifier/notifier.service';
 import { ForgetPasswordRepository } from './forget-password.repository';
 import { ForgetPassword } from './schemas/forget-password.schema';
+import { UserEntityFactory } from 'src/users/factories/user-entity.factory';
+import { UserSchemaFactory } from 'src/users/factories/user-schema.factory';
 
 @Injectable()
 export class ForgetPasswordService {
@@ -43,6 +50,8 @@ export class ForgetPasswordService {
 
       this.logger.log(`sending email to: ${user.email}`);
       this.notifierService.emit({ type: 'forget-password', message });
+
+      await session.commitTransaction();
     } catch (err) {
       this.logger.error(err);
 
@@ -54,5 +63,54 @@ export class ForgetPasswordService {
   /**
    * update user password
    */
-  async updatePassword(forgetPasswordId: string, newPassword: string) {}
+  async updatePassword(forgetPasswordId: string, newPassword: string) {
+    const forgetPassword = await this.forgetPasswordRepository.findOne({
+      _id: forgetPasswordId,
+    });
+
+    if (!forgetPassword)
+      throw new NotFoundException('Forget password entity not found');
+
+    if (forgetPassword.oldPassword)
+      throw new BadRequestException('Forget password already used');
+
+    const user = await this.usersService.findOne({
+      _id: forgetPassword.userId,
+    });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const session = await this.forgetPasswordRepository.startTransaction();
+    try {
+      forgetPassword.oldPassword = user.password;
+
+      user.password = newPassword;
+      this.logger.log(`new password: ${user.password}`);
+
+      const { password: newUserPassword } = await this.usersService.update(
+        user,
+      );
+
+      forgetPassword.newPassword = newUserPassword;
+
+      await this.forgetPasswordRepository.upsert(
+        {
+          _id: forgetPassword._id,
+        },
+        forgetPassword,
+      );
+
+      const message = {
+        to: user.email,
+        body: `Your password was updated. If it was not you, contact immediately the administrator.`,
+        subject: `Cisab - Recovery password`,
+      };
+      this.notifierService.emit({ type: 'forget-password', message });
+
+      await session.commitTransaction();
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    }
+  }
 }
