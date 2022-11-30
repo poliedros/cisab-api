@@ -1,12 +1,19 @@
 import { Body, Controller, Param, Post } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ForgetPasswordRequest } from './dto/request/forget-password-request.dto';
 import { NewPasswordRequest } from './dto/request/new-password-request.dto';
 import { ForgetPasswordService } from './forget-password.service';
 
+@ApiTags('forget-password')
 @Controller('forget-password')
 export class ForgetPasswordController {
   constructor(private readonly forgetPasswordService: ForgetPasswordService) {}
 
+  @ApiOperation({
+    summary: 'Forget password',
+    description: 'Forgotten password? ',
+  })
+  @ApiBody({ type: ForgetPasswordRequest })
   @Post()
   async forgetPassword(@Body() { email }: ForgetPasswordRequest) {
     try {
@@ -16,6 +23,11 @@ export class ForgetPasswordController {
     }
   }
 
+  @ApiOperation({
+    summary: 'Recovery password',
+    description: 'Recovery password through this route',
+  })
+  @ApiBody({ type: NewPasswordRequest })
   @Post('/recovery/:id')
   async recovery(
     @Param('id') id: string,
