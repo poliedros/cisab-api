@@ -9,7 +9,11 @@ export class ForgetPasswordController {
 
   @Post()
   async forgetPassword(@Body() { email }: ForgetPasswordRequest) {
-    await this.forgetPasswordService.run(email);
+    try {
+      await this.forgetPasswordService.run(email);
+    } catch (err) {
+      throw err;
+    }
   }
 
   @Post('/recovery/:id')
@@ -17,6 +21,10 @@ export class ForgetPasswordController {
     @Param('id') id: string,
     @Body() { password }: NewPasswordRequest,
   ) {
-    await this.forgetPasswordService.updatePassword(id, password);
+    try {
+      await this.forgetPasswordService.updatePassword(id, password);
+    } catch (err) {
+      throw err;
+    }
   }
 }

@@ -4,6 +4,8 @@ import { ForgetPasswordService } from './forget-password.service';
 
 describe('ForgetPasswordController', () => {
   let controller: ForgetPasswordController;
+  const runMockFn = jest.fn();
+  const updatePasswordMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -11,7 +13,10 @@ describe('ForgetPasswordController', () => {
       providers: [
         {
           provide: ForgetPasswordService,
-          useValue: {},
+          useValue: {
+            run: runMockFn,
+            updatePassword: updatePasswordMockFn,
+          },
         },
       ],
     }).compile();
@@ -19,7 +24,48 @@ describe('ForgetPasswordController', () => {
     controller = module.get<ForgetPasswordController>(ForgetPasswordController);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  it('should run forget password use case', async () => {
+    runMockFn.mockReturnValue(Promise.resolve());
+
+    await controller.forgetPassword({ email: 'contact@czar.dev' });
+
+    expect(true).toBeTruthy();
+  });
+
+  it('should throw exception in forget password use case', async () => {
+    class TestError extends Error {}
+    runMockFn.mockImplementation(() => {
+      throw new TestError();
+    });
+
+    try {
+      await controller.forgetPassword({ email: 'contact@czar.dev' });
+      expect(true).toBeFalsy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(TestError);
+    }
+  });
+
+  it('should recovery password', async () => {
+    updatePasswordMockFn.mockReturnValue(Promise.resolve());
+
+    await controller.recovery('1234', { password: 'newpassword' });
+
+    expect(true).toBeTruthy();
+  });
+
+  it('should throw excetion in recovery password', async () => {
+    class TestError extends Error {}
+
+    updatePasswordMockFn.mockImplementation(() => {
+      throw new TestError();
+    });
+
+    try {
+      await controller.recovery('1234', { password: 'newpassword' });
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(TestError);
+    }
   });
 });

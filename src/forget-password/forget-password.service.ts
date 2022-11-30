@@ -22,7 +22,7 @@ export class ForgetPasswordService {
   /**
    * send an notification to user with forget password id
    
-   * forget password is then used by updatePassword args
+   * forget password id is then used by updatePassword args
    */
   async run(email: string) {
     const session = await this.forgetPasswordRepository.startTransaction();
