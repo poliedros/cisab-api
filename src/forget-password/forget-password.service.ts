@@ -8,8 +8,6 @@ import { UsersService } from '../users/users.service';
 import { NotifierService } from '../notifier/notifier.service';
 import { ForgetPasswordRepository } from './forget-password.repository';
 import { ForgetPassword } from './schemas/forget-password.schema';
-import { UserEntityFactory } from 'src/users/factories/user-entity.factory';
-import { UserSchemaFactory } from 'src/users/factories/user-schema.factory';
 
 @Injectable()
 export class ForgetPasswordService {
