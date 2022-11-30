@@ -7,6 +7,7 @@ import { CountiesModule } from './counties/counties.module';
 import { NotifierModule } from './notifier/notifier.module';
 import { UnitsModule } from './units/units.module';
 import { ProductsModule } from './products/products.module';
+import { ForgetPasswordModule } from './forget-password/forget-password.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ProductsModule } from './products/products.module';
     NotifierModule,
     UnitsModule,
     ProductsModule,
+    ForgetPasswordModule,
   ],
   controllers: [],
   providers: [],

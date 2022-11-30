@@ -83,6 +83,9 @@ export class UsersService {
     }
   }
 
+  /***
+   * update user
+   */
   async update(updateUser: UpdateUserRequest) {
     const { _id, email, name, surname, password, properties } = updateUser;
 
