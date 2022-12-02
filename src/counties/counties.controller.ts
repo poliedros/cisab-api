@@ -201,8 +201,6 @@ export class CountiesController {
     summary: 'Confirm manager creation',
     description: 'forbidden',
   })
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
   @Post('/manager/:id/confirm')
   async confirmManager(@Param('id', ParseObjectIdPipe) id: Types.ObjectId) {
     let active = false;
@@ -214,15 +212,13 @@ export class CountiesController {
 
     if (active) return true;
 
-    throw new UnauthorizedException();
+    return false;
   }
 
   @ApiOperation({
     summary: 'Update manager password',
     description: 'forbidden',
   })
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
   @Post('/manager/:id')
   async updateManagerPassword(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
