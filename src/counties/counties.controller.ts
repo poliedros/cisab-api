@@ -212,7 +212,7 @@ export class CountiesController {
 
     if (active) return true;
 
-    throw new UnauthorizedException();
+    return false;
   }
 
   @ApiOperation({
