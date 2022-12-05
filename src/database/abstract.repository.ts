@@ -6,6 +6,7 @@ import {
   UpdateQuery,
   SaveOptions,
   Connection,
+  SortOrder,
 } from 'mongoose';
 import { AbstractDocument } from './abstract.schema';
 
@@ -72,6 +73,22 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
 
   async find(filterQuery: FilterQuery<TDocument>) {
     return this.model.find(filterQuery, {}, { lean: true });
+  }
+
+  async sort(
+    filterQuery: FilterQuery<TDocument>,
+    sort:
+      | string
+      | {
+          [key: string]:
+            | SortOrder
+            | {
+                $meta: 'textScore';
+              };
+        }
+      | [string, SortOrder][],
+  ) {
+    return this.model.find(filterQuery, {}, { lean: true }).sort(sort);
   }
 
   async deleteOne(filterQuery: FilterQuery<TDocument>) {

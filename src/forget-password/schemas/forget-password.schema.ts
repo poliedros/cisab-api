@@ -14,6 +14,9 @@ export class ForgetPassword extends AbstractDocument {
 
   @Prop()
   newPassword?: string;
+
+  @Prop()
+  createdAt: Date;
 }
 
 export const ForgetPasswordSchema =

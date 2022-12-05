@@ -35,6 +35,7 @@ export class ForgetPasswordService {
       const forgetPassword: ForgetPassword = {
         _id: null,
         userId: user._id.toString(),
+        createdAt: new Date(),
       };
 
       const { _id: forgetPasswordId } =
@@ -66,11 +67,7 @@ export class ForgetPasswordService {
       _id: forgetPasswordId,
     });
 
-    if (!forgetPassword)
-      throw new NotFoundException('Forget password entity not found');
-
-    if (forgetPassword.oldPassword)
-      throw new BadRequestException('Forget password already used');
+    await this.validateForgetPassword(forgetPassword);
 
     const user = await this.usersService.findOne({
       _id: forgetPassword.userId,
@@ -110,5 +107,56 @@ export class ForgetPasswordService {
       await session.abortTransaction();
       throw err;
     }
+  }
+
+  /**
+   * validates forget password id
+   * @param id
+   * @returns boolean
+   */
+  async validate(id: string) {
+    const forgetPassword = await this.forgetPasswordRepository.findOne({
+      _id: id,
+    });
+
+    return this.validateForgetPassword(forgetPassword);
+  }
+
+  /**
+   * validates forget password
+   * @param forgetPassword
+   * @returns boolean
+   */
+  private async validateForgetPassword(forgetPassword: ForgetPassword) {
+    const isEqual = (f1: ForgetPassword, f2: ForgetPassword) => {
+      return true
+        ? f1._id.toString() === f2._id.toString() &&
+            f1.userId === f2.userId &&
+            f1.createdAt.toString() === f2.createdAt.toString()
+        : false;
+    };
+
+    if (!forgetPassword) {
+      throw new BadRequestException();
+    }
+
+    // it means that this forget password was already used.
+    if (forgetPassword.oldPassword) {
+      throw new BadRequestException();
+    }
+
+    const forgetPasswords = await this.forgetPasswordRepository.sort(
+      { userId: forgetPassword.userId },
+      { createdAt: -1 },
+    );
+
+    if (forgetPasswords.length === 0) return true;
+
+    if (!isEqual(forgetPassword, forgetPasswords[0]))
+      throw new BadRequestException(
+        'This forget password is not valid anymore.',
+      );
+
+    return true;
   }
 }

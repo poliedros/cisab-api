@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ForgetPasswordRequest } from './dto/request/forget-password-request.dto';
 import { NewPasswordRequest } from './dto/request/new-password-request.dto';
@@ -35,6 +35,20 @@ export class ForgetPasswordController {
   ) {
     try {
       await this.forgetPasswordService.updatePassword(id, password);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  @ApiOperation({
+    summary: 'Validate password link',
+    description: 'Validate password link',
+  })
+  @Post('/:id/validate')
+  @HttpCode(200)
+  async validate(@Param('id') id: string) {
+    try {
+      await this.forgetPasswordService.validate(id);
     } catch (err) {
       throw err;
     }

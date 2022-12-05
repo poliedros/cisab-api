@@ -6,6 +6,7 @@ describe('ForgetPasswordController', () => {
   let controller: ForgetPasswordController;
   const runMockFn = jest.fn();
   const updatePasswordMockFn = jest.fn();
+  const validateMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,6 +17,7 @@ describe('ForgetPasswordController', () => {
           useValue: {
             run: runMockFn,
             updatePassword: updatePasswordMockFn,
+            validate: validateMockFn,
           },
         },
       ],
@@ -63,6 +65,29 @@ describe('ForgetPasswordController', () => {
 
     try {
       await controller.recovery('1234', { password: 'newpassword' });
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(TestError);
+    }
+  });
+
+  it('should validate forget password', async () => {
+    updatePasswordMockFn.mockReturnValue(Promise.resolve());
+
+    await controller.validate('1a');
+
+    expect(true).toBeTruthy();
+  });
+
+  it('should throw excetion in validating forget password', async () => {
+    class TestError extends Error {}
+
+    validateMockFn.mockImplementation(() => {
+      throw new TestError();
+    });
+
+    try {
+      await controller.validate(`1a`);
       expect(false).toBeTruthy();
     } catch (err) {
       expect(err).toBeInstanceOf(TestError);
