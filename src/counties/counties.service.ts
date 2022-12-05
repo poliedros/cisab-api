@@ -69,11 +69,11 @@ export class CountiesService {
     const county = new CountyEntity(name, info, contact, county_id);
 
     if (updateCountyRequest.contact) {
-      county.contact = contact;
+      county.contact = updateCountyRequest.contact;
     }
 
     if (updateCountyRequest.info) {
-      county.info = info;
+      county.info = updateCountyRequest.info;
     }
 
     // TODO: session here
