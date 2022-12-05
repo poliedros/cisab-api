@@ -15,6 +15,7 @@ describe('ForgetPasswordService', () => {
   const findOneForgetPasswordMockFn = jest.fn();
   const updateMockFn = jest.fn();
   const upsertMockFn = jest.fn();
+  const sortMockFn = jest.fn();
 
   beforeEach(async () => {
     jest.resetAllMocks();
@@ -48,6 +49,7 @@ describe('ForgetPasswordService', () => {
             create: createMockFn,
             findOne: findOneForgetPasswordMockFn,
             upsert: upsertMockFn,
+            sort: sortMockFn,
           },
         },
       ],
@@ -122,18 +124,20 @@ describe('ForgetPasswordService', () => {
 
     upsertMockFn.mockReturnValue(Promise.resolve());
 
+    sortMockFn.mockReturnValue(Promise.resolve([]));
+
     await service.updatePassword('1a', 'newpassword');
 
     expect(emitMockFn).toBeCalledTimes(1);
   });
 
-  it('should throw not found exception if forget password id is not found', async () => {
+  it('should throw bad request exception if forget password id is not found', async () => {
     findOneForgetPasswordMockFn.mockReturnValue(Promise.resolve());
 
     try {
       await service.updatePassword('1a', 'newpassword');
     } catch (err) {
-      expect(err).toBeInstanceOf(NotFoundException);
+      expect(err).toBeInstanceOf(BadRequestException);
     }
   });
 
@@ -143,6 +147,7 @@ describe('ForgetPasswordService', () => {
     );
 
     findOneMockFn.mockReturnValue(Promise.resolve());
+    sortMockFn.mockReturnValue(Promise.resolve([]));
 
     try {
       await service.updatePassword('1a', 'newpassword');
@@ -162,6 +167,8 @@ describe('ForgetPasswordService', () => {
       Promise.resolve({ password: 'password', email: 'contact@czar.dev' }),
     );
 
+    sortMockFn.mockReturnValue(Promise.resolve([]));
+
     updateMockFn.mockImplementation(() => {
       throw new TestError();
     });
@@ -171,6 +178,53 @@ describe('ForgetPasswordService', () => {
       expect(false).toBeTruthy();
     } catch (err) {
       expect(err).toBeInstanceOf(TestError);
+    }
+  });
+
+  it('should validate forget password', async () => {
+    const forgetPassword = { _id: '1a', userId: 'b1', createdAt: new Date() };
+    findOneForgetPasswordMockFn.mockReturnValue(
+      Promise.resolve(forgetPassword),
+    );
+
+    findOneMockFn.mockReturnValue(
+      Promise.resolve({ password: 'password', email: 'contact@czar.dev' }),
+    );
+
+    updateMockFn.mockReturnValue(Promise.resolve({ password: '123' }));
+
+    upsertMockFn.mockReturnValue(Promise.resolve());
+
+    sortMockFn.mockReturnValue(Promise.resolve([forgetPassword]));
+
+    const res = await service.validate('1a');
+
+    expect(res).toBeTruthy();
+  });
+
+  it('should throw bad request if forget password is not valid', async () => {
+    const forgetPassword = { _id: '1a', userId: 'b1', createdAt: new Date() };
+    findOneForgetPasswordMockFn.mockReturnValue(
+      Promise.resolve(forgetPassword),
+    );
+
+    findOneMockFn.mockReturnValue(
+      Promise.resolve({ password: 'password', email: 'contact@czar.dev' }),
+    );
+
+    updateMockFn.mockReturnValue(Promise.resolve({ password: '123' }));
+
+    upsertMockFn.mockReturnValue(Promise.resolve());
+
+    sortMockFn.mockReturnValue(
+      Promise.resolve([{ _id: '1b', userId: 'b1', createdAt: new Date() }]),
+    );
+
+    try {
+      await service.validate('1a');
+      expect(true).toBeFalsy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
     }
   });
 });
