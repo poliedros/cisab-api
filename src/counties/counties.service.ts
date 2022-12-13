@@ -157,9 +157,10 @@ export class CountiesService {
 
       await lastValueFrom(
         this.notifierService.emit({
-          type: 'sent_email',
+          type: 'send_email',
           message: {
             to: email,
+            subject: 'Cadastro CISAB',
             body: `você deve registrar pelo link: <a href="${process.env.WEBSITE_URL}/firstAccess/${user._id}">clique aqui.</a>`,
           },
         }),

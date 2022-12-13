@@ -48,7 +48,7 @@ export class ForgetPasswordService {
       };
 
       this.logger.log(`sending email to: ${user.email}`);
-      this.notifierService.emit({ type: 'forget-password', message });
+      this.notifierService.emit({ type: 'send_email', message });
 
       await session.commitTransaction();
     } catch (err) {
