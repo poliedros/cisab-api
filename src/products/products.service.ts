@@ -15,8 +15,22 @@ export class ProductsService {
     private readonly unitsService: UnitsService,
   ) {}
 
-  async create({ name, measurements }: CreateProductRequest) {
-    const productEntity = new ProductEntity(name, measurements);
+  async create({
+    name,
+    measurements,
+    accessory_ids,
+    categories,
+    code,
+    norms,
+  }: CreateProductRequest) {
+    const productEntity = new ProductEntity(
+      name,
+      measurements,
+      norms,
+      code,
+      accessory_ids,
+      categories,
+    );
 
     for (const measure of productEntity.measurements) {
       try {
@@ -45,7 +59,7 @@ export class ProductsService {
   }
 
   findAll() {
-    return `This action returns all products`;
+    return this.productsRepository.find({});
   }
 
   findOne(id: number) {

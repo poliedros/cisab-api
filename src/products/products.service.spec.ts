@@ -46,6 +46,10 @@ describe('ProductsService', () => {
           unit: 'cm',
         },
       ],
+      accessory_ids: ['ab'],
+      categories: ['ab'],
+      code: 'ab',
+      norms: ['ab'],
     };
 
     findOneMockFn.mockReturnValue(Promise.resolve());
@@ -81,6 +85,10 @@ describe('ProductsService', () => {
           unit: 'cm',
         },
       ],
+      accessory_ids: ['ab'],
+      categories: ['ab'],
+      code: 'ab',
+      norms: ['ab'],
     };
 
     findOneMockFn.mockReturnValue(Promise.resolve());
@@ -107,6 +115,10 @@ describe('ProductsService', () => {
           unit: 'cm',
         },
       ],
+      accessory_ids: ['ab'],
+      categories: ['ab'],
+      code: 'ab',
+      norms: ['ab'],
     };
 
     findOneMockFn.mockImplementation(() => {

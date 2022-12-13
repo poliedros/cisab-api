@@ -5,6 +5,10 @@ type ProductSchemaFactoryProps = {
   id: Types.ObjectId | undefined;
   name: string;
   measurements: { name: string; value: string; unit: string }[];
+  norms: string[];
+  code: string;
+  accessory_ids: string[];
+  categories: string[];
 };
 
 export class ProductSchemaFactory {
@@ -12,7 +16,19 @@ export class ProductSchemaFactory {
     id,
     name,
     measurements,
+    norms,
+    code,
+    accessory_ids,
+    categories,
   }: ProductSchemaFactoryProps): Product {
-    return { _id: id, name, measurements } as Product;
+    return {
+      _id: id,
+      name,
+      measurements,
+      norms,
+      code,
+      accessory_ids,
+      categories,
+    } as Product;
   }
 }

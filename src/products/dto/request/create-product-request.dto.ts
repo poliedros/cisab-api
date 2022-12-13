@@ -20,4 +20,16 @@ export class CreateProductRequest {
 
   @ApiProperty()
   measurements: MeasureRequest[];
+
+  @ApiProperty()
+  norms: string[];
+
+  @ApiProperty()
+  code: string;
+
+  @ApiProperty()
+  accessory_ids: string[];
+
+  @ApiProperty()
+  categories: string[];
 }

@@ -28,6 +28,10 @@ describe('ProductsController', () => {
           unit: 'cm',
         },
       ],
+      accessory_ids: ['ab'],
+      categories: ['ab'],
+      code: 'ab',
+      norms: ['ab'],
     };
 
     const resService = {

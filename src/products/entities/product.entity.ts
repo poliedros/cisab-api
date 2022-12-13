@@ -7,7 +7,14 @@ export class Measure {
 }
 
 export class ProductEntity {
-  constructor(public name: string, measurements: Measure[]) {
+  constructor(
+    public name: string,
+    measurements: Measure[],
+    public norms: string[],
+    public code: string,
+    public accessory_ids: string[],
+    public categories: string[],
+  ) {
     this._measurements = measurements;
   }
 
