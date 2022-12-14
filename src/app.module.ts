@@ -8,6 +8,7 @@ import { NotifierModule } from './notifier/notifier.module';
 import { UnitsModule } from './units/units.module';
 import { ProductsModule } from './products/products.module';
 import { ForgetPasswordModule } from './forget-password/forget-password.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ForgetPasswordModule } from './forget-password/forget-password.module';
     UnitsModule,
     ProductsModule,
     ForgetPasswordModule,
+    CategoriesModule,
   ],
   controllers: [],
   providers: [],
