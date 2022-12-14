@@ -17,6 +17,18 @@ export class Product extends AbstractDocument {
 
   @Prop({ type: Array<Measure> })
   measurements: Measure[];
+
+  @Prop()
+  norms: string[];
+
+  @Prop()
+  code: string;
+
+  @Prop()
+  accessory_ids: string[];
+
+  @Prop()
+  categories: string[];
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

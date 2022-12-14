@@ -43,7 +43,7 @@ export class UnitsService {
   }
 
   remove(id: string) {
-    this.logger.log(`county id: ${id} will be deleted...`);
+    this.logger.log(`unit id: ${id} will be deleted...`);
     return this.unitsRepository.deleteOne({ _id: id });
   }
 }
