@@ -10,6 +10,7 @@ describe('ProductsService', () => {
   let service: ProductsService;
   const findOneUnitMockFn = jest.fn();
   const findOneCategoryMockFn = jest.fn();
+  const findOneProductMockFn = jest.fn();
   const createMockFn = jest.fn();
   const startTransactionMockFn = jest.fn();
 
@@ -29,6 +30,7 @@ describe('ProductsService', () => {
         {
           provide: ProductsRepository,
           useValue: {
+            findOne: findOneProductMockFn,
             create: createMockFn,
             startTransaction: startTransactionMockFn,
           },
@@ -213,6 +215,34 @@ describe('ProductsService', () => {
     };
 
     findOneCategoryMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await service.create(request);
+      expect(false).toBeTruthy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
+  });
+
+  it('should throw a bad request if accessory id doesnt exist', async () => {
+    const request: CreateProductRequest = {
+      name: 'string',
+      measurements: [
+        {
+          name: 'width',
+          value: '3',
+          unit: 'cm',
+        },
+      ],
+      accessory_ids: ['ab'],
+      categories: ['ab'],
+      code: 'ab',
+      norms: ['ab'],
+    };
+
+    findOneProductMockFn.mockImplementation(() => {
       throw new Error();
     });
 

@@ -50,6 +50,14 @@ export class ProductsService {
       }
     }
 
+    for (const accessoryId of productEntity.accessory_ids) {
+      try {
+        await this.productsRepository.findOne({ _id: accessoryId });
+      } catch (err) {
+        throw new BadRequestException("Accessory doesn't exist");
+      }
+    }
+
     const productSchema = ProductSchemaFactory.create(productEntity);
 
     const session = await this.productsRepository.startTransaction();
