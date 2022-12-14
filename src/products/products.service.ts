@@ -5,6 +5,7 @@ import { ProductEntity } from './entities/product.entity';
 import { ProductSchemaFactory } from './factories/product-schema.factory';
 import { ProductsRepository } from './products.repository';
 import { UnitsService } from '../units/units.service';
+import { CategoriesService } from '../categories/categories.service';
 
 @Injectable()
 export class ProductsService {
@@ -13,6 +14,7 @@ export class ProductsService {
   constructor(
     private readonly productsRepository: ProductsRepository,
     private readonly unitsService: UnitsService,
+    private readonly categoriesService: CategoriesService,
   ) {}
 
   async create({
@@ -37,6 +39,14 @@ export class ProductsService {
         await this.unitsService.findOne({ name: measure.unit });
       } catch (err) {
         throw new BadRequestException("Unit doesn't exist");
+      }
+    }
+
+    for (const category of productEntity.categories) {
+      try {
+        await this.categoriesService.findOne({ name: category });
+      } catch (err) {
+        throw new BadRequestException("Category doesn't exist");
       }
     }
 
