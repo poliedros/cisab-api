@@ -1,6 +1,6 @@
 # Cisab-api
 
-<a></a><img src="https://img.shields.io/github/workflow/status/poliedros/cisab-api/build%20images" alt="Github Actions" /></a>
+<a></a><img src="https://img.shields.io/github/actions/workflow/status/poliedros/cisab-api/docker-image.yml?branch=main" alt="Github Actions" /></a>
 <a>[![Coverage Status](https://coveralls.io/repos/github/poliedros/cisab-api/badge.svg?branch=main)](https://coveralls.io/github/poliedros/cisab-api?branch=main)</a>
 
 ## Description
