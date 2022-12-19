@@ -10,6 +10,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
@@ -17,6 +18,7 @@ import { Express } from 'express';
 import { ProductsService } from './products.service';
 import { CreateProductRequest } from './dto/request/create-product-request.dto';
 import { UpdateProductRequest } from './dto/request/update-product-request.dto';
+import { GetProductResponse } from './dto/response/get-product-response.dto';
 
 const TWO_MBs = 2097152;
 
@@ -35,8 +37,10 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(
+    @Query('category') categories: string[],
+  ): Promise<GetProductResponse[]> {
+    return this.productsService.findAll({ categories });
   }
 
   @Get(':id')

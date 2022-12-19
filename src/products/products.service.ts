@@ -76,7 +76,12 @@ export class ProductsService {
     }
   }
 
-  findAll() {
+  findAll({ categories }: { categories: string[] }) {
+    if (categories)
+      return this.productsRepository.find({
+        categories: { $all: categories },
+      });
+
     return this.productsRepository.find({});
   }
 
