@@ -13,6 +13,7 @@ describe('ProductsService', () => {
   const findOneProductMockFn = jest.fn();
   const createMockFn = jest.fn();
   const startTransactionMockFn = jest.fn();
+  const findProductMockFn = jest.fn();
 
   beforeEach(async () => {
     jest.resetAllMocks();
@@ -33,6 +34,7 @@ describe('ProductsService', () => {
             findOne: findOneProductMockFn,
             create: createMockFn,
             startTransaction: startTransactionMockFn,
+            find: findProductMockFn,
           },
         },
         { provide: UnitsService, useValue: { findOne: findOneUnitMockFn } },
@@ -252,5 +254,57 @@ describe('ProductsService', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(BadRequestException);
     }
+  });
+
+  it('should filter products with categories', async () => {
+    const products = [
+      {
+        name: 'string',
+        measurements: [
+          {
+            name: 'width',
+            value: '3',
+            unit: 'cm',
+          },
+        ],
+        accessory_ids: ['ab'],
+        categories: ['ab'],
+        code: 'ab',
+        norms: ['ab'],
+      },
+    ];
+
+    findProductMockFn.mockReturnValue(Promise.resolve(products));
+
+    const response = await service.findAll({ categories: ['abc'] });
+
+    expect(response[0].name).toEqual('string');
+    expect(response[0].categories.includes('ab')).toBeTruthy();
+  });
+
+  it('should return products without filter', async () => {
+    const products = [
+      {
+        name: 'string',
+        measurements: [
+          {
+            name: 'width',
+            value: '3',
+            unit: 'cm',
+          },
+        ],
+        accessory_ids: ['ab'],
+        categories: ['ab'],
+        code: 'ab',
+        norms: ['ab'],
+      },
+    ];
+
+    findProductMockFn.mockReturnValue(Promise.resolve(products));
+
+    const response = await service.findAll();
+
+    expect(response[0].name).toEqual('string');
+    expect(response[0].categories.includes('ab')).toBeTruthy();
   });
 });
