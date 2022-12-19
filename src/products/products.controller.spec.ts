@@ -8,6 +8,7 @@ describe('ProductsController', () => {
   let controller: ProductsController;
   const createMockFn = jest.fn();
   const findAllMockFn = jest.fn();
+  const findOneMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -15,7 +16,11 @@ describe('ProductsController', () => {
       providers: [
         {
           provide: ProductsService,
-          useValue: { create: createMockFn, findAll: findAllMockFn },
+          useValue: {
+            create: createMockFn,
+            findAll: findAllMockFn,
+            findOne: findOneMockFn,
+          },
         },
       ],
     }).compile();
@@ -83,5 +88,31 @@ describe('ProductsController', () => {
 
     expect(response[0].name).toEqual('string');
     expect(response[0].categories.includes('ab')).toBeTruthy();
+  });
+
+  it('should find one product', async () => {
+    findOneMockFn.mockReturnValue(
+      Promise.resolve({
+        _id: '6398b92f5eeb9d5a289e3411',
+        name: 'string',
+        measurements: [
+          {
+            name: 'width',
+            value: '3',
+            unit: 'cm',
+          },
+        ],
+        accessory_ids: ['ab'],
+        categories: ['ab'],
+        code: 'ab',
+        norms: ['ab'],
+      }),
+    );
+
+    const product = await controller.findOne('6398b92f5eeb9d5a289e3411');
+
+    expect(product._id).toEqual('6398b92f5eeb9d5a289e3411');
+    expect(product.name).toEqual('string');
+    expect(product.code).toEqual('ab');
   });
 });

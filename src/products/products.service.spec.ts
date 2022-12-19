@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from '../categories/categories.service';
 import { UnitsService } from '../units/units.service';
 import { CreateProductRequest } from './dto/request/create-product-request.dto';
+import { GetProductResponse } from './dto/response/get-product-response.dto';
 import { ProductsRepository } from './products.repository';
 import { ProductsService } from './products.service';
 
@@ -306,5 +307,29 @@ describe('ProductsService', () => {
 
     expect(response[0].name).toEqual('string');
     expect(response[0].categories.includes('ab')).toBeTruthy();
+  });
+
+  it('should return one product', async () => {
+    const request: GetProductResponse = {
+      name: 'string',
+      measurements: [
+        {
+          name: 'width',
+          value: '3',
+          unit: 'cm',
+        },
+      ],
+      accessory_ids: ['ab'],
+      categories: ['ab'],
+      code: 'ab',
+      norms: ['ab'],
+    };
+
+    findOneProductMockFn.mockReturnValue(Promise.resolve(request));
+
+    const response = await service.findOne('6398b92f5eeb9d5a289e3411');
+
+    expect(response.name).toEqual('string');
+    expect(response.code).toEqual('ab');
   });
 });
