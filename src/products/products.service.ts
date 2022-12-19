@@ -93,7 +93,7 @@ export class ProductsService {
     return `This action updates a #${id} product`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  remove(id: string) {
+    return this.productsRepository.deleteOne({ id });
   }
 }
