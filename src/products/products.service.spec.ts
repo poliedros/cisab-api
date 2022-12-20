@@ -15,6 +15,7 @@ describe('ProductsService', () => {
   const createMockFn = jest.fn();
   const startTransactionMockFn = jest.fn();
   const findProductMockFn = jest.fn();
+  const deleteOneMockFn = jest.fn();
 
   beforeEach(async () => {
     jest.resetAllMocks();
@@ -36,6 +37,7 @@ describe('ProductsService', () => {
             create: createMockFn,
             startTransaction: startTransactionMockFn,
             find: findProductMockFn,
+            deleteOne: deleteOneMockFn,
           },
         },
         { provide: UnitsService, useValue: { findOne: findOneUnitMockFn } },
@@ -331,5 +333,13 @@ describe('ProductsService', () => {
 
     expect(response.name).toEqual('string');
     expect(response.code).toEqual('ab');
+  });
+
+  it('should remove product', async () => {
+    deleteOneMockFn.mockReturnValue(Promise.resolve('deleteone'));
+
+    const res = await service.remove('ab');
+
+    expect(res).toEqual('deleteone');
   });
 });

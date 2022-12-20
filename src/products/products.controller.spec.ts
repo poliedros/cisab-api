@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateProductRequest } from './dto/request/create-product-request.dto';
 import { GetProductResponse } from './dto/response/get-product-response.dto';
@@ -9,6 +10,7 @@ describe('ProductsController', () => {
   const createMockFn = jest.fn();
   const findAllMockFn = jest.fn();
   const findOneMockFn = jest.fn();
+  const removeMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,6 +22,7 @@ describe('ProductsController', () => {
             create: createMockFn,
             findAll: findAllMockFn,
             findOne: findOneMockFn,
+            remove: removeMockFn,
           },
         },
       ],
@@ -62,6 +65,36 @@ describe('ProductsController', () => {
     expect(res._id).toEqual('635aece69b8ac8a5056875a2');
     expect(res.name).toEqual('string');
     expect(res.measurements.length).toEqual(1);
+  });
+
+  it('should throw error in product creation', async () => {
+    const request: CreateProductRequest = {
+      name: 'string',
+      measurements: [
+        {
+          name: 'width',
+          value: '3',
+          unit: 'cm',
+        },
+      ],
+      accessory_ids: ['ab'],
+      categories: ['ab'],
+      code: 'ab',
+      norms: ['ab'],
+    };
+
+    class TestException extends Error {}
+
+    createMockFn.mockImplementation(() => {
+      throw new TestException();
+    });
+
+    try {
+      await controller.create(request);
+      expect(true).toBeFalsy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(TestException);
+    }
   });
 
   it('should get products by categories', async () => {
@@ -114,5 +147,26 @@ describe('ProductsController', () => {
     expect(product._id).toEqual('6398b92f5eeb9d5a289e3411');
     expect(product.name).toEqual('string');
     expect(product.code).toEqual('ab');
+  });
+
+  it('should remove product', async () => {
+    removeMockFn.mockReturnValue(Promise.resolve('remove'));
+
+    const res = await controller.remove('ab');
+
+    expect(res).toEqual('remove');
+  });
+
+  it('should throw bad request in removing product', async () => {
+    removeMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await controller.remove('ab');
+      expect(true).toBeFalsy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
   });
 });

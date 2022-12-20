@@ -11,6 +11,7 @@ import {
   MaxFileSizeValidator,
   UseInterceptors,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
@@ -19,6 +20,7 @@ import { ProductsService } from './products.service';
 import { CreateProductRequest } from './dto/request/create-product-request.dto';
 import { UpdateProductRequest } from './dto/request/update-product-request.dto';
 import { GetProductResponse } from './dto/response/get-product-response.dto';
+import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 
 const TWO_MBs = 2097152;
 
@@ -57,8 +59,12 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  remove(@Param('id', ParseObjectIdPipe) id: string) {
+    try {
+      return this.productsService.remove(id);
+    } catch (err) {
+      throw new BadRequestException();
+    }
   }
 
   @UseInterceptors(FileInterceptor('file'))
