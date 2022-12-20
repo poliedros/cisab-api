@@ -94,6 +94,6 @@ export class ProductsService {
   }
 
   remove(id: string) {
-    return this.productsRepository.deleteOne({ id });
+    return this.productsRepository.deleteOne({ _id: id });
   }
 }

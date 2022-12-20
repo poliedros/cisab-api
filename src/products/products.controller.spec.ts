@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateProductRequest } from './dto/request/create-product-request.dto';
 import { GetProductResponse } from './dto/response/get-product-response.dto';
@@ -154,5 +155,18 @@ describe('ProductsController', () => {
     const res = await controller.remove('ab');
 
     expect(res).toEqual('remove');
+  });
+
+  it('should throw bad request in removing product', async () => {
+    removeMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await controller.remove('ab');
+      expect(true).toBeFalsy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
   });
 });
