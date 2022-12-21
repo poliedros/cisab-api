@@ -86,7 +86,7 @@ export class ProductsService {
   }
 
   findOne(id: string) {
-    return this.productsRepository.findOne({ id });
+    return this.productsRepository.findOne({ _id: id });
   }
 
   update(id: number, updateProductDto: UpdateProductRequest) {
