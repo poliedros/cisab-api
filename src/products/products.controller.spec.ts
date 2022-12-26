@@ -112,6 +112,7 @@ describe('ProductsController', () => {
         categories: ['ab'],
         code: 'ab',
         norms: ['ab'],
+        photo_url: 'https://a1',
       },
     ];
 

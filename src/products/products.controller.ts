@@ -93,7 +93,7 @@ export class ProductsController {
   @Roles(Role.Cisab)
   @UseInterceptors(FileInterceptor('file'))
   @Post(':id/image')
-  uploadImage(
+  async uploadImage(
     @Param('id') id: string,
     @UploadedFile(
       new ParseFilePipe({
@@ -102,6 +102,8 @@ export class ProductsController {
     )
     file: Express.Multer.File,
   ) {
+    await this.productsService.uploadImage(id, file);
+
     return `File size: ${file.size} bytes`;
   }
 }
