@@ -325,6 +325,7 @@ describe('ProductsService', () => {
       categories: ['ab'],
       code: 'ab',
       norms: ['ab'],
+      photo_url: 'https://ab1',
     };
 
     findOneProductMockFn.mockReturnValue(Promise.resolve(request));

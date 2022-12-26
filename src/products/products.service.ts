@@ -96,4 +96,12 @@ export class ProductsService {
   remove(id: string) {
     return this.productsRepository.deleteOne({ _id: id });
   }
+
+  async uploadImage(id: string, file: Express.Multer.File) {
+    const product = await this.productsRepository.findOne({ _id: id });
+
+    product.photo_url = 'https://i.ibb.co/6tmJqXm/SEM-IMAGEM.png';
+
+    await this.productsRepository.upsert({ _id: id }, product);
+  }
 }

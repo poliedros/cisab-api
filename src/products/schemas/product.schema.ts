@@ -29,6 +29,9 @@ export class Product extends AbstractDocument {
 
   @Prop()
   categories: string[];
+
+  @Prop()
+  photo_url: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
