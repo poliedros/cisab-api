@@ -17,7 +17,11 @@ export class DemandsController {
 
   @Post()
   create(@Body() createDemandDto: CreateDemandRequest) {
-    return this.demandsService.create(createDemandDto);
+    try {
+      return this.demandsService.create(createDemandDto);
+    } catch (err) {
+      throw err;
+    }
   }
 
   @Get()
