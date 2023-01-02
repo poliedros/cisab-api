@@ -12,6 +12,9 @@ export class DemandEntity {
   state: DemandState;
 
   open(): boolean {
+    if (this.state === DemandState.blocked || this.state === DemandState.draft)
+      return false;
+
     const today = new Date();
     if (this.start_date < today && today < this.end_date) return true;
 
