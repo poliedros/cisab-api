@@ -1,1 +1,1 @@
-export class Demand {}
+export class DemandEntity {}

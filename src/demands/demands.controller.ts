@@ -1,14 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { DemandsService } from './demands.service';
-import { CreateDemandDto } from './dto/create-demand.dto';
-import { UpdateDemandDto } from './dto/update-demand.dto';
+import { CreateDemandRequest } from './dto/request/create-demand-request.dto';
+import { UpdateDemandRequest } from './dto/request/update-demand-request.dto';
 
 @Controller('demands')
 export class DemandsController {
   constructor(private readonly demandsService: DemandsService) {}
 
   @Post()
-  create(@Body() createDemandDto: CreateDemandDto) {
+  create(@Body() createDemandDto: CreateDemandRequest) {
     return this.demandsService.create(createDemandDto);
   }
 
@@ -23,7 +31,10 @@ export class DemandsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDemandDto: UpdateDemandDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateDemandDto: UpdateDemandRequest,
+  ) {
     return this.demandsService.update(+id, updateDemandDto);
   }
 
