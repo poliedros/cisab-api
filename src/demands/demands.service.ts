@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DemandsRepository } from './demands.repository';
-import { CreateDemandRequest } from './dto/request/create-demand-request.dto';
+import {
+  CreateDemandRequest,
+  CreateDemandStateEnum,
+} from './dto/request/create-demand-request.dto';
 import { UpdateDemandRequest } from './dto/request/update-demand-request.dto';
 import { DemandState } from './enums/demand-state.enum';
 import { Demand } from './schemas/demand.schema';
@@ -19,7 +22,8 @@ export class DemandsService {
       state: null,
     };
 
-    if (createDemandDto.draft) demand.state = DemandState.draft;
+    if (createDemandDto.state == CreateDemandStateEnum.draft)
+      demand.state = DemandState.draft;
 
     return this.demandsRepository.create(demand);
   }
