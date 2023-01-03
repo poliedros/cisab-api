@@ -2,6 +2,10 @@ import { DemandState } from '../enums/demand-state.enum';
 import { DemandEntity } from './demand.entity';
 
 describe('demand entity', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   it('should return that it is open', () => {
     const today = new Date();
     const tomorrow = new Date(today);
