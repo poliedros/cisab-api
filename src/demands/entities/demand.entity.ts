@@ -9,10 +9,13 @@ export class DemandEntity {
 
   product_ids: [];
 
-  state: DemandState;
+  state: DemandState | undefined;
 
   open(): boolean {
-    if (this.state === DemandState.blocked || this.state === DemandState.draft)
+    if (
+      this.state &&
+      (this.state === DemandState.blocked || this.state === DemandState.draft)
+    )
       return false;
 
     const today = new Date();
