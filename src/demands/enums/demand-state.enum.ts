@@ -1,4 +1,4 @@
 export enum DemandState {
-  draft,
-  blocked,
+  draft = 'DRAFT',
+  blocked = 'BLOCKED',
 }

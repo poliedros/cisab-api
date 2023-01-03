@@ -19,7 +19,7 @@ export class Demand extends AbstractDocument {
   product_ids: [];
 
   @Prop()
-  state: DemandState;
+  state: DemandState | undefined;
 }
 
 export const DemandSchema = SchemaFactory.createForClass(Demand);
