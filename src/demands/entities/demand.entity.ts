@@ -12,6 +12,7 @@ export class DemandEntity {
   state: DemandState | undefined;
 
   open(): boolean {
+    console.log(this.state);
     if (
       this.state &&
       (this.state === DemandState.blocked || this.state === DemandState.draft)
@@ -19,7 +20,7 @@ export class DemandEntity {
       return false;
 
     const today = new Date();
-    if (this.start_date < today && today < this.end_date) return true;
+    if (this.start_date <= today && today < this.end_date) return true;
 
     return false;
   }
