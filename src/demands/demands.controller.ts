@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { DemandsService } from './demands.service';
 import { CreateDemandRequest } from './dto/request/create-demand-request.dto';
@@ -25,8 +26,18 @@ export class DemandsController {
   }
 
   @Get()
-  findAll() {
-    return this.demandsService.findAll();
+  findAll(
+    @Query('start_date') start_date: string,
+    @Query('end_date') end_date: string,
+    @Query('name') name: string,
+    @Query('state') states: string[],
+  ) {
+    return this.demandsService.findAll({
+      start_date,
+      end_date,
+      name,
+      states,
+    });
   }
 
   @Get(':id')

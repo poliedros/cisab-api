@@ -24,8 +24,25 @@ export class DemandsService {
     return this.demandsRepository.create(demand);
   }
 
-  findAll() {
-    return `This action returns all demands`;
+  findAll({
+    name,
+    start_date,
+    end_date,
+    states,
+  }: {
+    name: string;
+    start_date: string;
+    end_date: string;
+    states: string[];
+  }) {
+    const filter: any = {};
+
+    if (name) filter.name = name;
+    if (start_date) filter.start_date = { $gte: start_date };
+    if (end_date) filter.end_date = { $lte: end_date };
+    if (states) filter.state = { $all: states };
+
+    return this.demandsRepository.find(filter);
   }
 
   findOne(id: number) {
