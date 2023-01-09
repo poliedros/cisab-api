@@ -20,6 +20,9 @@ export class Demand extends AbstractDocument {
 
   @Prop()
   state: DemandState | undefined;
+
+  @Prop()
+  created_on: Date;
 }
 
 export const DemandSchema = SchemaFactory.createForClass(Demand);

@@ -7,6 +7,8 @@ import { DemandState } from './enums/demand-state.enum';
 describe('DemandsController', () => {
   let controller: DemandsController;
   const createMockFn = jest.fn();
+  const findAllMockFn = jest.fn();
+  const findOneMockFn = jest.fn();
 
   class TestError extends Error {}
 
@@ -18,6 +20,8 @@ describe('DemandsController', () => {
           provide: DemandsService,
           useValue: {
             create: createMockFn,
+            findAll: findAllMockFn,
+            findOne: findOneMockFn,
           },
         },
       ],
@@ -83,5 +87,27 @@ describe('DemandsController', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(TestError);
     }
+  });
+
+  it('should find demands with filters', async () => {
+    findAllMockFn.mockReturnValue(Promise.resolve([{ name: 'demand 01-1' }]));
+
+    const res = await controller.findAll(
+      '01-01-2022',
+      '01-01-2023',
+      'demand 01-1',
+      [],
+      undefined,
+    );
+
+    expect(res[0].name).toEqual('demand 01-1');
+  });
+
+  it('should find one demand', async () => {
+    findOneMockFn.mockReturnValue(Promise.resolve({ name: 'demand 01-1' }));
+
+    const res = await controller.findOne('123abc');
+
+    expect(res.name).toEqual('demand 01-1');
   });
 });

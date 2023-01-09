@@ -17,6 +17,7 @@ export class DemandsService {
       end_date: createDemandDto.end_date,
       product_ids: createDemandDto.product_ids,
       state: null,
+      created_on: new Date(),
     };
 
     if (createDemandDto.draft) demand.state = DemandState.draft;
@@ -24,12 +25,32 @@ export class DemandsService {
     return this.demandsRepository.create(demand);
   }
 
-  findAll() {
-    return `This action returns all demands`;
+  findAll({
+    name,
+    start_date,
+    end_date,
+    states,
+    page,
+  }: {
+    name: string;
+    start_date: string;
+    end_date: string;
+    states: string[];
+    page: number;
+  }) {
+    const filter: any = {};
+
+    if (name) filter.name = name;
+    if (start_date) filter.start_date = { $gte: start_date };
+    if (end_date) filter.end_date = { $lte: end_date };
+    if (states) filter.state = { $all: states };
+    if (!page) page = 0;
+
+    return this.demandsRepository.paginate(filter, page);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} demand`;
+  findOne(id: string) {
+    return this.demandsRepository.findOne({ _id: id });
   }
 
   update(id: number, updateDemandDto: UpdateDemandRequest) {
