@@ -53,11 +53,11 @@ export class DemandsService {
     return this.demandsRepository.findOne({ _id: id });
   }
 
-  update(id: number, updateDemandDto: UpdateDemandRequest) {
-    return `This action updates a #${id} demand`;
+  update(id: string, updateDemandDto: UpdateDemandRequest) {
+    return this.demandsRepository.upsert({ _id: id }, updateDemandDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} demand`;
+  remove(id: string) {
+    return this.demandsRepository.deleteOne({ _id: id });
   }
 }

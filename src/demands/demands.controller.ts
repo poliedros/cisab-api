@@ -52,11 +52,18 @@ export class DemandsController {
     @Param('id') id: string,
     @Body() updateDemandDto: UpdateDemandRequest,
   ) {
-    return this.demandsService.update(+id, updateDemandDto);
+    const updateRequest: UpdateDemandRequest = {
+      name: updateDemandDto.name,
+      start_date: updateDemandDto.start_date,
+      end_date: updateDemandDto.end_date,
+      product_ids: updateDemandDto.product_ids,
+    };
+
+    return this.demandsService.update(id, updateRequest);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.demandsService.remove(+id);
+    return this.demandsService.remove(id);
   }
 }
