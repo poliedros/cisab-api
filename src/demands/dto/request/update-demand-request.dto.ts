@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateDemandRequest } from './create-demand-request.dto';
-
-export class UpdateDemandRequest extends PartialType(CreateDemandRequest) {}
+export class UpdateDemandRequest {
+  name: string;
+  start_date: Date;
+  end_date: Date;
+  product_ids: [];
+}
