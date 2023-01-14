@@ -24,7 +24,7 @@ export class DemandsRepository extends AbstractRepository<Demand> {
           lean: true,
         },
       )
-      .sort('created-on')
+      .sort('created_on')
       .skip(page * 100)
       .limit(100);
   }

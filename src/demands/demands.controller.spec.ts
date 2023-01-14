@@ -2,13 +2,23 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DemandsController } from './demands.controller';
 import { DemandsService } from './demands.service';
 import { CreateDemandRequest } from './dto/request/create-demand-request.dto';
+import { UpdateDemandRequest } from './dto/request/update-demand-request.dto';
 import { DemandState } from './enums/demand-state.enum';
+
+function getTodayAndTomorrow() {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return [today, tomorrow];
+}
 
 describe('DemandsController', () => {
   let controller: DemandsController;
   const createMockFn = jest.fn();
   const findAllMockFn = jest.fn();
   const findOneMockFn = jest.fn();
+  const updateMockFn = jest.fn();
+  const removeMockFn = jest.fn();
 
   class TestError extends Error {}
 
@@ -22,6 +32,8 @@ describe('DemandsController', () => {
             create: createMockFn,
             findAll: findAllMockFn,
             findOne: findOneMockFn,
+            update: updateMockFn,
+            remove: removeMockFn,
           },
         },
       ],
@@ -109,5 +121,32 @@ describe('DemandsController', () => {
     const res = await controller.findOne('123abc');
 
     expect(res.name).toEqual('demand 01-1');
+  });
+
+  it('should update demand', async () => {
+    const [today, tomorrow] = getTodayAndTomorrow();
+
+    const request: UpdateDemandRequest = {
+      name: 'updated demand 01-1',
+      start_date: today,
+      end_date: tomorrow,
+      product_ids: [],
+    };
+
+    updateMockFn.mockReturnValue({
+      name: 'updated demand 01-1',
+    });
+
+    const response = await controller.update('id', request);
+
+    expect(response.name).toEqual('updated demand 01-1');
+  });
+
+  it('should remove demand', async () => {
+    removeMockFn.mockReturnValue('id');
+
+    const res = await controller.remove('id');
+
+    expect(res).toEqual('id');
   });
 });

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DemandsRepository } from './demands.repository';
 import { DemandsService } from './demands.service';
 import { CreateDemandRequest } from './dto/request/create-demand-request.dto';
+import { UpdateDemandRequest } from './dto/request/update-demand-request.dto';
 import { DemandState } from './enums/demand-state.enum';
 
 function getTodayAndTomorrow() {
@@ -16,6 +17,8 @@ describe('DemandsService', () => {
   const createDemandMockFn = jest.fn();
   const paginateDemandMockFn = jest.fn();
   const findOneDemandMockFn = jest.fn();
+  const upsertMockFn = jest.fn();
+  const deleteOneMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,6 +30,8 @@ describe('DemandsService', () => {
             create: createDemandMockFn,
             paginate: paginateDemandMockFn,
             findOne: findOneDemandMockFn,
+            upsert: upsertMockFn,
+            deleteOne: deleteOneMockFn,
           },
         },
       ],
@@ -92,5 +97,30 @@ describe('DemandsService', () => {
     const demand = await service.findOne('1ab2');
 
     expect(demand.name).toEqual('demand 01-1');
+  });
+
+  it('should update demand', async () => {
+    const [today, tomorrow] = getTodayAndTomorrow();
+
+    const request: UpdateDemandRequest = {
+      name: 'updated demand 01-1',
+      start_date: today,
+      end_date: tomorrow,
+      product_ids: [],
+    };
+
+    upsertMockFn.mockReturnValue('upsert');
+
+    const res = await service.update('id', request);
+
+    expect(res).toEqual('upsert');
+  });
+
+  it('should remove demand', async () => {
+    deleteOneMockFn.mockReturnValue('remove');
+
+    const res = await service.remove('id');
+
+    expect(res).toEqual('remove');
   });
 });
