@@ -1,4 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { CountiesRepository } from './counties.repository';
 import { CreateCountyRequest } from './dto/request/create-county-request.dto';
@@ -27,6 +32,18 @@ export class CountiesService {
   async create(createCountyDto: CreateCountyRequest) {
     const session = await this.countyRepository.startTransaction();
     try {
+      // check county already exists
+      const countyExist = await this.countyRepository.findOne({
+        name: createCountyDto.name,
+      });
+
+      if (countyExist) {
+        this.logger.error(
+          `tried to save county with name ${createCountyDto.name}`,
+        );
+        throw new ConflictException();
+      }
+
       const county = await this.countyRepository.create(createCountyDto, {
         session,
       });

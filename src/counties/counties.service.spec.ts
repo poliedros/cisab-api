@@ -12,6 +12,7 @@ import { CreateCountyRequest } from './dto/request/create-county-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { UpdateCountyRequest } from './dto/request/update-county-request.dto';
 import { County } from './schemas/county.schema';
+import { ConflictException } from '@nestjs/common';
 
 function buildCounty(): CreateCountyRequest {
   return {
@@ -381,5 +382,73 @@ describe('CountiesService', () => {
     const res = await service.update(countyId, updateCountyRequest);
 
     expect(res.county_id).toEqual(updatedCountyIdStub);
+  });
+
+  it('shouldnt create county with the same name', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    const county: County = {
+      _id: idStub,
+      name: 'updated county',
+      info: {
+        anniversary: '01/01/1920',
+        distanceToCisab: '2',
+        mayor: 'nivald',
+        note: 'notes',
+        population: '343',
+        flag: 'url',
+      },
+      contact: {
+        address: '123 address',
+        email: 'email@email.com',
+        phone: '12345678',
+        note: 'notes',
+        socialMedia: 'facebbok',
+        speakTo: 'john',
+        zipCode: 'f32',
+      },
+    };
+
+    findOneMockFn.mockReturnValue(Promise.resolve(county));
+
+    try {
+      await service.create({} as CreateCountyRequest);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ConflictException);
+    }
+  });
+
+  it('should find one county', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+
+    const county: County = {
+      _id: idStub,
+      name: 'updated county',
+      info: {
+        anniversary: '01/01/1920',
+        distanceToCisab: '2',
+        mayor: 'nivald',
+        note: 'notes',
+        population: '343',
+        flag: 'url',
+      },
+      contact: {
+        address: '123 address',
+        email: 'email@email.com',
+        phone: '12345678',
+        note: 'notes',
+        socialMedia: 'facebbok',
+        speakTo: 'john',
+        zipCode: 'f32',
+      },
+    };
+
+    findOneMockFn.mockReturnValue(Promise.resolve(county));
+
+    const response = await service.findOne(idString);
+
+    expect(response.name).toEqual(county.name);
   });
 });
