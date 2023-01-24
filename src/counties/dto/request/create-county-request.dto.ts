@@ -61,6 +61,5 @@ export class CreateCountyRequest {
   contact: ContactDto;
 
   @ApiProperty()
-  @IsString()
   county_id?: Types.ObjectId;
 }
