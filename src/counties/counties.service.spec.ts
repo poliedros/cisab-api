@@ -77,6 +77,7 @@ describe('CountiesService', () => {
   let service: CountiesService;
   const createMockFn = jest.fn();
   const findOneMockFn = jest.fn();
+  const findOneOrReturnUndefinedMockFn = jest.fn();
   const findMockFn = jest.fn();
   const upsertMockFn = jest.fn();
   const findOneAndUpdateMockFn = jest.fn();
@@ -104,6 +105,7 @@ describe('CountiesService', () => {
       deleteOne: deleteOneMockFn,
       startTransaction: startTransactionMockFn,
       findOneAndUpdate: findOneAndUpdateMockFn,
+      findOneOrReturnUndefined: findOneOrReturnUndefinedMockFn,
     };
 
     const usersServiceMockValue = {
@@ -410,7 +412,7 @@ describe('CountiesService', () => {
       },
     };
 
-    findOneMockFn.mockReturnValue(Promise.resolve(county));
+    findOneOrReturnUndefinedMockFn.mockReturnValue(Promise.resolve(county));
 
     try {
       await service.create({} as CreateCountyRequest);

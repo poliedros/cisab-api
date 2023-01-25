@@ -42,6 +42,14 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return document;
   }
 
+  async findOneOrReturnUndefined(
+    filterQuery: FilterQuery<TDocument>,
+  ): Promise<TDocument> {
+    const document = await this.model.findOne(filterQuery, {}, { lean: true });
+
+    return document;
+  }
+
   // TODO: options (session) as parameter
   async findOneAndUpdate(
     filterQuery: FilterQuery<TDocument>,

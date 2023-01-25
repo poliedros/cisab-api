@@ -33,7 +33,7 @@ export class CountiesService {
     const session = await this.countyRepository.startTransaction();
     try {
       // check county already exists
-      const countyExist = await this.countyRepository.findOne({
+      const countyExist = await this.countyRepository.findOneOrReturnUndefined({
         name: createCountyDto.name,
       });
 
