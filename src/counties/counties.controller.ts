@@ -44,7 +44,7 @@ export class CountiesController {
     try {
       return await this.countiesService.create(createCountyDto);
     } catch (err) {
-      throw new BadRequestException('Can`t save counties now');
+      throw err;
     }
   }
 

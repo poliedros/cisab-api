@@ -137,15 +137,16 @@ describe('CountiesController', () => {
   });
 
   it('should throw bad request in creation if service throws an error', async () => {
+    class TestError extends Error {}
     createMockFn.mockImplementation(() => {
-      throw new Error();
+      throw new TestError();
     });
 
     try {
       await controller.create({} as CreateCountyRequest);
       expect(false).toBeTruthy();
     } catch (err) {
-      expect(err).toBeInstanceOf(BadRequestException);
+      expect(err).toBeInstanceOf(TestError);
     }
   });
 
