@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ProductsService } from '../products/products.service';
 import { DemandsRepository } from './demands.repository';
 import { DemandsService } from './demands.service';
 import { CreateDemandRequest } from './dto/request/create-demand-request.dto';
@@ -19,6 +20,7 @@ describe('DemandsService', () => {
   const findOneDemandMockFn = jest.fn();
   const upsertMockFn = jest.fn();
   const deleteOneMockFn = jest.fn();
+  const findAllProductsMockfn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,6 +34,12 @@ describe('DemandsService', () => {
             findOne: findOneDemandMockFn,
             upsert: upsertMockFn,
             deleteOne: deleteOneMockFn,
+          },
+        },
+        {
+          provide: ProductsService,
+          useValue: {
+            findAll: findAllProductsMockfn,
           },
         },
       ],

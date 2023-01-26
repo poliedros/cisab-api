@@ -279,7 +279,40 @@ describe('ProductsService', () => {
 
     findProductMockFn.mockReturnValue(Promise.resolve(products));
 
-    const response = await service.findAll({ categories: ['abc'] });
+    const response = await service.findAll({
+      categories: ['abc'],
+      ids: undefined,
+    });
+
+    expect(response[0].name).toEqual('string');
+    expect(response[0].categories.includes('ab')).toBeTruthy();
+  });
+
+  it('should filter products with ids', async () => {
+    const products = [
+      {
+        _id: '1',
+        name: 'string',
+        measurements: [
+          {
+            name: 'width',
+            value: '3',
+            unit: 'cm',
+          },
+        ],
+        accessory_ids: ['ab'],
+        categories: ['ab'],
+        code: 'ab',
+        norms: ['ab'],
+      },
+    ];
+
+    findProductMockFn.mockReturnValue(Promise.resolve(products));
+
+    const response = await service.findAll({
+      categories: undefined,
+      ids: ['1'],
+    });
 
     expect(response[0].name).toEqual('string');
     expect(response[0].categories.includes('ab')).toBeTruthy();

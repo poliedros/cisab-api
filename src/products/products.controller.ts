@@ -56,7 +56,7 @@ export class ProductsController {
   findAll(
     @Query('category') categories: string[],
   ): Promise<GetProductResponse[]> {
-    return this.productsService.findAll({ categories });
+    return this.productsService.findAll({ categories, ids: undefined });
   }
 
   @ApiOperation({ summary: 'Find one product', description: 'forbidden' })

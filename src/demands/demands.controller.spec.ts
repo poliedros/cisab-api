@@ -19,6 +19,7 @@ describe('DemandsController', () => {
   const findOneMockFn = jest.fn();
   const updateMockFn = jest.fn();
   const removeMockFn = jest.fn();
+  const findAllWithProductslMockFn = jest.fn();
 
   class TestError extends Error {}
 
@@ -34,6 +35,7 @@ describe('DemandsController', () => {
             findOne: findOneMockFn,
             update: updateMockFn,
             remove: removeMockFn,
+            findAllWithProducts: findAllWithProductslMockFn,
           },
         },
       ],
@@ -102,7 +104,9 @@ describe('DemandsController', () => {
   });
 
   it('should find demands with filters', async () => {
-    findAllMockFn.mockReturnValue(Promise.resolve([{ name: 'demand 01-1' }]));
+    findAllWithProductslMockFn.mockReturnValue(
+      Promise.resolve([{ name: 'demand 01-1' }]),
+    );
 
     const res = await controller.findAll(
       '01-01-2022',
