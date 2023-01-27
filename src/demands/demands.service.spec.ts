@@ -97,6 +97,46 @@ describe('DemandsService', () => {
     expect(demands[0].name).toEqual('demand 01-1');
   });
 
+  it('should find demands with products', async () => {
+    const [today, tomorrow] = getTodayAndTomorrow();
+    const demandName = 'demand 01-1';
+
+    paginateDemandMockFn.mockReturnValue(
+      Promise.resolve([
+        {
+          _id: 'h2',
+          name: demandName,
+          start_date: today,
+          end_date: tomorrow,
+          product_ids: ['1'],
+          created_on: today,
+        },
+      ]),
+    );
+
+    findAllProductsMockfn.mockReturnValue(
+      Promise.resolve([
+        {
+          _id: '1',
+        },
+      ]),
+    );
+
+    const demands = await service.findAllWithProducts({
+      name: 'name',
+      start_date: today.toString(),
+      end_date: tomorrow.toString(),
+      states: [],
+      page: 0,
+    });
+
+    expect(demands[0].name).toEqual(demandName);
+    expect(demands[0].start_date).toEqual(today);
+    expect(demands[0].end_date).toEqual(tomorrow);
+    expect(demands[0].products.length).toBeGreaterThan(0);
+    expect(demands[0].created_on).toEqual(today);
+  });
+
   it('should find demand', async () => {
     findOneDemandMockFn.mockReturnValue(
       Promise.resolve({ name: 'demand 01-1' }),

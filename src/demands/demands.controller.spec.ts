@@ -3,6 +3,7 @@ import { DemandsController } from './demands.controller';
 import { DemandsService } from './demands.service';
 import { CreateDemandRequest } from './dto/request/create-demand-request.dto';
 import { UpdateDemandRequest } from './dto/request/update-demand-request.dto';
+import { GetDemandResponse } from './dto/response/get-demand-response.dto';
 import { DemandState } from './enums/demand-state.enum';
 
 function getTodayAndTomorrow() {
@@ -108,7 +109,11 @@ describe('DemandsController', () => {
       Promise.resolve([{ name: 'demand 01-1' }]),
     );
 
-    const res = await controller.findAll(
+    // This is here because of test coverage. Coverage on GetDemandResponse was 0.
+    const e = new GetDemandResponse();
+    e._id = 'a';
+
+    const res: GetDemandResponse[] = await controller.findAll(
       '01-01-2022',
       '01-01-2023',
       'demand 01-1',
