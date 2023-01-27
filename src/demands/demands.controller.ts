@@ -17,6 +17,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { DemandsService } from './demands.service';
 import { CreateDemandRequest } from './dto/request/create-demand-request.dto';
 import { UpdateDemandRequest } from './dto/request/update-demand-request.dto';
+import { GetDemandResponse } from './dto/response/get-demand-response.dto';
 
 @ApiTags('demands')
 @Controller('demands')
@@ -38,14 +39,14 @@ export class DemandsController {
 
   @ApiOperation({ summary: 'Get all demands', description: 'forbidden' })
   @Get()
-  findAll(
+  async findAll(
     @Query('start_date') start_date: string,
     @Query('end_date') end_date: string,
     @Query('name') name: string,
     @Query('state') states: string[],
     @Query('page') page: string,
-  ) {
-    return this.demandsService.findAll({
+  ): Promise<GetDemandResponse[]> {
+    return this.demandsService.findAllWithProducts({
       start_date,
       end_date,
       name,

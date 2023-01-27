@@ -16,7 +16,7 @@ export class Demand extends AbstractDocument {
   end_date: Date;
 
   @Prop()
-  product_ids: [];
+  product_ids: string[];
 
   @Prop()
   state: DemandState | undefined;
