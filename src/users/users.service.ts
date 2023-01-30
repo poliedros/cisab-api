@@ -141,4 +141,20 @@ export class UsersService {
       throw err;
     }
   }
+
+  async removeMany(ids: string[]) {
+    try {
+      const res = await this.usersRepository.deleteMany({
+        _id: { $in: ids },
+      });
+
+      // await session.commitTransaction();
+      this.logger.log(`user ids: ${ids} removed`);
+
+      return res;
+    } catch (err) {
+      // await session.abortTransaction();
+      throw err;
+    }
+  }
 }

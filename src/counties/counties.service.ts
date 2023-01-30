@@ -97,9 +97,25 @@ export class CountiesService {
     return this.countyRepository.findOneAndUpdate({ _id: id }, county);
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     this.logger.log(`county id: ${id} will be deleted...`);
-    return this.countyRepository.deleteOne({ _id: id });
+    const session = await this.countyRepository.startTransaction();
+    try {
+      const users = await this.usersService.find({
+        'properties.county_id': id,
+      });
+      const usersIds = users.map((user) => user._id.toString());
+
+      await this.usersService.removeMany(usersIds);
+
+      await this.countyRepository.deleteOne({ _id: id });
+      this.logger.log(`county id: ${id} has been deleted...`);
+
+      await session.commitTransaction();
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    }
   }
 
   async createCountyUser(
