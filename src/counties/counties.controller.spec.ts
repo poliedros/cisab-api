@@ -122,15 +122,15 @@ describe('CountiesController', () => {
 
     findOneMockFn.mockReturnValue(county);
 
-    const response = await controller.findOne(idString);
+    const response = await controller.findOne(idStub);
 
     expect(response._id).toEqual(idStub);
   });
 
   it('should throw bad request with invalid id', async () => {
     try {
-      const idStub = '63599affb4013501084091';
-      await controller.findOne(idStub);
+      const idString = '63599affb4013501084091';
+      await controller.findOne(idString);
     } catch (e: any) {
       expect(e).toBeInstanceOf(BadRequestException);
     }
@@ -152,9 +152,9 @@ describe('CountiesController', () => {
 
   it('should throw not when finding one found with valid id', async () => {
     try {
-      const idStub = '63599affb40135010840911b';
+      const idString = '63599affb4013501084091';
       findOneMockFn.mockReturnValue(undefined);
-      await controller.findOne(idStub);
+      await controller.findOne(idString);
     } catch (e: any) {
       expect(e).toBeInstanceOf(NotFoundException);
     }
@@ -167,14 +167,14 @@ describe('CountiesController', () => {
 
     const county = { _id: idStub, ...buildCounty() };
 
-    const response = await controller.update(idString, county);
+    const response = await controller.update(idStub, county);
 
     expect(response).toBeDefined();
   });
 
   it('should remove county with valid id', async () => {
     updateMockFn.mockReturnValue(Promise.resolve(true));
-    const idString = '63599affb40135010840911b';
+    const idString = '63599affb4013501084091';
     removeMockFn.mockReturnValue(Promise.resolve(true));
 
     const response = await controller.remove(idString);
@@ -185,8 +185,7 @@ describe('CountiesController', () => {
   it('should throw bad request when updating with invalid id', async () => {
     try {
       const idString = '63599affb4013501084091';
-      const idStub = new Types.ObjectId('63599affb40135010840911b');
-      const county = { _id: idStub, ...buildCounty() };
+      const county = { _id: idString, ...buildCounty() };
       await controller.update(idString, county);
     } catch (err) {
       expect(err).toBeInstanceOf(BadRequestException);
@@ -195,7 +194,7 @@ describe('CountiesController', () => {
 
   it('should throw bad request when deleting with invalid id', async () => {
     try {
-      const idString = '63599affb40135010840911';
+      const idString = '63599affb4013501084091';
       await controller.remove(idString);
     } catch (err) {
       expect(err).toBeInstanceOf(BadRequestException);
@@ -218,7 +217,9 @@ describe('CountiesController', () => {
       Promise.resolve({ _id: '12', ...req }),
     );
 
-    const response = await controller.createCountyUser('1', req);
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+    const response = await controller.createCountyUser(idStub, req);
 
     expect(response._id).toEqual('12');
     expect(response.properties['county_id']).toEqual('1');
@@ -236,9 +237,9 @@ describe('CountiesController', () => {
     };
 
     findCountyUsersMockFn.mockReturnValue(Promise.resolve([countyUser]));
-    const response = await controller.findCountyUser(
-      '6363c2f363e9deb5a8e1c672',
-    );
+    const idString = '6363c2f363e9deb5a8e1c672';
+    const idStub = new Types.ObjectId(idString);
+    const response = await controller.findCountyUser(idStub);
 
     expect(response[0]._id).toEqual('6363d75a63e9deb5a8e1c6cd');
     expect(response[0].email).toEqual('vicosa@cisab.com');
@@ -263,10 +264,9 @@ describe('CountiesController', () => {
 
     updateCountyUserMockFn.mockReturnValue(Promise.resolve(countyUser));
 
-    const response = await controller.updateCountyUser(
-      '6363d75a63e9deb3a9e1c2cj',
-      countyUser,
-    );
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+    const response = await controller.updateCountyUser(idStub, countyUser);
 
     expect(response._id).toEqual(id);
     expect(response.email).toEqual('vicosa2@cisab.com');
@@ -278,7 +278,9 @@ describe('CountiesController', () => {
 
   it('should remove county user', async () => {
     removeCountyUserMockFn.mockReturnValue(Promise.resolve(true));
-    const res = await controller.removeCountyUser('6363c2f363e9deb5a8e1c672');
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+    const res = await controller.removeCountyUser(idStub);
 
     expect(res).toBeDefined();
   });
