@@ -95,6 +95,7 @@ describe('CountiesService', () => {
   );
 
   const createCountyUserMockFn = jest.fn();
+  const removeManyUsersMockFn = jest.fn();
 
   beforeEach(async () => {
     const countyRepositoryMocksValue = {
@@ -114,6 +115,7 @@ describe('CountiesService', () => {
       update: updateCountyUserMockFn,
       remove: removeCountyUserMockFn,
       findOne: findOneCountyUserMock,
+      removeMany: removeManyUsersMockFn,
     };
 
     service = await buildService(
@@ -452,5 +454,25 @@ describe('CountiesService', () => {
     const response = await service.findOne(idString);
 
     expect(response.name).toEqual(county.name);
+  });
+
+  it('should remove all users from county', async () => {
+    findCountyUserMockFn.mockReturnValue(Promise.resolve([{ _id: '1' }]));
+
+    await service.remove('abc');
+    expect(true).toBeTruthy();
+  });
+
+  it('should throw in removing all users from county', async () => {
+    class TestError extends Error {}
+    findCountyUserMockFn.mockImplementation(() => {
+      throw new TestError();
+    });
+
+    try {
+      await service.remove('abc');
+    } catch (err) {
+      expect(err).toBeInstanceOf(TestError);
+    }
   });
 });
