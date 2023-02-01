@@ -66,8 +66,8 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Get(':id')
-  async findOne(@Param('id', ParseObjectIdPipe) id: string) {
-    const county = await this.countiesService.findOne(id);
+  async findOne(@Param('id', ParseObjectIdPipe) id: Types.ObjectId | string) {
+    const county = await this.countiesService.findOne(id.toString());
 
     if (county) return county;
 
@@ -81,18 +81,22 @@ export class CountiesController {
   @Roles(Role.Cisab)
   @Put(':id')
   update(
-    @Param('id', ParseObjectIdPipe) id: string,
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId | string,
     @Body() updateCountyDto: UpdateCountyRequest,
   ) {
-    return this.countiesService.update(id, updateCountyDto);
+    return this.countiesService.update(id.toString(), updateCountyDto);
   }
 
   @ApiOperation({ summary: 'Remove county', description: 'forbidden' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Delete(':id')
-  remove(@Param('id', ParseObjectIdPipe) id: string) {
-    return this.countiesService.remove(id);
+  remove(@Param('id', ParseObjectIdPipe) id: Types.ObjectId | string) {
+    try {
+      return this.countiesService.remove(id.toString());
+    } catch (err) {
+      throw err;
+    }
   }
 
   @ApiOperation({ summary: 'Create county user', description: 'forbidden' })
@@ -102,11 +106,11 @@ export class CountiesController {
   @Roles(Role.Cisab)
   @Post(':id/users')
   async createCountyUser(
-    @Param('id', ParseObjectIdPipe) countyId: string,
+    @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
     @Body() createCountyUserRequest: CreateCountyUserRequest,
   ): Promise<GetCountyUserResponse> {
     const countyUser = await this.countiesService.createCountyUser(
-      countyId,
+      countyId.toString(),
       createCountyUserRequest,
     );
 
@@ -126,9 +130,11 @@ export class CountiesController {
   @Roles(Role.Cisab)
   @Get(':id/users')
   async findCountyUser(
-    @Param('id', ParseObjectIdPipe) countyId: string,
+    @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
   ): Promise<GetCountyUserResponse[]> {
-    const countyUsers = await this.countiesService.findCountyUsers(countyId);
+    const countyUsers = await this.countiesService.findCountyUsers(
+      countyId.toString(),
+    );
 
     const response = countyUsers.map((countyUser) => {
       return {
@@ -150,11 +156,11 @@ export class CountiesController {
   @Roles(Role.Cisab)
   @Put(':id/users')
   async updateCountyUser(
-    @Param('id', ParseObjectIdPipe) countyId: string,
+    @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
     @Body() updateCountyUserRequest: UpdateCountyUserRequest,
   ): Promise<GetCountyUserResponse> {
     const countyUser = await this.countiesService.updateCountyUser(
-      countyId,
+      countyId.toString(),
       updateCountyUserRequest,
     );
 
@@ -173,8 +179,10 @@ export class CountiesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Cisab)
   @Delete(':county_id/users/:id')
-  removeCountyUser(@Param('id', ParseObjectIdPipe) id: string) {
-    return this.countiesService.removeCountyUser(id);
+  removeCountyUser(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId | string,
+  ) {
+    return this.countiesService.removeCountyUser(id.toString());
   }
 
   @ApiOperation({ summary: 'Create manager', description: 'forbidden' })
