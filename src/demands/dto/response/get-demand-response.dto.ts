@@ -8,7 +8,7 @@ export class GetDemandProductResponse {
   measurements: Measure[];
   norms: string[];
   code: string;
-  accessory_ids: string[];
+  accessories: GetDemandProductResponse[];
   categories: string[];
   photo_url: string;
 }

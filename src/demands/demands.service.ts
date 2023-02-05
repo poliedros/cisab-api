@@ -3,7 +3,10 @@ import { ProductsService } from '../products/products.service';
 import { DemandsRepository } from './demands.repository';
 import { CreateDemandRequest } from './dto/request/create-demand-request.dto';
 import { UpdateDemandRequest } from './dto/request/update-demand-request.dto';
-import { GetDemandResponse } from './dto/response/get-demand-response.dto';
+import {
+  GetDemandProductResponse,
+  GetDemandResponse,
+} from './dto/response/get-demand-response.dto';
 import { DemandState } from './enums/demand-state.enum';
 import { Demand } from './schemas/demand.schema';
 
@@ -84,11 +87,28 @@ export class DemandsService {
       categories: undefined,
     });
 
+    const productAcessoryIds = products
+      .map((product) => product.accessory_ids)
+      .flat();
+
+    const acessories = await this.productsService.findAll({
+      ids: productAcessoryIds,
+      categories: undefined,
+    });
+
     const response: GetDemandResponse[] = [];
     for (const demand of demands) {
       const demandProducts = products.filter((p) =>
         demand.product_ids.includes(p._id.toString()),
       );
+      const demandP: any[] = demandProducts;
+
+      for (const product of demandP) {
+        product.accessories = acessories.filter((a) =>
+          product.accessory_ids.includes(a._id.toString()),
+        );
+        delete product.acessory_ids;
+      }
 
       const demandResponse: GetDemandResponse = {
         _id: demand._id.toString(),
@@ -96,7 +116,7 @@ export class DemandsService {
         start_date: demand.start_date,
         end_date: demand.end_date,
         state: demand.state,
-        products: demandProducts,
+        products: demandP,
         created_on: demand.created_on,
       };
 
