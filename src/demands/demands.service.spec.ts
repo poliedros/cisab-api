@@ -86,6 +86,10 @@ describe('DemandsService', () => {
       Promise.resolve([{ name: 'demand 01-1' }]),
     );
 
+    findAllProductsMockfn.mockReturnValue(
+      Promise.resolve([{ _id: 'as', accessory_ids: [{ _id: 'asbd' }] }]),
+    );
+
     const demands = await service.findAll({
       name: 'name',
       start_date: today.toString(),
@@ -118,6 +122,7 @@ describe('DemandsService', () => {
       Promise.resolve([
         {
           _id: '1',
+          accessory_ids: [{ _id: 'asbd' }],
         },
       ]),
     );

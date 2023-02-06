@@ -8,13 +8,13 @@ export class GetDemandProductResponse {
   measurements: Measure[];
   norms: string[];
   code: string;
-  accessory_ids: string[];
+  accessories: GetDemandProductResponse[];
   categories: string[];
   photo_url: string;
 }
 
 export class GetDemandResponse {
-  _id: string;
+  _id: Types.ObjectId;
   name: string;
   start_date: Date;
   end_date: Date;
