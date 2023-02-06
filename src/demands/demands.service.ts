@@ -111,7 +111,7 @@ export class DemandsService {
       }
 
       const demandResponse: GetDemandResponse = {
-        _id: demand._id.toString(),
+        _id: demand._id,
         name: demand.name,
         start_date: demand.start_date,
         end_date: demand.end_date,
@@ -126,8 +126,46 @@ export class DemandsService {
     return response;
   }
 
-  findOne(id: string) {
-    return this.demandsRepository.findOne({ _id: id });
+  async findOne(id: string): Promise<GetDemandResponse> {
+    const demand = await this.demandsRepository.findOne({ _id: id });
+
+    delete demand.product_ids;
+
+    const products = await this.productsService.findAll({
+      ids: demand.product_ids,
+      categories: undefined,
+    });
+
+    const productAcessoryIds = products
+      .map((product) => product.accessory_ids)
+      .flat();
+
+    const accessories: any[] = await this.productsService.findAll({
+      ids: productAcessoryIds,
+      categories: undefined,
+    });
+
+    const responseProducts: GetDemandProductResponse[] = [];
+
+    for (const product of products) {
+      const acc = accessories.filter((a) =>
+        product.accessory_ids.includes(a._id.toString()),
+      );
+
+      const resProducts: GetDemandProductResponse = {
+        ...product,
+        accessories: acc,
+      };
+
+      responseProducts.push(resProducts);
+    }
+
+    const response: GetDemandResponse = {
+      ...demand,
+      products: responseProducts,
+    };
+
+    return response;
   }
 
   update(id: string, updateDemandDto: UpdateDemandRequest) {

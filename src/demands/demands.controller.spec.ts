@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { Types } from 'mongoose';
 import { DemandsController } from './demands.controller';
 import { DemandsService } from './demands.service';
 import { CreateDemandRequest } from './dto/request/create-demand-request.dto';
@@ -111,7 +112,9 @@ describe('DemandsController', () => {
 
     // This is here because of test coverage. Coverage on GetDemandResponse was 0.
     const e = new GetDemandResponse();
-    e._id = 'a';
+    const idString = '63599affb40135010840911b';
+    const id = new Types.ObjectId(idString);
+    e._id = id;
 
     const res: GetDemandResponse[] = await controller.findAll(
       '01-01-2022',

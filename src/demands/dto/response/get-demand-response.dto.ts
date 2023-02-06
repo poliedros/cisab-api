@@ -14,7 +14,7 @@ export class GetDemandProductResponse {
 }
 
 export class GetDemandResponse {
-  _id: string;
+  _id: Types.ObjectId;
   name: string;
   start_date: Date;
   end_date: Date;
