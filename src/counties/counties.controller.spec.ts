@@ -382,4 +382,11 @@ describe('CountiesController', () => {
       expect(err).toBeInstanceOf(UnauthorizedException);
     }
   });
+
+  it('should get county autarkies', async () => {
+    findAllMockFn.mockReturnValue(Promise.resolve([{}]));
+    const response = await controller.getAutarkies('1a');
+
+    expect(response.length).toEqual(1);
+  });
 });

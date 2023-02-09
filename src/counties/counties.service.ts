@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { lastValueFrom } from 'rxjs';
 import { CountiesRepository } from './counties.repository';
 import { CreateCountyRequest } from './dto/request/create-county-request.dto';
@@ -16,8 +11,9 @@ import { GetCountyUserResponse } from './dto/response/get-county-user-response.d
 import { UsersService } from '../users/users.service';
 import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
-import { Types } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
 import { CountyEntity } from './entities/county.entity';
+import { County } from './schemas/county.schema';
 
 @Injectable()
 export class CountiesService {
@@ -66,8 +62,8 @@ export class CountiesService {
     }
   }
 
-  findAll() {
-    return this.countyRepository.find({});
+  findAll(filterQuery: FilterQuery<County>) {
+    return this.countyRepository.find(filterQuery);
   }
 
   findOne(id: string) {
