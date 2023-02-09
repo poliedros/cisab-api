@@ -79,7 +79,7 @@ export class ProductsService {
   findAll(filter: { categories: string[]; ids: string[] } = undefined) {
     if (filter && filter.categories)
       return this.productsRepository.find({
-        categories: { $all: filter.categories },
+        categories: { $in: filter.categories },
       });
 
     if (filter && filter.ids)
