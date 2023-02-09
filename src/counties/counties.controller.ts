@@ -54,7 +54,7 @@ export class CountiesController {
   @Roles(Role.Cisab)
   @Get()
   async findAll() {
-    const counties = await this.countiesService.findAll();
+    const counties = await this.countiesService.findAll({});
 
     if (counties) return counties;
 
@@ -242,5 +242,21 @@ export class CountiesController {
     );
 
     return res;
+  }
+
+  @ApiOperation({ summary: 'Get county autarkies', description: 'forbidden' })
+  @ApiBody({ type: CreateCountyUserRequest })
+  @ApiResponse({ type: GetCountyUserResponse })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab)
+  @Get(':id/autarkies')
+  async getAutarkies(
+    @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
+  ) {
+    const counties = this.countiesService.findAll({
+      county_id: countyId.toString(),
+    });
+
+    return counties;
   }
 }

@@ -146,7 +146,7 @@ describe('CountiesService', () => {
 
     findMockFn.mockReturnValue(Promise.resolve(countiesStub));
 
-    const response = await service.findAll();
+    const response = await service.findAll({});
 
     expect(response[0]._id).toEqual(idStub);
   });
