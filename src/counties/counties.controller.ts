@@ -20,10 +20,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '../auth/role.enum';
-import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
+import { CreateEmployeeRequest } from './dto/request/create-employee-request.dto';
 import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
-import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
-import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
+import { GetEmployeeResponse } from './dto/response/get-employee-response.dto';
+import { UpdateEmployeeRequest } from './dto/request/update-employee-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { CreateManagerResponse } from './dto/response/create-manager-response.dto';
 import { Types } from 'mongoose';
@@ -99,90 +99,88 @@ export class CountiesController {
     }
   }
 
-  @ApiOperation({ summary: 'Create county user', description: 'forbidden' })
-  @ApiBody({ type: CreateCountyUserRequest })
-  @ApiResponse({ type: GetCountyUserResponse })
+  @ApiOperation({ summary: 'Create employee', description: 'forbidden' })
+  @ApiBody({ type: CreateEmployeeRequest })
+  @ApiResponse({ type: GetEmployeeResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
+  @Roles(Role.Cisab, Role.Manager)
   @Post(':id/users')
-  async createCountyUser(
+  async createEmployee(
     @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
-    @Body() createCountyUserRequest: CreateCountyUserRequest,
-  ): Promise<GetCountyUserResponse> {
-    const countyUser = await this.countiesService.createCountyUser(
+    @Body() createEmployeeRequest: CreateEmployeeRequest,
+  ): Promise<GetEmployeeResponse> {
+    const employee = await this.countiesService.createEmployee(
       countyId.toString(),
-      createCountyUserRequest,
+      createEmployeeRequest,
     );
 
-    const response: GetCountyUserResponse = {
-      _id: countyUser._id,
-      email: countyUser.email,
-      properties: countyUser.properties,
+    const response: GetEmployeeResponse = {
+      _id: employee._id,
+      email: employee.email,
+      properties: employee.properties,
     };
 
     return response;
   }
 
-  @ApiOperation({ summary: 'Find county user', description: 'forbidden' })
-  @ApiBody({ type: CreateCountyUserRequest })
-  @ApiResponse({ type: GetCountyUserResponse })
+  @ApiOperation({ summary: 'Find employee', description: 'forbidden' })
+  @ApiBody({ type: CreateEmployeeRequest })
+  @ApiResponse({ type: GetEmployeeResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
+  @Roles(Role.Cisab, Role.Employee)
   @Get(':id/users')
-  async findCountyUser(
+  async findEmployee(
     @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
-  ): Promise<GetCountyUserResponse[]> {
-    const countyUsers = await this.countiesService.findCountyUsers(
+  ): Promise<GetEmployeeResponse[]> {
+    const employees = await this.countiesService.findEmployees(
       countyId.toString(),
     );
 
-    const response = countyUsers.map((countyUser) => {
+    const response = employees.map((employee) => {
       return {
-        _id: countyUser._id,
-        email: countyUser.email,
-        name: countyUser.name,
-        surname: countyUser.surname,
-        properties: countyUser.properties,
-      } as GetCountyUserResponse;
+        _id: employee._id,
+        email: employee.email,
+        name: employee.name,
+        surname: employee.surname,
+        properties: employee.properties,
+      } as GetEmployeeResponse;
     });
 
     return response;
   }
 
-  @ApiOperation({ summary: 'Update county user', description: 'forbidden' })
-  @ApiBody({ type: UpdateCountyUserRequest })
-  @ApiResponse({ type: GetCountyUserResponse })
+  @ApiOperation({ summary: 'Update employee', description: 'forbidden' })
+  @ApiBody({ type: UpdateEmployeeRequest })
+  @ApiResponse({ type: GetEmployeeResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
+  @Roles(Role.Cisab, Role.Employee)
   @Put(':id/users')
-  async updateCountyUser(
+  async updateEmployee(
     @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
-    @Body() updateCountyUserRequest: UpdateCountyUserRequest,
-  ): Promise<GetCountyUserResponse> {
-    const countyUser = await this.countiesService.updateCountyUser(
+    @Body() updateEmployeeRequest: UpdateEmployeeRequest,
+  ): Promise<GetEmployeeResponse> {
+    const employee = await this.countiesService.updateEmployee(
       countyId.toString(),
-      updateCountyUserRequest,
+      updateEmployeeRequest,
     );
 
-    const response: GetCountyUserResponse = {
-      _id: countyUser._id,
-      email: countyUser.email,
-      name: countyUser.name,
-      surname: countyUser.surname,
-      properties: countyUser.properties,
+    const response: GetEmployeeResponse = {
+      _id: employee._id,
+      email: employee.email,
+      name: employee.name,
+      surname: employee.surname,
+      properties: employee.properties,
     };
 
     return response;
   }
 
-  @ApiOperation({ summary: 'Remove county user', description: 'forbidden' })
+  @ApiOperation({ summary: 'Remove employee', description: 'forbidden' })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
+  @Roles(Role.Cisab, Role.Manager)
   @Delete(':county_id/users/:id')
-  removeCountyUser(
-    @Param('id', ParseObjectIdPipe) id: Types.ObjectId | string,
-  ) {
-    return this.countiesService.removeCountyUser(id.toString());
+  removeEmployee(@Param('id', ParseObjectIdPipe) id: Types.ObjectId | string) {
+    return this.countiesService.removeEmployee(id.toString());
   }
 
   @ApiOperation({ summary: 'Create manager', description: 'forbidden' })
@@ -245,10 +243,10 @@ export class CountiesController {
   }
 
   @ApiOperation({ summary: 'Get county autarkies', description: 'forbidden' })
-  @ApiBody({ type: CreateCountyUserRequest })
-  @ApiResponse({ type: GetCountyUserResponse })
+  @ApiBody({ type: CreateEmployeeRequest })
+  @ApiResponse({ type: GetEmployeeResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
+  @Roles(Role.Cisab, Role.Manager)
   @Get(':id/autarkies')
   async getAutarkies(
     @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,

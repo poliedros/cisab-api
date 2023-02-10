@@ -7,10 +7,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 import { CountiesController } from './counties.controller';
 import { CountiesService } from './counties.service';
-import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
+import { CreateEmployeeRequest } from './dto/request/create-employee-request.dto';
 import { CreateCountyRequest } from './dto/request/create-county-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { County } from './schemas/county.schema';
+import { Role } from '../auth/role.enum';
 
 function buildCounty(): CreateCountyRequest {
   return {
@@ -44,10 +45,10 @@ describe('CountiesController', () => {
   const findOneMockFn = jest.fn();
   const updateMockFn = jest.fn();
   const removeMockFn = jest.fn();
-  const createCountyUserMockFn = jest.fn();
-  const findCountyUsersMockFn = jest.fn();
-  const updateCountyUserMockFn = jest.fn();
-  const removeCountyUserMockFn = jest.fn();
+  const createEmployeeMockFn = jest.fn();
+  const findEmployeesMockFn = jest.fn();
+  const updateEmployeeMockFn = jest.fn();
+  const removeEmployeeMockFn = jest.fn();
   const createManagerMockFn = jest.fn();
   const isManagerActiveMockFn = jest.fn();
   const updateManagerPasswordMockFn = jest.fn();
@@ -64,10 +65,10 @@ describe('CountiesController', () => {
             findOne: findOneMockFn,
             update: updateMockFn,
             remove: removeMockFn,
-            createCountyUser: createCountyUserMockFn,
-            findCountyUsers: findCountyUsersMockFn,
-            updateCountyUser: updateCountyUserMockFn,
-            removeCountyUser: removeCountyUserMockFn,
+            createEmployee: createEmployeeMockFn,
+            findEmployees: findEmployeesMockFn,
+            updateEmployee: updateEmployeeMockFn,
+            removeEmployee: removeEmployeeMockFn,
             createManager: createManagerMockFn,
             isManagerActive: isManagerActiveMockFn,
             updateManagerPassword: updateManagerPasswordMockFn,
@@ -201,11 +202,11 @@ describe('CountiesController', () => {
     }
   });
 
-  it('should create a county user', async () => {
+  it('should create a employee', async () => {
     const properties: Map<string, string> = new Map<string, string>();
     properties['profession'] = 'software engineer';
     properties['county_id'] = '1';
-    const req: CreateCountyUserRequest = {
+    const req: CreateEmployeeRequest = {
       email: 'carlos@czar.dev',
       name: 'carlos',
       surname: 'zansavio',
@@ -213,20 +214,20 @@ describe('CountiesController', () => {
       properties,
     };
 
-    createCountyUserMockFn.mockReturnValue(
+    createEmployeeMockFn.mockReturnValue(
       Promise.resolve({ _id: '12', ...req }),
     );
 
     const idString = '63599affb40135010840911b';
     const idStub = new Types.ObjectId(idString);
-    const response = await controller.createCountyUser(idStub, req);
+    const response = await controller.createEmployee(idStub, req);
 
     expect(response._id).toEqual('12');
     expect(response.properties['county_id']).toEqual('1');
   });
 
-  it('should find all county users', async () => {
-    const countyUser = {
+  it('should find all employees', async () => {
+    const employee = {
       _id: '6363d75a63e9deb5a8e1c6cd',
       email: 'vicosa@cisab.com',
       name: 'cisab',
@@ -236,10 +237,10 @@ describe('CountiesController', () => {
       },
     };
 
-    findCountyUsersMockFn.mockReturnValue(Promise.resolve([countyUser]));
+    findEmployeesMockFn.mockReturnValue(Promise.resolve([employee]));
     const idString = '6363c2f363e9deb5a8e1c672';
     const idStub = new Types.ObjectId(idString);
-    const response = await controller.findCountyUser(idStub);
+    const response = await controller.findEmployee(idStub);
 
     expect(response[0]._id).toEqual('6363d75a63e9deb5a8e1c6cd');
     expect(response[0].email).toEqual('vicosa@cisab.com');
@@ -249,24 +250,25 @@ describe('CountiesController', () => {
     expect(response[0].properties).not.toBeUndefined();
   });
 
-  it('should update county user', async () => {
+  it('should update employee', async () => {
     const id = new Types.ObjectId('63599affb40135010840911b');
 
-    const countyUser = {
+    const employee = {
       _id: id,
       email: 'vicosa2@cisab.com',
       name: 'cisab',
       surname: 'cisab',
       password: 'f4C1_b0ts',
       properties: new Map<string, string>(),
+      roles: [Role.Employee],
     };
-    countyUser.properties.set('profession', 'software engineer');
+    employee.properties.set('profession', 'software engineer');
 
-    updateCountyUserMockFn.mockReturnValue(Promise.resolve(countyUser));
+    updateEmployeeMockFn.mockReturnValue(Promise.resolve(employee));
 
     const idString = '63599affb40135010840911b';
     const idStub = new Types.ObjectId(idString);
-    const response = await controller.updateCountyUser(idStub, countyUser);
+    const response = await controller.updateEmployee(idStub, employee);
 
     expect(response._id).toEqual(id);
     expect(response.email).toEqual('vicosa2@cisab.com');
@@ -276,11 +278,11 @@ describe('CountiesController', () => {
     expect(response.properties).not.toBeUndefined();
   });
 
-  it('should remove county user', async () => {
-    removeCountyUserMockFn.mockReturnValue(Promise.resolve(true));
+  it('should remove employee', async () => {
+    removeEmployeeMockFn.mockReturnValue(Promise.resolve(true));
     const idString = '63599affb40135010840911b';
     const idStub = new Types.ObjectId(idString);
-    const res = await controller.removeCountyUser(idStub);
+    const res = await controller.removeEmployee(idStub);
 
     expect(res).toBeDefined();
   });

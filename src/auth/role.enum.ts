@@ -1,6 +1,20 @@
 export enum Role {
+  /**
+   * CZAR+ Role
+   */
   Admin = 'admin',
-  County = 'county',
+
+  /**
+   * Cisab role
+   */
   Cisab = 'cisab',
+
+  /**
+   * Manager of institutions
+   */
   Manager = 'manager',
+  /**
+   * Employee of institutions
+   */
+  Employee = 'employee',
 }

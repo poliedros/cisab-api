@@ -1,14 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
-import { Types } from 'mongoose';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateCountyUserRequest {
+export class CreateEmployeeRequest {
   @IsNotEmpty()
-  @ApiProperty()
-  _id: Types.ObjectId;
-
-  @IsNotEmpty()
-  @IsString()
+  @IsEmail()
   @ApiProperty()
   email: string;
 
