@@ -128,8 +128,8 @@ describe('User Service', () => {
     }
   });
 
-  it('should find county users', async () => {
-    const countyUsers = {
+  it('should find employees', async () => {
+    const employees = {
       _id: '6363d75a63e9deb5a8e1c6cd',
       email: 'vicosa@cisab.com',
       name: 'cisab',
@@ -141,7 +141,7 @@ describe('User Service', () => {
       },
     };
 
-    findMockFn.mockReturnValue(Promise.resolve([countyUsers]));
+    findMockFn.mockReturnValue(Promise.resolve([employees]));
     const response = await service.find({
       'properties.county_id': '6363d75a63e9deb5a8e1c6cd',
     });

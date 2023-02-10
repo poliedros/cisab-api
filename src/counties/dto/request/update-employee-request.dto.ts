@@ -1,9 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { Types } from 'mongoose';
+import { Role } from '../../../auth/role.enum';
 
-export class CreateCountyUserRequest {
+export class UpdateEmployeeRequest {
   @IsNotEmpty()
-  @IsEmail()
+  @ApiProperty()
+  _id: Types.ObjectId;
+
+  @IsNotEmpty()
+  @IsString()
   @ApiProperty()
   email: string;
 
@@ -24,4 +30,6 @@ export class CreateCountyUserRequest {
 
   @ApiProperty()
   properties: Map<string, string>;
+
+  roles: Role[];
 }

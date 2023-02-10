@@ -5,11 +5,11 @@ import { CreateCountyRequest } from './dto/request/create-county-request.dto';
 import { UpdateCountyRequest } from './dto/request/update-county-request.dto';
 import { NotifierService } from './../notifier/notifier.service';
 import { CreateUserRequest } from 'src/users/dtos/create-user-request.dto';
-import { CreateCountyUserRequest } from './dto/request/create-county-user-request.dto';
+import { CreateEmployeeRequest } from './dto/request/create-employee-request.dto';
 import { Role } from '../auth/role.enum';
-import { GetCountyUserResponse } from './dto/response/get-county-user-response.dto';
+import { GetEmployeeResponse } from './dto/response/get-employee-response.dto';
 import { UsersService } from '../users/users.service';
-import { UpdateCountyUserRequest } from './dto/request/update-county-user-request.dto';
+import { UpdateEmployeeRequest } from './dto/request/update-employee-request.dto';
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { FilterQuery, Types } from 'mongoose';
 import { CountyEntity } from './entities/county.entity';
@@ -114,14 +114,14 @@ export class CountiesService {
     }
   }
 
-  async createCountyUser(
+  async createEmployee(
     countyId: string,
-    createCountyUserRequest: CreateCountyUserRequest,
-  ): Promise<GetCountyUserResponse> {
-    createCountyUserRequest.properties['county_id'] = countyId;
+    createEmployeeRequest: CreateEmployeeRequest,
+  ): Promise<GetEmployeeResponse> {
+    createEmployeeRequest.properties['county_id'] = countyId;
 
-    const serviceRequest = createCountyUserRequest as CreateUserRequest;
-    serviceRequest.roles = [Role.County];
+    const serviceRequest = createEmployeeRequest as CreateUserRequest;
+    serviceRequest.roles = [Role.Employee];
     const user = await this.usersService.create(serviceRequest);
 
     return {
@@ -130,25 +130,26 @@ export class CountiesService {
       name: user.name,
       surname: user.surname,
       properties: user.properties,
-    } as GetCountyUserResponse;
+    } as GetEmployeeResponse;
   }
 
-  async findCountyUsers(countyId: string) {
+  async findEmployees(countyId: string) {
     return this.usersService.find({
       'properties.county_id': countyId,
     });
   }
 
-  async updateCountyUser(
+  async updateEmployee(
     countyId: string,
-    updateCountyUserRequest: UpdateCountyUserRequest,
-  ): Promise<GetCountyUserResponse> {
-    updateCountyUserRequest.properties['county_id'] = countyId;
+    updateEmployeeRequest: UpdateEmployeeRequest,
+  ): Promise<GetEmployeeResponse> {
+    updateEmployeeRequest.properties['county_id'] = countyId;
 
-    const serviceRequest = updateCountyUserRequest as UpdateCountyUserRequest;
+    const serviceRequest = updateEmployeeRequest as UpdateEmployeeRequest;
     serviceRequest.properties = new Map(
-      Object.entries(updateCountyUserRequest.properties),
+      Object.entries(updateEmployeeRequest.properties),
     );
+    serviceRequest.roles = [Role.Employee];
     const user = await this.usersService.update(serviceRequest);
 
     return {
@@ -157,11 +158,11 @@ export class CountiesService {
       name: user.name,
       surname: user.surname,
       properties: user.properties,
-    } as GetCountyUserResponse;
+    } as GetEmployeeResponse;
   }
 
-  async removeCountyUser(countyUserId: string) {
-    return await this.usersService.remove(countyUserId);
+  async removeEmployee(employeeId: string) {
+    return await this.usersService.remove(employeeId);
   }
 
   async createManager({ email, name, county_id }: CreateManagerRequest) {

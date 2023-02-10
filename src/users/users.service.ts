@@ -87,7 +87,8 @@ export class UsersService {
    * update user
    */
   async update(updateUser: UpdateUserRequest) {
-    const { _id, email, name, surname, password, properties } = updateUser;
+    const { _id, email, name, surname, password, properties, roles } =
+      updateUser;
 
     const users = await this.usersRepository.find({
       _id,
@@ -103,7 +104,7 @@ export class UsersService {
       name,
       surname,
       password,
-      roles: [Role.County],
+      roles,
       properties: new Map<string, string>(),
     });
 
