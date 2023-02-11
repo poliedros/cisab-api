@@ -10,6 +10,7 @@ import {
   NotFoundException,
   BadRequestException,
   UnauthorizedException,
+  Request,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CountiesService } from './counties.service';
@@ -28,6 +29,7 @@ import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { CreateManagerResponse } from './dto/response/create-manager-response.dto';
 import { Types } from 'mongoose';
 import { UpdateManagerPasswordRequest } from './dto/request/update-manager-password-request.dto';
+import { Payload } from 'src/auth/auth.service';
 
 @ApiTags('counties')
 @Controller('counties')
@@ -250,9 +252,12 @@ export class CountiesController {
   @Get(':id/autarkies')
   async getAutarkies(
     @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
+    @Request() req,
   ) {
+    const userPayload = req.user as Payload;
     const counties = this.countiesService.findAll({
       county_id: countyId.toString(),
+      _id: userPayload.county_id,
     });
 
     return counties;
