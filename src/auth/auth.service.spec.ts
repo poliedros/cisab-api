@@ -81,6 +81,7 @@ describe('AuthService', () => {
       _id: id,
       email: 'carlos@czar.dev',
       roles: [Role.Cisab],
+      properties: new Map<string, string>(),
     });
 
     expect(token).toEqual({ access_token: '3a' });

@@ -387,7 +387,9 @@ describe('CountiesController', () => {
 
   it('should get county autarkies', async () => {
     findAllMockFn.mockReturnValue(Promise.resolve([{}]));
-    const response = await controller.getAutarkies('1a');
+    const response = await controller.getAutarkies('1a', {
+      user: { _id: '1b', county_id: '1a' },
+    });
 
     expect(response.length).toEqual(1);
   });
