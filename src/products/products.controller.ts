@@ -51,7 +51,7 @@ export class ProductsController {
   @ApiOperation({ summary: 'Find all products', description: 'forbidden' })
   @ApiResponse({ type: [GetProductResponse] })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
+  @Roles(Role.Cisab, Role.Manager, Role.Employee)
   @Get()
   findAll(
     @Query('category') categories: string[],
@@ -62,7 +62,7 @@ export class ProductsController {
   @ApiOperation({ summary: 'Find one product', description: 'forbidden' })
   @ApiResponse({ type: GetProductResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
+  @Roles(Role.Cisab, Role.Employee, Role.Manager)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);

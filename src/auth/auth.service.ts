@@ -9,12 +9,14 @@ export type UserValidation = {
   _id: Types.ObjectId;
   email: string;
   roles: Role[];
+  properties: Map<string, string>;
 };
 
 export type Payload = {
   email: string;
   sub: string;
   roles: Role[];
+  county_id?: string;
 };
 
 @Injectable()
@@ -45,10 +47,15 @@ export class AuthService {
   }
 
   async login(user: UserValidation) {
+    let countyId: string;
+    if (user.properties && user.properties.has('county_id'))
+      countyId = user.properties.get('county_id');
+
     const payload: Payload = {
       email: user.email,
       sub: user._id.toString(),
       roles: user.roles,
+      county_id: countyId,
     };
 
     return {

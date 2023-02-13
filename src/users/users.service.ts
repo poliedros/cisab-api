@@ -23,7 +23,8 @@ export class UsersService {
     try {
       const user = await this.usersRepository.findOne(filterQuery);
 
-      user.properties = new Map(Object.entries(user.properties));
+      if (user.properties !== null)
+        user.properties = new Map(Object.entries(user.properties));
 
       return user;
     } catch (err) {

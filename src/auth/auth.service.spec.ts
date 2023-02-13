@@ -77,10 +77,14 @@ describe('AuthService', () => {
 
     const idString = '63599affb40135010840911b';
     const id = new Types.ObjectId(idString);
+    const properties = new Map<string, string>();
+    properties.set('county_id', '1a');
+
     const token = await service.login({
       _id: id,
       email: 'carlos@czar.dev',
       roles: [Role.Cisab],
+      properties: properties,
     });
 
     expect(token).toEqual({ access_token: '3a' });
