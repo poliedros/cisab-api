@@ -10,6 +10,7 @@ import { ProductsModule } from './products/products.module';
 import { ForgetPasswordModule } from './forget-password/forget-password.module';
 import { CategoriesModule } from './categories/categories.module';
 import { DemandsModule } from './demands/demands.module';
+import { CartsModule } from './carts/carts.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { DemandsModule } from './demands/demands.module';
     ForgetPasswordModule,
     CategoriesModule,
     DemandsModule,
+    CartsModule,
   ],
   controllers: [],
   providers: [],
