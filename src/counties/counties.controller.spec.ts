@@ -385,10 +385,19 @@ describe('CountiesController', () => {
     }
   });
 
-  it('should get county autarkies', async () => {
+  it('should get county autarkies by cisab', async () => {
     findAllMockFn.mockReturnValue(Promise.resolve([{}]));
     const response = await controller.getAutarkies('1a', {
-      user: { _id: '1b', county_id: '1a' },
+      user: { _id: '1b', county_id: '1a', roles: [Role.Cisab] },
+    });
+
+    expect(response.length).toEqual(1);
+  });
+
+  it('should get county autarkies by manager', async () => {
+    findAllMockFn.mockReturnValue(Promise.resolve([{}]));
+    const response = await controller.getAutarkies('1a', {
+      user: { _id: '1b', county_id: '1a', roles: [Role.Manager] },
     });
 
     expect(response.length).toEqual(1);
