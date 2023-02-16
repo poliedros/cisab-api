@@ -255,11 +255,19 @@ export class CountiesController {
     @Request() req,
   ) {
     const userPayload = req.user as Payload;
-    const counties = this.countiesService.findAll({
+
+    if (
+      userPayload.roles.includes(Role.Cisab) ||
+      userPayload.roles.includes(Role.Admin)
+    ) {
+      return this.countiesService.findAll({
+        county_id: countyId.toString(),
+      });
+    }
+
+    return this.countiesService.findAll({
       county_id: countyId.toString(),
       _id: userPayload.county_id,
     });
-
-    return counties;
   }
 }
