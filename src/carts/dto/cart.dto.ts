@@ -4,7 +4,7 @@ class CartMeasurementDto {
   unit: string;
 }
 
-class CartProductDto {
+export class CartProductDto {
   _id: string;
   name: string;
   norms: string[];
@@ -14,7 +14,7 @@ class CartProductDto {
   quantity: number;
 }
 
-class CartProductIdDto {
+export class CartProductIdDto {
   product_id: string;
   quantity: number;
 }
@@ -26,4 +26,7 @@ export class CartDto {
   user_id: string;
   updated_on: Date;
   product_ids: CartProductIdDto[];
+  demandName: string;
+  userName: string;
+  county_id: string;
 }

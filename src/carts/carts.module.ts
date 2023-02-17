@@ -6,6 +6,9 @@ import type { RedisClientOptions } from 'redis';
 import { CartsService } from './carts.service';
 import * as redisStore from 'cache-manager-redis-store';
 import { CartsRepository } from './carts.repository';
+import { ProductsModule } from '../products/products.module';
+import { DemandsModule } from '../demands/demands.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -16,8 +19,11 @@ import { CartsRepository } from './carts.repository';
       port: process.env.REDIS_PORT,
       auth_pass: process.env.REDIS_AUTH_PASS,
     }),
+    ProductsModule,
+    DemandsModule,
+    UsersModule,
   ],
   controllers: [CartsController],
-  providers: [CartsRepository, CartsService],
+  providers: [CartsService, CartsRepository],
 })
 export class CartsModule {}

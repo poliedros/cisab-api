@@ -9,6 +9,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { CartDto } from './dto/cart.dto';
 import { Cart } from './schemas/cart.schema';
+import { Cache } from 'cache-manager-redis-store';
 
 @Injectable()
 export class CartsRepository {

@@ -6,6 +6,7 @@ import {
   Post,
   UseGuards,
   Request,
+  Body,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -28,10 +29,15 @@ export class CartsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Employee, Role.Manager)
   @Post()
-  upsertCart(cart: CartsRequest, @Request() req) {
+  upsertCart(@Body() cart: CartsRequest, @Request() req) {
     try {
-      const userPayload = req.user as Payload;
-      return this.cartsService.upsert(cart, userPayload.county_id);
+      const userPayload = req.user;
+      console.log(userPayload);
+      return this.cartsService.upsert(
+        cart,
+        userPayload.county_id,
+        userPayload.id,
+      );
     } catch (err) {
       throw err;
     }
