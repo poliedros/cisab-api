@@ -11,7 +11,9 @@ class GetCartProductResponse {
   categories: string[];
   photo_url: string;
   measurements: GetCartMeasurementResponse[];
+  quantity: number;
 }
+
 export class GetCartResponse {
   _id: string;
   state: string;
