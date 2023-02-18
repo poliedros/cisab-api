@@ -32,7 +32,6 @@ export class CartsController {
   upsertCart(@Body() cart: CartsRequest, @Request() req) {
     try {
       const userPayload = req.user;
-      console.log(userPayload);
       return this.cartsService.upsert(
         cart,
         userPayload.county_id,

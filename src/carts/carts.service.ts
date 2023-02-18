@@ -67,6 +67,7 @@ export class CartsService {
       product_ids: cart.products,
       products: cartProducts,
       demandName,
+      demand_id: cart.demand_id,
       userName: fullName,
       county_id: countyId,
     };
@@ -75,7 +76,7 @@ export class CartsService {
   }
 
   get(county_id: string, demand_id: string): Promise<GetCartResponse> {
-    throw new NotImplementedException();
+    return this.cartsRepository.get(county_id, demand_id);
   }
 
   close(county_id: string, demand_id: string) {

@@ -1,8 +1,8 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { CacheModule, CACHE_MANAGER, Inject, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Cart, CartSchema } from './schemas/cart.schema';
 import { CartsController } from './carts.controller';
-import type { RedisClientOptions } from 'redis';
+import type { ClientOpts } from 'redis';
 import { CartsService } from './carts.service';
 import * as redisStore from 'cache-manager-redis-store';
 import { CartsRepository } from './carts.repository';
@@ -13,7 +13,7 @@ import { UsersModule } from '../users/users.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Cart.name, schema: CartSchema }]),
-    CacheModule.register<RedisClientOptions>({
+    CacheModule.register<ClientOpts>({
       store: redisStore,
       host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT,
@@ -26,4 +26,11 @@ import { UsersModule } from '../users/users.module';
   controllers: [CartsController],
   providers: [CartsService, CartsRepository],
 })
-export class CartsModule {}
+export class CartsModule {
+  constructor(@Inject(CACHE_MANAGER) private cacheManager) {}
+
+  onModuleDestroy() {
+    const redisClient = this.cacheManager.store.getClient();
+    redisClient.quit();
+  }
+}
