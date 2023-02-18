@@ -36,7 +36,15 @@ export class CartsRepository {
     return this.cacheManager.get(key);
   }
 
-  close(county_id: string, demand_id: string) {
-    throw new NotImplementedException();
+  async close(county_id: string, demand_id: string) {
+    try {
+      const key = `${county_id}, ${demand_id}`;
+      const cart = (await this.cacheManager.get(key)) as CartDto;
+      cart.state = 'close';
+      const doc = new this.userModel(cart);
+      return (await doc.save()).toJSON();
+    } catch (err) {
+      throw err;
+    }
   }
 }

@@ -7,6 +7,7 @@ import {
   UseGuards,
   Request,
   Body,
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -69,7 +70,7 @@ export class CartsController {
       const userPayload = req.user as Payload;
       return this.cartsService.close(userPayload.county_id, demandId);
     } catch (err) {
-      throw err;
+      throw new BadRequestException();
     }
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { DemandsService } from '../demands/demands.service';
 import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
@@ -60,7 +61,7 @@ export class CartsService {
     const fullName = `${userName} ${userSurname}`;
 
     const cartDto: CartDto = {
-      _id: '123',
+      _id: new Types.ObjectId().toString(),
       user_id: userId,
       state: 'OPEN',
       updated_on: new Date(),
@@ -80,6 +81,10 @@ export class CartsService {
   }
 
   close(county_id: string, demand_id: string) {
-    throw new NotImplementedException();
+    try {
+      return this.cartsRepository.close(county_id, demand_id);
+    } catch (err) {
+      throw err;
+    }
   }
 }
