@@ -226,7 +226,7 @@ describe('CountiesController', () => {
     expect(response.properties['county_id']).toEqual('1');
   });
 
-  it('should find all employees', async () => {
+  it('should find all employees by cisab', async () => {
     const employee = {
       _id: '6363d75a63e9deb5a8e1c6cd',
       email: 'vicosa@cisab.com',
@@ -240,7 +240,8 @@ describe('CountiesController', () => {
     findEmployeesMockFn.mockReturnValue(Promise.resolve([employee]));
     const idString = '6363c2f363e9deb5a8e1c672';
     const idStub = new Types.ObjectId(idString);
-    const response = await controller.findEmployee(idStub);
+    const req = { user: { roles: [Role.Cisab] } };
+    const response = await controller.findEmployee(idStub, req);
 
     expect(response[0]._id).toEqual('6363d75a63e9deb5a8e1c6cd');
     expect(response[0].email).toEqual('vicosa@cisab.com');
@@ -248,6 +249,32 @@ describe('CountiesController', () => {
     expect(response[0].surname).toEqual('cisab');
     expect(response[0].surname).toEqual('cisab');
     expect(response[0].properties).not.toBeUndefined();
+  });
+
+  it('should find all employees by manager/employee', async () => {
+    const employee = {
+      _id: '6363d75a63e9deb5a8e1c6cd',
+      email: 'vicosa@cisab.com',
+      name: 'cisab',
+      surname: 'cisab',
+      properties: {
+        profession: 'software developer',
+        county_id: 'ab',
+      },
+    };
+
+    findEmployeesMockFn.mockReturnValue(Promise.resolve([employee]));
+    const idString = '6363c2f363e9deb5a8e1c672';
+    const idStub = new Types.ObjectId(idString);
+    const req = { user: { roles: [Role.Manager], county_id: 'ab' } };
+    const response = await controller.findEmployee(idStub, req);
+
+    expect(response[0]._id).toEqual('6363d75a63e9deb5a8e1c6cd');
+    expect(response[0].email).toEqual('vicosa@cisab.com');
+    expect(response[0].name).toEqual('cisab');
+    expect(response[0].surname).toEqual('cisab');
+    expect(response[0].surname).toEqual('cisab');
+    expect(response[0].properties['county_id']).toEqual('ab');
   });
 
   it('should update employee', async () => {
