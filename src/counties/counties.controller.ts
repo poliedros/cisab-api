@@ -129,14 +129,20 @@ export class CountiesController {
   @ApiBody({ type: CreateEmployeeRequest })
   @ApiResponse({ type: GetEmployeeResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab, Role.Employee)
+  @Roles(Role.Cisab, Role.Manager, Role.Employee)
   @Get(':id/users')
   async findEmployee(
     @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
+    @Request() req,
   ): Promise<GetEmployeeResponse[]> {
-    const employees = await this.countiesService.findEmployees(
-      countyId.toString(),
-    );
+    const userPayload = req.user as Payload;
+
+    let userCountyId: string;
+    if (userPayload.roles.includes(Role.Cisab)) {
+      userCountyId = countyId.toString();
+    } else userCountyId = userPayload.county_id;
+
+    const employees = await this.countiesService.findEmployees(userCountyId);
 
     const response = employees.map((employee) => {
       return {
