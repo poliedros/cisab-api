@@ -116,14 +116,28 @@ describe('CountiesController', () => {
     expect(result._id).toEqual(idStub);
   });
 
-  it('should return one county with valid id', async () => {
+  it('should return one county with valid id by cisab', async () => {
     const idString = '63599affb40135010840911b';
     const idStub = new Types.ObjectId(idString);
+    const req = { user: { roles: [Role.Cisab] } };
     const county = { _id: idStub, ...buildCounty() };
 
     findOneMockFn.mockReturnValue(county);
 
-    const response = await controller.findOne(idStub);
+    const response = await controller.findOne(idStub, req);
+
+    expect(response._id).toEqual(idStub);
+  });
+
+  it('should return one county with valid id by manager/employee', async () => {
+    const idString = '63599affb40135010840911b';
+    const idStub = new Types.ObjectId(idString);
+    const req = { user: { roles: [Role.Manager] } };
+    const county = { _id: idStub, ...buildCounty() };
+
+    findOneMockFn.mockReturnValue(county);
+
+    const response = await controller.findOne(idStub, req);
 
     expect(response._id).toEqual(idStub);
   });
@@ -131,7 +145,8 @@ describe('CountiesController', () => {
   it('should throw bad request with invalid id', async () => {
     try {
       const idString = '63599affb4013501084091';
-      await controller.findOne(idString);
+      const req = { user: { roles: [] } };
+      await controller.findOne(idString, req);
     } catch (e: any) {
       expect(e).toBeInstanceOf(BadRequestException);
     }
@@ -154,8 +169,9 @@ describe('CountiesController', () => {
   it('should throw not when finding one found with valid id', async () => {
     try {
       const idString = '63599affb4013501084091';
+      const req = { user: { roles: [] } };
       findOneMockFn.mockReturnValue(undefined);
-      await controller.findOne(idString);
+      await controller.findOne(idString, req);
     } catch (e: any) {
       expect(e).toBeInstanceOf(NotFoundException);
     }

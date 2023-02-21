@@ -66,10 +66,23 @@ export class CountiesController {
   @ApiOperation({ summary: 'Find one county', description: 'forbidden' })
   @ApiResponse({ type: GetCountyResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
+  @Roles(Role.Cisab, Role.Manager, Role.Employee)
   @Get(':id')
-  async findOne(@Param('id', ParseObjectIdPipe) id: Types.ObjectId | string) {
-    const county = await this.countiesService.findOne(id.toString());
+  async findOne(
+    @Param('id', ParseObjectIdPipe) id: Types.ObjectId | string,
+    @Request() req,
+  ) {
+    const userPayload = req.user as Payload;
+
+    let userCountyId: string;
+    if (
+      userPayload.roles.includes(Role.Cisab) ||
+      userPayload.roles.includes(Role.Admin)
+    ) {
+      userCountyId = id.toString();
+    } else userCountyId = userPayload.county_id;
+
+    const county = await this.countiesService.findOne(userCountyId);
 
     if (county) return county;
 
@@ -138,7 +151,10 @@ export class CountiesController {
     const userPayload = req.user as Payload;
 
     let userCountyId: string;
-    if (userPayload.roles.includes(Role.Cisab)) {
+    if (
+      userPayload.roles.includes(Role.Cisab) ||
+      userPayload.roles.includes(Role.Admin)
+    ) {
       userCountyId = countyId.toString();
     } else userCountyId = userPayload.county_id;
 
