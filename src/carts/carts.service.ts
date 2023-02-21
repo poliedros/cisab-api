@@ -1,9 +1,10 @@
-import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { DemandsService } from '../demands/demands.service';
 import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
-import { CartsRepository } from './carts.repository';
+import { CartsCacheRepository } from './carts.cache.repository';
+import { CartsMongoRepository } from './carts.mongo.repository';
 import { CartDto, CartProductDto } from './dto/cart.dto';
 import { CartsRequest } from './dto/request/carts-request.dto';
 import { GetCartResponse } from './dto/response/get-cart-response.dto';
@@ -13,7 +14,8 @@ export class CartsService {
   protected readonly logger = new Logger(CartsService.name);
 
   constructor(
-    private readonly cartsRepository: CartsRepository,
+    private readonly cartsCacheRepository: CartsCacheRepository,
+    private readonly cartsMongoRepository: CartsMongoRepository,
     private readonly productsService: ProductsService,
     private readonly demandsService: DemandsService,
     private readonly usersService: UsersService,
@@ -24,6 +26,13 @@ export class CartsService {
     countyId: string,
     userId: string,
   ): Promise<CartDto> {
+    const existCart = await this.cartsMongoRepository.findOneOrReturnUndefined({
+      county_id: countyId,
+      demand_id: cart.demand_id,
+    });
+
+    if (existCart) throw new BadRequestException('This cart is already closed');
+
     const ids = cart.products.map((id) => id.product_id);
 
     const products = await this.productsService.findAll({
@@ -63,7 +72,7 @@ export class CartsService {
     const cartDto: CartDto = {
       _id: new Types.ObjectId().toString(),
       user_id: userId,
-      state: 'OPEN',
+      state: 'opened',
       updated_on: new Date(),
       product_ids: cart.products,
       products: cartProducts,
@@ -73,16 +82,36 @@ export class CartsService {
       county_id: countyId,
     };
 
-    return this.cartsRepository.upsert(cartDto);
+    return this.cartsCacheRepository.upsert(cartDto);
   }
 
-  get(county_id: string, demand_id: string): Promise<GetCartResponse> {
-    return this.cartsRepository.get(county_id, demand_id);
+  async get(county_id: string, demand_id: string): Promise<GetCartResponse> {
+    const cart = await this.cartsMongoRepository.findOneOrReturnUndefined({
+      county_id: county_id,
+      demand_id: demand_id,
+    });
+
+    if (cart) return { ...cart, _id: cart._id.toString() };
+
+    return this.cartsCacheRepository.get(county_id, demand_id);
   }
 
-  close(county_id: string, demand_id: string) {
+  async close(county_id: string, demand_id: string) {
     try {
-      return this.cartsRepository.close(county_id, demand_id);
+      const existCart =
+        await this.cartsMongoRepository.findOneOrReturnUndefined({
+          county_id: county_id,
+          demand_id: demand_id,
+        });
+
+      if (existCart)
+        throw new BadRequestException('This cart is already closed');
+
+      const cart = await this.cartsCacheRepository.get(county_id, demand_id);
+      return this.cartsMongoRepository.close({
+        ...cart,
+        _id: new Types.ObjectId(cart._id),
+      });
     } catch (err) {
       throw err;
     }

@@ -3,30 +3,55 @@ import { AbstractDocument } from '../../database/abstract.schema';
 
 export type CartDocument = Cart & Document;
 
-class CartProduct {
+class CartMeasurementDto {
+  name: string;
+  value: string;
+  unit: string;
+}
+
+export class CartProduct {
   _id: string;
+  name: string;
+  norms: string[];
+  categories: string[];
+  photo_url: string;
+  measurements: CartMeasurementDto[];
+  quantity: number;
+}
+
+export class CartProductIds {
+  product_id: string;
   quantity: number;
 }
 
 @Schema({ versionKey: false })
 export class Cart extends AbstractDocument {
   @Prop()
-  state: 'open' | 'closed';
+  state: 'opened' | 'closed';
 
-  @Prop()
+  @Prop({ type: CartProduct })
   products: CartProduct[];
 
   @Prop()
-  county_id: string;
+  user_id: string;
+
+  @Prop()
+  updated_on: Date;
+
+  @Prop({ type: CartProductIds })
+  product_ids: CartProductIds[];
+
+  @Prop()
+  demandName: string;
 
   @Prop()
   demand_id: string;
 
   @Prop()
-  updated_on: Date;
+  userName: string;
 
   @Prop()
-  user_id: string;
+  county_id: string;
 }
 
 export const CartSchema = SchemaFactory.createForClass(Cart);

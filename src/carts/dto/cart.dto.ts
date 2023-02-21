@@ -21,7 +21,7 @@ export class CartProductIdDto {
 
 export class CartDto {
   _id: string;
-  state: string;
+  state: 'opened' | 'closed';
   products: CartProductDto[];
   user_id: string;
   updated_on: Date;

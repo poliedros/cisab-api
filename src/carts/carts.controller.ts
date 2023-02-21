@@ -61,7 +61,6 @@ export class CartsController {
   }
 
   @ApiOperation({ summary: 'Close cart', description: 'forbidden' })
-  @ApiBody({ type: CartsRequest })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Employee, Role.Manager)
   @Post(':demand_id/close')

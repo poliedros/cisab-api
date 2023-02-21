@@ -5,10 +5,11 @@ import { CartsController } from './carts.controller';
 import type { ClientOpts } from 'redis';
 import { CartsService } from './carts.service';
 import * as redisStore from 'cache-manager-redis-store';
-import { CartsRepository } from './carts.repository';
+import { CartsCacheRepository } from './carts.cache.repository';
 import { ProductsModule } from '../products/products.module';
 import { DemandsModule } from '../demands/demands.module';
 import { UsersModule } from '../users/users.module';
+import { CartsMongoRepository } from './carts.mongo.repository';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { UsersModule } from '../users/users.module';
     UsersModule,
   ],
   controllers: [CartsController],
-  providers: [CartsService, CartsRepository],
+  providers: [CartsService, CartsCacheRepository, CartsMongoRepository],
 })
 export class CartsModule {
   constructor(@Inject(CACHE_MANAGER) private cacheManager) {}
