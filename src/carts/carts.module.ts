@@ -10,6 +10,7 @@ import { ProductsModule } from '../products/products.module';
 import { DemandsModule } from '../demands/demands.module';
 import { UsersModule } from '../users/users.module';
 import { CartsMongoRepository } from './carts.mongo.repository';
+import { CountiesModule } from '../counties/counties.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CartsMongoRepository } from './carts.mongo.repository';
     ProductsModule,
     DemandsModule,
     UsersModule,
+    CountiesModule,
   ],
   controllers: [CartsController],
   providers: [CartsService, CartsCacheRepository, CartsMongoRepository],

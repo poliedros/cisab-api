@@ -26,8 +26,9 @@ export class CartDto {
   user_id: string;
   updated_on: Date;
   product_ids: CartProductIdDto[];
-  demandName: string;
+  demand_name: string;
   demand_id: string;
-  userName: string;
+  user_name: string;
   county_id: string;
+  county_name: string;
 }

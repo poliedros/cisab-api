@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { Types } from 'mongoose';
+import { CountiesService } from '../counties/counties.service';
 import { DemandsService } from '../demands/demands.service';
 import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
@@ -19,6 +20,7 @@ export class CartsService {
     private readonly productsService: ProductsService,
     private readonly demandsService: DemandsService,
     private readonly usersService: UsersService,
+    private readonly countiesService: CountiesService,
   ) {}
 
   async upsert(
@@ -60,7 +62,7 @@ export class CartsService {
       };
     });
 
-    const { name: demandName } = await this.demandsService.findOne(
+    const { name: demand_name } = await this.demandsService.findOne(
       cart.demand_id,
     );
 
@@ -69,6 +71,8 @@ export class CartsService {
 
     const fullName = `${userName} ${userSurname}`;
 
+    const { name: county_name } = await this.countiesService.findOne(countyId);
+
     const cartDto: CartDto = {
       _id: new Types.ObjectId().toString(),
       user_id: userId,
@@ -76,10 +80,11 @@ export class CartsService {
       updated_on: new Date(),
       product_ids: cart.products,
       products: cartProducts,
-      demandName,
+      demand_name,
       demand_id: cart.demand_id,
-      userName: fullName,
+      user_name: fullName,
       county_id: countyId,
+      county_name,
     };
 
     return this.cartsCacheRepository.upsert(cartDto);

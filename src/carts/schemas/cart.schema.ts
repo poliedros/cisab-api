@@ -42,16 +42,19 @@ export class Cart extends AbstractDocument {
   product_ids: CartProductIds[];
 
   @Prop()
-  demandName: string;
+  demand_name: string;
 
   @Prop()
   demand_id: string;
 
   @Prop()
-  userName: string;
+  user_name: string;
 
   @Prop()
   county_id: string;
+
+  @Prop()
+  county_name: string;
 }
 
 export const CartSchema = SchemaFactory.createForClass(Cart);
