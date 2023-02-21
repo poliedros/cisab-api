@@ -15,5 +15,6 @@ import { County, CountySchema } from './schemas/county.schema';
   ],
   controllers: [CountiesController],
   providers: [CountiesService, CountiesRepository],
+  exports: [CountiesService],
 })
 export class CountiesModule {}
