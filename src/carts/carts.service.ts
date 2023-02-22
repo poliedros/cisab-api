@@ -6,7 +6,7 @@ import { ProductsService } from '../products/products.service';
 import { UsersService } from '../users/users.service';
 import { CartsCacheRepository } from './carts.cache.repository';
 import { CartsMongoRepository } from './carts.mongo.repository';
-import { CartDto, CartProductDto } from './dto/cart.dto';
+import { CartDto, CartProductDto, CartProductIdDto } from './dto/cart.dto';
 import { CartsRequest } from './dto/request/carts-request.dto';
 import { GetCartResponse } from './dto/response/get-cart-response.dto';
 
@@ -90,15 +90,68 @@ export class CartsService {
     return this.cartsCacheRepository.upsert(cartDto);
   }
 
-  async get(county_id: string, demand_id: string): Promise<GetCartResponse> {
+  async get(
+    county_id: string,
+    demand_id: string,
+    user_id: string,
+  ): Promise<GetCartResponse> {
+    // If cart is already closed, it will be on Mongo
     const cart = await this.cartsMongoRepository.findOneOrReturnUndefined({
       county_id: county_id,
       demand_id: demand_id,
     });
-
     if (cart) return { ...cart, _id: cart._id.toString() };
 
-    return this.cartsCacheRepository.get(county_id, demand_id);
+    // If cart is on the cache, return it
+    const cachedCart = await this.cartsCacheRepository.get(
+      county_id,
+      demand_id,
+    );
+    if (cachedCart) return cachedCart;
+
+    // Cart is not on the cache, so generate it
+
+    const demand = await this.demandsService.findOne(demand_id);
+
+    const productsWithQuantity = demand.products.map<CartProductDto>(
+      (product) => {
+        return { ...product, quantity: 0, _id: product._id.toString() };
+      },
+    );
+
+    const productsIds = productsWithQuantity.map<CartProductIdDto>(
+      (product) => {
+        return {
+          product_id: product._id.toString(),
+          quantity: product.quantity,
+        };
+      },
+    );
+
+    const { name: userName, surname: userSurname } =
+      await this.usersService.findOne({ _id: user_id });
+
+    const fullName = `${userName} ${userSurname}`;
+
+    const { name: county_name } = await this.countiesService.findOne(county_id);
+
+    const cartDto: CartDto = {
+      _id: new Types.ObjectId().toString(),
+      user_id: user_id,
+      state: 'opened',
+      updated_on: new Date(),
+      product_ids: productsIds,
+      products: productsWithQuantity,
+      demand_name: demand.name,
+      demand_id: demand_id,
+      user_name: fullName,
+      county_id: county_id,
+      county_name,
+    };
+
+    await this.cartsCacheRepository.upsert(cartDto);
+
+    return cartDto;
   }
 
   async close(county_id: string, demand_id: string) {
