@@ -53,8 +53,12 @@ export class CartsController {
     @Request() req,
   ): Promise<GetCartResponse> {
     try {
-      const userPayload = req.user as Payload;
-      return this.cartsService.get(userPayload.county_id, demandId);
+      const userPayload = req.user;
+      return this.cartsService.get(
+        userPayload.county_id,
+        demandId,
+        userPayload.id,
+      );
     } catch (err) {
       throw err;
     }
