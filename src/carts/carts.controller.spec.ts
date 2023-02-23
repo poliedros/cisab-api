@@ -3,10 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CartBuilder } from './builders/cart.builder';
 import { CartsController } from './carts.controller';
 import { CartsService } from './carts.service';
-import {
-  CartsProductRequest,
-  CartsRequest,
-} from './dto/request/carts-request.dto';
 
 describe('CartsController', () => {
   let controller: CartsController;
