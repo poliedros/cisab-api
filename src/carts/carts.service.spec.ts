@@ -127,4 +127,32 @@ describe('CartsService', () => {
     expect(res.county_id).toEqual('1a');
     expect(res.county_name).toEqual('County name');
   });
+
+  it('closed carts should be gotten on get', async () => {
+    const cart = cartBuilder
+      .addDemandId('2')
+      .addProduct({
+        product_id: '12',
+        quantity: 3,
+      })
+      .build();
+
+    findOneOrReturnUndefinedMockFn.mockReturnValue(
+      Promise.resolve({
+        ...cart,
+        state: 'closed',
+        updated_on: new Date(),
+        user_id: '3f',
+        _id: 'dfe2',
+      }),
+    );
+
+    const res = await service.get('1a', '2', '3f');
+
+    expect(res._id).not.toBeUndefined();
+    expect(res.products).not.toBeUndefined();
+    expect(res.state).toEqual('closed');
+    expect(res.updated_on).not.toBeUndefined();
+    expect(res.user_id).not.toBeUndefined();
+  });
 });
