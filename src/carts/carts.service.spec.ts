@@ -6,9 +6,17 @@ import { ProductsService } from '../products/products.service';
 import { CartsCacheRepository } from './carts.cache.repository';
 import { CartsMongoRepository } from './carts.mongo.repository';
 import { CartsService } from './carts.service';
+import { CartBuilder } from './builders/cart.builder';
+import { BadRequestException } from '@nestjs/common';
 
 describe('CartsService', () => {
   let service: CartsService;
+  const findOneOrReturnUndefinedMockFn = jest.fn();
+  const productFindAllMockFn = jest.fn();
+  const demandsFindOneMockFn = jest.fn();
+  const countiesFindOneMockFn = jest.fn();
+  const usersFindOneMockFn = jest.fn();
+  const cacheUpsertMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,27 +24,39 @@ describe('CartsService', () => {
         CartsService,
         {
           provide: CartsCacheRepository,
-          useValue: {},
+          useValue: {
+            upsert: cacheUpsertMockFn,
+          },
         },
         {
           provide: CartsMongoRepository,
-          useValue: {},
+          useValue: {
+            findOneOrReturnUndefined: findOneOrReturnUndefinedMockFn,
+          },
         },
         {
           provide: ProductsService,
-          useValue: {},
+          useValue: {
+            findAll: productFindAllMockFn,
+          },
         },
         {
           provide: DemandsService,
-          useValue: {},
+          useValue: {
+            findOne: demandsFindOneMockFn,
+          },
         },
         {
           provide: CountiesService,
-          useValue: {},
+          useValue: {
+            findOne: countiesFindOneMockFn,
+          },
         },
         {
           provide: UsersService,
-          useValue: {},
+          useValue: {
+            findOne: usersFindOneMockFn,
+          },
         },
       ],
     }).compile();
@@ -44,7 +64,68 @@ describe('CartsService', () => {
     service = module.get<CartsService>(CartsService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('should throw bad request if cart already exists', async () => {
+    try {
+      const cartBuilder = new CartBuilder();
+
+      const cart = cartBuilder
+        .addDemandId('2')
+        .addProduct({
+          product_id: '12',
+          quantity: 3,
+        })
+        .build();
+
+      findOneOrReturnUndefinedMockFn.mockReturnValue(Promise.resolve({}));
+      await service.upsert(cart, '1a', '2a');
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
+  });
+
+  it('should upsert cart', async () => {
+    const cartBuilder = new CartBuilder();
+    const cart = cartBuilder
+      .addDemandId('2')
+      .addProduct({
+        product_id: '12',
+        quantity: 3,
+      })
+      .build();
+
+    const product = {
+      _id: '12',
+      name: 'Product Test',
+      norms: [],
+      categories: [],
+      photo_url: '',
+      measurements: [],
+    };
+
+    findOneOrReturnUndefinedMockFn.mockReturnValue(Promise.resolve(undefined));
+    productFindAllMockFn.mockReturnValue(Promise.resolve([product]));
+    demandsFindOneMockFn.mockReturnValue(
+      Promise.resolve({ name: 'Demand name' }),
+    );
+    usersFindOneMockFn.mockReturnValue(
+      Promise.resolve({ name: 'Name', surname: 'Surname' }),
+    );
+    countiesFindOneMockFn.mockReturnValue(
+      Promise.resolve({ name: 'County name' }),
+    );
+
+    const res = await service.upsert(cart, '1a', '2a');
+
+    expect(res._id).not.toBeUndefined();
+    expect(res.user_id).toEqual('2a');
+    expect(res.state).toEqual('opened');
+    expect(res.updated_on).not.toBeUndefined();
+    expect(res.product_ids).not.toBeUndefined();
+    expect(res.products).not.toBeUndefined();
+    expect(res.demand_name).toEqual('Demand name');
+    expect(res.demand_id).toEqual('2');
+    expect(res.user_name).toEqual('Name Surname');
+    expect(res.county_id).toEqual('1a');
+    expect(res.county_name).toEqual('County name');
   });
 });

@@ -87,7 +87,8 @@ export class CartsService {
       county_name,
     };
 
-    return this.cartsCacheRepository.upsert(cartDto);
+    await this.cartsCacheRepository.upsert(cartDto);
+    return cartDto;
   }
 
   async get(
