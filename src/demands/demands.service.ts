@@ -117,6 +117,7 @@ export class DemandsService {
         end_date: demand.end_date,
         state: demand.state,
         products: demandP,
+        product_ids: demand.product_ids,
         created_on: demand.created_on,
       };
 
@@ -128,8 +129,6 @@ export class DemandsService {
 
   async findOne(id: string): Promise<GetDemandResponse> {
     const demand = await this.demandsRepository.findOne({ _id: id });
-
-    delete demand.product_ids;
 
     const products = await this.productsService.findAll({
       ids: demand.product_ids,
