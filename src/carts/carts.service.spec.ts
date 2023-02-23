@@ -18,6 +18,7 @@ describe('CartsService', () => {
   const countiesFindOneMockFn = jest.fn();
   const usersFindOneMockFn = jest.fn();
   const cacheUpsertMockFn = jest.fn();
+  const cacheGetMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,6 +28,7 @@ describe('CartsService', () => {
           provide: CartsCacheRepository,
           useValue: {
             upsert: cacheUpsertMockFn,
+            get: cacheGetMockFn,
           },
         },
         {
@@ -138,6 +140,35 @@ describe('CartsService', () => {
       .build();
 
     findOneOrReturnUndefinedMockFn.mockReturnValue(
+      Promise.resolve({
+        ...cart,
+        state: 'closed',
+        updated_on: new Date(),
+        user_id: '3f',
+        _id: 'dfe2',
+      }),
+    );
+
+    const res = await service.get('1a', '2', '3f');
+
+    expect(res._id).not.toBeUndefined();
+    expect(res.products).not.toBeUndefined();
+    expect(res.state).toEqual('closed');
+    expect(res.updated_on).not.toBeUndefined();
+    expect(res.user_id).not.toBeUndefined();
+  });
+
+  it('should return cart if it is on the cache', async () => {
+    const cart = cartBuilder
+      .addDemandId('2')
+      .addProduct({
+        product_id: '12',
+        quantity: 3,
+      })
+      .build();
+
+    findOneOrReturnUndefinedMockFn.mockReturnValue(Promise.resolve(undefined));
+    cacheGetMockFn.mockReturnValue(
       Promise.resolve({
         ...cart,
         state: 'closed',
