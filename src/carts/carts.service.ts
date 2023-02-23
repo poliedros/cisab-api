@@ -168,6 +168,7 @@ export class CartsService {
         throw new BadRequestException('This cart is already closed');
 
       const cart = await this.cartsCacheRepository.get(county_id, demand_id);
+
       return this.cartsMongoRepository.close({
         ...cart,
         _id: new Types.ObjectId(cart._id),

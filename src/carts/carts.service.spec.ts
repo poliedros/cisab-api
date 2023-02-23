@@ -20,6 +20,7 @@ describe('CartsService', () => {
   const usersFindOneMockFn = jest.fn();
   const cacheUpsertMockFn = jest.fn();
   const cacheGetMockFn = jest.fn();
+  const closeMongoMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +37,7 @@ describe('CartsService', () => {
           provide: CartsMongoRepository,
           useValue: {
             findOneOrReturnUndefined: findOneOrReturnUndefinedMockFn,
+            close: closeMongoMockFn,
           },
         },
         {
@@ -222,5 +224,25 @@ describe('CartsService', () => {
     expect(res.user_name).toEqual('Name Surname');
     expect(res.county_id).toEqual('1a');
     expect(res.county_name).toEqual('County name');
+  });
+
+  it('should throw bad request when closing cart that is already closed', async () => {
+    try {
+      findOneOrReturnUndefinedMockFn.mockReturnValue(Promise.resolve({}));
+      await service.close('1a', '2b');
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
+  });
+
+  it('should close cart', async () => {
+    findOneOrReturnUndefinedMockFn.mockReturnValue(Promise.resolve(undefined));
+
+    cacheGetMockFn.mockReturnValue(Promise.resolve({}));
+    closeMongoMockFn.mockReturnValue(Promise.resolve(true));
+
+    const res = await service.close('1a', '2b');
+
+    expect(res).toBeTruthy();
   });
 });
