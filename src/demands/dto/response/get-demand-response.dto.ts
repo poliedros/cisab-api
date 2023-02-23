@@ -19,6 +19,7 @@ export class GetDemandResponse {
   start_date: Date;
   end_date: Date;
   products: GetDemandProductResponse[];
+  product_ids: string[];
   state: DemandState | undefined;
   created_on: Date;
 }
