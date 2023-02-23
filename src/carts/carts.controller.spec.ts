@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { CartBuilder } from './builders/cart.builder';
 import { CartsController } from './carts.controller';
 import { CartsService } from './carts.service';
 import {
@@ -12,6 +13,7 @@ describe('CartsController', () => {
   const upsertMockFn = jest.fn();
   const getMockFn = jest.fn();
   const closeMockFn = jest.fn();
+  const cartBuilder = new CartBuilder();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,21 +31,20 @@ describe('CartsController', () => {
     }).compile();
 
     controller = module.get<CartsController>(CartsController);
+    cartBuilder.reset();
   });
 
   it('should upsert cart', async () => {
     const req = { user: { county_id: '1', id: '2' } };
-    const products: CartsProductRequest[] = [
-      {
+
+    const cart = cartBuilder
+      .addDemandId('2')
+      .addProduct({
         product_id: '12',
         quantity: 3,
-      },
-    ];
+      })
+      .build();
 
-    const cart: CartsRequest = {
-      demand_id: '2',
-      products,
-    };
     upsertMockFn.mockReturnValue(Promise.resolve(true));
     const res = await controller.upsertCart(cart, req);
 
@@ -55,17 +56,15 @@ describe('CartsController', () => {
 
     try {
       const req = { user: { county_id: '1', id: '2' } };
-      const products: CartsProductRequest[] = [
-        {
+
+      const cart = cartBuilder
+        .addDemandId('2')
+        .addProduct({
           product_id: '12',
           quantity: 3,
-        },
-      ];
+        })
+        .build();
 
-      const cart: CartsRequest = {
-        demand_id: '2',
-        products,
-      };
       upsertMockFn.mockImplementation(() => {
         throw new TestError();
       });

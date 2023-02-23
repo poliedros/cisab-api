@@ -11,6 +11,7 @@ import { BadRequestException } from '@nestjs/common';
 
 describe('CartsService', () => {
   let service: CartsService;
+  const cartBuilder = new CartBuilder();
   const findOneOrReturnUndefinedMockFn = jest.fn();
   const productFindAllMockFn = jest.fn();
   const demandsFindOneMockFn = jest.fn();
@@ -62,12 +63,11 @@ describe('CartsService', () => {
     }).compile();
 
     service = module.get<CartsService>(CartsService);
+    cartBuilder.reset();
   });
 
   it('should throw bad request if cart already exists', async () => {
     try {
-      const cartBuilder = new CartBuilder();
-
       const cart = cartBuilder
         .addDemandId('2')
         .addProduct({
@@ -84,7 +84,6 @@ describe('CartsService', () => {
   });
 
   it('should upsert cart', async () => {
-    const cartBuilder = new CartBuilder();
     const cart = cartBuilder
       .addDemandId('2')
       .addProduct({
