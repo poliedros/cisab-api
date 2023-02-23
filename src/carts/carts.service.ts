@@ -73,7 +73,8 @@ export class CartsService {
 
     const { name: county_name } = await this.countiesService.findOne(countyId);
 
-    const cartDto: CartDto = {
+    let cartDto: CartDto = new CartDto();
+    cartDto = {
       _id: new Types.ObjectId().toString(),
       user_id: userId,
       state: 'opened',
@@ -95,7 +96,7 @@ export class CartsService {
     county_id: string,
     demand_id: string,
     user_id: string,
-  ): Promise<GetCartResponse> {
+  ): Promise<CartDto> {
     // If cart is already closed, it will be on Mongo
     const cart = await this.cartsMongoRepository.findOneOrReturnUndefined({
       county_id: county_id,

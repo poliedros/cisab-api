@@ -8,6 +8,7 @@ import { CartsMongoRepository } from './carts.mongo.repository';
 import { CartsService } from './carts.service';
 import { CartBuilder } from './builders/cart.builder';
 import { BadRequestException } from '@nestjs/common';
+import { CartDto } from './dto/cart.dto';
 
 describe('CartsService', () => {
   let service: CartsService;
@@ -115,7 +116,7 @@ describe('CartsService', () => {
       Promise.resolve({ name: 'County name' }),
     );
 
-    const res = await service.upsert(cart, '1a', '2a');
+    const res: CartDto = await service.upsert(cart, '1a', '2a');
 
     expect(res._id).not.toBeUndefined();
     expect(res.user_id).toEqual('2a');
@@ -185,5 +186,41 @@ describe('CartsService', () => {
     expect(res.state).toEqual('closed');
     expect(res.updated_on).not.toBeUndefined();
     expect(res.user_id).not.toBeUndefined();
+  });
+
+  it('should create cart and save it on the cache', async () => {
+    const cart = cartBuilder
+      .addDemandId('2')
+      .addProduct({
+        product_id: '12',
+        quantity: 3,
+      })
+      .build();
+
+    findOneOrReturnUndefinedMockFn.mockReturnValue(Promise.resolve(undefined));
+    cacheGetMockFn.mockReturnValue(Promise.resolve(undefined));
+    demandsFindOneMockFn.mockReturnValue(
+      Promise.resolve({ name: 'Demand name', products: [{ _id: '1a' }] }),
+    );
+    usersFindOneMockFn.mockReturnValue(
+      Promise.resolve({ name: 'Name', surname: 'Surname' }),
+    );
+    countiesFindOneMockFn.mockReturnValue(
+      Promise.resolve({ name: 'County name' }),
+    );
+
+    const res = await service.get('1a', '2', '3f');
+
+    expect(res._id).not.toBeUndefined();
+    expect(res.user_id).toEqual('3f');
+    expect(res.state).toEqual('opened');
+    expect(res.updated_on).not.toBeUndefined();
+    expect(res.product_ids).not.toBeUndefined();
+    expect(res.products).not.toBeUndefined();
+    expect(res.demand_name).toEqual('Demand name');
+    expect(res.demand_id).toEqual('2');
+    expect(res.user_name).toEqual('Name Surname');
+    expect(res.county_id).toEqual('1a');
+    expect(res.county_name).toEqual('County name');
   });
 });
