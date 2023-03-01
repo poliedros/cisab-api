@@ -14,9 +14,10 @@ describe('JwtStrategy', () => {
     });
 
     expect(payload).toEqual({
-      id: payload.id,
+      county_id: undefined,
       email: payload.email,
       roles: [Role.Cisab],
+      sub: payload.sub,
     });
   });
 });

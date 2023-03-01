@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 describe('AuthController', () => {
   let controller: AuthController;
   const loginMockFn = jest.fn();
+  const profileMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -14,6 +15,7 @@ describe('AuthController', () => {
           provide: AuthService,
           useValue: {
             login: loginMockFn,
+            profile: profileMockFn,
           },
         },
       ],
@@ -35,6 +37,8 @@ describe('AuthController', () => {
   });
 
   it('should get profile', async () => {
+    profileMockFn.mockReturnValue(Promise.resolve({ email: 'carlos' }));
+
     const profile = await controller.getProfile({
       user: { email: 'carlos' },
     });
