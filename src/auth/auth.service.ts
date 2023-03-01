@@ -62,4 +62,15 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async profile(payload: Payload) {
+    const user = await this.usersService.findOne({ _id: payload.sub });
+    return {
+      _id: user._id,
+      email: user.email,
+      roles: user.roles,
+      name: user.name,
+      surname: user.surname,
+    };
+  }
 }

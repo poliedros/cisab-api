@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from './../users/users.service';
-import { AuthService } from './auth.service';
+import { AuthService, Payload } from './auth.service';
 import { Role } from './role.enum';
 import { User } from './../users/schemas/user.schema';
 import { Types } from 'mongoose';
@@ -88,5 +88,31 @@ describe('AuthService', () => {
     });
 
     expect(token).toEqual({ access_token: '3a' });
+  });
+
+  it('should return user profile', async () => {
+    const user = {
+      _id: '1a',
+      email: 'carlos',
+      roles: [],
+      name: 'carlos',
+      surname: 'czar',
+      properties: {},
+    };
+
+    findOneMockFn.mockReturnValue(Promise.resolve(user));
+
+    const res = await service.profile({
+      email: 'carlos',
+      roles: [],
+      sub: '12',
+      county_id: undefined,
+    } as Payload);
+
+    expect(res._id).toEqual(user._id);
+    expect(res.email).toEqual(user.email);
+    expect(res.roles).toEqual(user.roles);
+    expect(res.name).toEqual(user.name);
+    expect(res.surname).toEqual(user.surname);
   });
 });
