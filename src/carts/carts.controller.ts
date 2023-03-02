@@ -36,7 +36,7 @@ export class CartsController {
       return this.cartsService.upsert(
         cart,
         userPayload.county_id,
-        userPayload.id,
+        userPayload.sub,
       );
     } catch (err) {
       throw err;
@@ -57,7 +57,7 @@ export class CartsController {
       return this.cartsService.get(
         userPayload.county_id,
         demandId,
-        userPayload.id,
+        userPayload.sub,
       );
     } catch (err) {
       throw err;
