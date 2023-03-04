@@ -14,12 +14,13 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Role } from '../auth/role.enum';
 import { Roles } from '../auth/roles.decorator';
 import { CartsRequest } from './dto/request/carts-request.dto';
-import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetCartResponse } from './dto/response/get-cart-response.dto';
 import { CartsService } from './carts.service';
 import { Payload } from 'src/auth/auth.service';
 
 @Controller('carts')
+@ApiTags('carts')
 export class CartsController {
   private readonly logger = new Logger(CartsController.name);
 
