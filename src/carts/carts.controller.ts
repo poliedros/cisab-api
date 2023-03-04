@@ -17,8 +17,8 @@ import { CartsRequest } from './dto/request/carts-request.dto';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetCartResponse } from './dto/response/get-cart-response.dto';
 import { CartsService } from './carts.service';
-import { Payload } from 'src/auth/auth.service';
-import { ParseObjectIdPipe } from 'src/pipes/parse-objectid.pipe';
+import { Payload } from '../auth/auth.service';
+import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 
 @Controller('carts')
 @ApiTags('carts')
