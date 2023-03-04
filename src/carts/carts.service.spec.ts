@@ -17,7 +17,7 @@ describe('CartsService', () => {
   const productFindAllMockFn = jest.fn();
   const demandsFindOneMockFn = jest.fn();
   const countiesFindOneMockFn = jest.fn();
-  const usersFindOneOrReturnNullMockFn = jest.fn();
+  const usersFindOneMockFn = jest.fn();
   const cacheUpsertMockFn = jest.fn();
   const cacheGetMockFn = jest.fn();
   const closeMongoMockFn = jest.fn();
@@ -61,7 +61,7 @@ describe('CartsService', () => {
         {
           provide: UsersService,
           useValue: {
-            findOneOrReturnNull: usersFindOneOrReturnNullMockFn,
+            findOne: usersFindOneMockFn,
           },
         },
       ],
@@ -111,7 +111,7 @@ describe('CartsService', () => {
     demandsFindOneMockFn.mockReturnValue(
       Promise.resolve({ name: 'Demand name' }),
     );
-    usersFindOneOrReturnNullMockFn.mockReturnValue(
+    usersFindOneMockFn.mockReturnValue(
       Promise.resolve({ name: 'Name', surname: 'Surname' }),
     );
     countiesFindOneMockFn.mockReturnValue(
@@ -204,7 +204,7 @@ describe('CartsService', () => {
     demandsFindOneMockFn.mockReturnValue(
       Promise.resolve({ name: 'Demand name', products: [{ _id: '1a' }] }),
     );
-    usersFindOneOrReturnNullMockFn.mockReturnValue(
+    usersFindOneMockFn.mockReturnValue(
       Promise.resolve({ name: 'Name', surname: 'Surname' }),
     );
     countiesFindOneMockFn.mockReturnValue(

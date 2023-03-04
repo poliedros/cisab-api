@@ -66,7 +66,7 @@ export class CartsService {
     );
 
     const { name: userName, surname: userSurname } =
-      await this.usersService.findOneOrReturnNull({ _id: userId });
+      await this.usersService.findOne({ _id: userId });
 
     const fullName = `${userName} ${userSurname}`;
 
@@ -130,7 +130,7 @@ export class CartsService {
     );
 
     const { name: userName, surname: userSurname } =
-      await this.usersService.findOneOrReturnNull({ _id: user_id });
+      await this.usersService.findOne({ _id: user_id });
 
     const fullName = `${userName} ${userSurname}`;
 

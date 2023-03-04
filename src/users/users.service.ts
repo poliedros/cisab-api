@@ -32,6 +32,10 @@ export class UsersService {
     }
   }
 
+  async findOne(filterQuery: FilterQuery<User>) {
+    return this.usersRepository.findOne(filterQuery);
+  }
+
   async find(filterQuery: FilterQuery<User>) {
     try {
       return await this.usersRepository.find(filterQuery);

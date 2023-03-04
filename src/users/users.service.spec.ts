@@ -312,4 +312,22 @@ describe('User Service', () => {
       expect(err).toBeInstanceOf(Error);
     }
   });
+
+  it('should find one user', async () => {
+    const user = {
+      _id: '1',
+      email: 'carlos@czar.dev',
+      password: 'changeme',
+      roles: [Role.Cisab],
+      properties: new Map<string, string>(),
+    };
+
+    findOneMockFn.mockReturnValue(Promise.resolve(user));
+
+    const expectedUser = await service.findOne({
+      email: 'carlos@czar.dev',
+    });
+
+    expect(expectedUser).toEqual(user);
+  });
 });
