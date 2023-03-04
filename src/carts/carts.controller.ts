@@ -18,6 +18,7 @@ import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetCartResponse } from './dto/response/get-cart-response.dto';
 import { CartsService } from './carts.service';
 import { Payload } from 'src/auth/auth.service';
+import { ParseObjectIdPipe } from 'src/pipes/parse-objectid.pipe';
 
 @Controller('carts')
 @ApiTags('carts')
@@ -50,7 +51,7 @@ export class CartsController {
   @Roles(Role.Employee, Role.Manager)
   @Get(':demand_id')
   getCart(
-    @Param('demand_id') demandId: string,
+    @Param('demand_id', ParseObjectIdPipe) demandId: string,
     @Request() req,
   ): Promise<GetCartResponse> {
     try {
@@ -69,7 +70,10 @@ export class CartsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Employee, Role.Manager)
   @Post(':demand_id/close')
-  closeCart(@Param('demand_id') demandId: string, @Request() req) {
+  closeCart(
+    @Param('demand_id', ParseObjectIdPipe) demandId: string,
+    @Request() req,
+  ) {
     try {
       const userPayload = req.user as Payload;
       return this.cartsService.close(userPayload.county_id, demandId);
