@@ -8,7 +8,6 @@ import { CartsCacheRepository } from './carts.cache.repository';
 import { CartsMongoRepository } from './carts.mongo.repository';
 import { CartDto, CartProductDto, CartProductIdDto } from './dto/cart.dto';
 import { CartsRequest } from './dto/request/carts-request.dto';
-import { GetCartResponse } from './dto/response/get-cart-response.dto';
 
 @Injectable()
 export class CartsService {
@@ -67,7 +66,7 @@ export class CartsService {
     );
 
     const { name: userName, surname: userSurname } =
-      await this.usersService.findOne({ _id: userId });
+      await this.usersService.findOneOrReturnNull({ _id: userId });
 
     const fullName = `${userName} ${userSurname}`;
 
@@ -131,7 +130,7 @@ export class CartsService {
     );
 
     const { name: userName, surname: userSurname } =
-      await this.usersService.findOne({ _id: user_id });
+      await this.usersService.findOneOrReturnNull({ _id: user_id });
 
     const fullName = `${userName} ${userSurname}`;
 

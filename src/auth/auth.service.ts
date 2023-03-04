@@ -29,7 +29,7 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string) {
-    const user = await this.usersService.findOne({ email });
+    const user = await this.usersService.findOneOrReturnNull({ email });
 
     if (!user) return null;
 
@@ -64,7 +64,9 @@ export class AuthService {
   }
 
   async profile(payload: Payload) {
-    const user = await this.usersService.findOne({ _id: payload.sub });
+    const user = await this.usersService.findOneOrReturnNull({
+      _id: payload.sub,
+    });
     return {
       _id: user._id,
       email: user.email,

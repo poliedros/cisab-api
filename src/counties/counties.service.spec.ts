@@ -86,7 +86,7 @@ describe('CountiesService', () => {
   const findEmployeeMockFn = jest.fn();
   const updateEmployeeMockFn = jest.fn();
   const removeEmployeeMockFn = jest.fn();
-  const findOneEmployeeMock = jest.fn();
+  const findOneOrReturnNullEmployeeMock = jest.fn();
   startTransactionMockFn.mockReturnValue(
     Promise.resolve({
       abortTransaction: jest.fn(),
@@ -114,7 +114,7 @@ describe('CountiesService', () => {
       find: findEmployeeMockFn,
       update: updateEmployeeMockFn,
       remove: removeEmployeeMockFn,
-      findOne: findOneEmployeeMock,
+      findOneOrReturnNull: findOneOrReturnNullEmployeeMock,
       removeMany: removeManyUsersMockFn,
     };
 
@@ -277,7 +277,7 @@ describe('CountiesService', () => {
     const idString = '63599affb40135010840911b';
     const idStub = new Types.ObjectId(idString);
 
-    findOneEmployeeMock.mockReturnValue({});
+    findOneOrReturnNullEmployeeMock.mockReturnValue({});
 
     const res = await service.isManagerActive(idStub);
 
@@ -288,7 +288,7 @@ describe('CountiesService', () => {
     const idString = '63599affb40135010840911b';
     const idStub = new Types.ObjectId(idString);
 
-    findOneEmployeeMock.mockReturnValue({ password: '12a' });
+    findOneOrReturnNullEmployeeMock.mockReturnValue({ password: '12a' });
 
     const res = await service.isManagerActive(idStub);
 
@@ -307,7 +307,7 @@ describe('CountiesService', () => {
       properties: new Map<string, string>(),
     };
 
-    findOneEmployeeMock.mockReturnValue(Promise.resolve(user));
+    findOneOrReturnNullEmployeeMock.mockReturnValue(Promise.resolve(user));
     const res = await service.updateManagerPassword(idStub, 'password');
 
     expect(res).toBeTruthy();
@@ -317,7 +317,7 @@ describe('CountiesService', () => {
     const idString = '63599affb40135010840911b';
     const idStub = new Types.ObjectId(idString);
 
-    findOneEmployeeMock.mockImplementation(() => {
+    findOneOrReturnNullEmployeeMock.mockImplementation(() => {
       throw new Error();
     });
 

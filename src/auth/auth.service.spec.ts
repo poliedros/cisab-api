@@ -10,7 +10,7 @@ import { Types } from 'mongoose';
 
 describe('AuthService', () => {
   let service: AuthService;
-  const findOneMockFn = jest.fn();
+  const findOneOrReturnNullMockFn = jest.fn();
   const signMockFn = jest.fn();
   const userModelMockFn = jest.fn();
   const bcryptSpy = jest.spyOn(bcrypt, 'compare');
@@ -24,7 +24,7 @@ describe('AuthService', () => {
         {
           provide: UsersService,
           useValue: {
-            findOne: findOneMockFn,
+            findOneOrReturnNull: findOneOrReturnNullMockFn,
           },
         },
         {
@@ -55,7 +55,7 @@ describe('AuthService', () => {
       roles: [Role.Cisab],
     };
 
-    findOneMockFn.mockReturnValue(Promise.resolve(user));
+    findOneOrReturnNullMockFn.mockReturnValue(Promise.resolve(user));
     bcryptSpy.mockReturnValue(Promise.resolve(true));
 
     const validateUser = await service.validateUser('carlos', 'test');
@@ -65,7 +65,7 @@ describe('AuthService', () => {
   });
 
   it('should return null', async () => {
-    findOneMockFn.mockReturnValue({});
+    findOneOrReturnNullMockFn.mockReturnValue({});
     bcryptSpy.mockReturnValue(Promise.resolve(false));
     const validateUser = await service.validateUser('carlos', 'test');
 
@@ -100,7 +100,7 @@ describe('AuthService', () => {
       properties: {},
     };
 
-    findOneMockFn.mockReturnValue(Promise.resolve(user));
+    findOneOrReturnNullMockFn.mockReturnValue(Promise.resolve(user));
 
     const res = await service.profile({
       email: 'carlos',
