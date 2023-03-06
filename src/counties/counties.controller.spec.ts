@@ -51,7 +51,7 @@ describe('CountiesController', () => {
   const removeEmployeeMockFn = jest.fn();
   const createManagerMockFn = jest.fn();
   const isManagerActiveMockFn = jest.fn();
-  const updateManagerPasswordMockFn = jest.fn();
+  const updateManagerAttributesMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -71,7 +71,7 @@ describe('CountiesController', () => {
             removeEmployee: removeEmployeeMockFn,
             createManager: createManagerMockFn,
             isManagerActive: isManagerActiveMockFn,
-            updateManagerPassword: updateManagerPasswordMockFn,
+            updateManagerAttributes: updateManagerAttributesMockFn,
           },
         },
       ],
@@ -405,10 +405,13 @@ describe('CountiesController', () => {
 
     isManagerActiveMockFn.mockReturnValue(Promise.resolve(false));
 
-    updateManagerPasswordMockFn.mockReturnValue(Promise.resolve(true));
+    updateManagerAttributesMockFn.mockReturnValue(Promise.resolve(true));
 
-    const res = await controller.updateManagerPassword(idStub, {
-      password: '123',
+    const res = await controller.managerFirstAccessUpdateAttributes(idStub, {
+      name: 'carlos',
+      surname: 'carlos',
+      password: 'password',
+      properties: {},
     });
 
     expect(res).toBeTruthy();
@@ -421,7 +424,12 @@ describe('CountiesController', () => {
     isManagerActiveMockFn.mockReturnValue(Promise.resolve(true));
 
     try {
-      await controller.updateManagerPassword(idStub, { password: '123' });
+      await controller.managerFirstAccessUpdateAttributes(idStub, {
+        name: 'carlos',
+        surname: 'carlos',
+        password: 'password',
+        properties: {},
+      });
       expect(false).toBeTruthy();
     } catch (err) {
       expect(err).toBeInstanceOf(UnauthorizedException);
