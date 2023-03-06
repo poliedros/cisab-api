@@ -411,7 +411,7 @@ describe('CountiesController', () => {
       name: 'carlos',
       surname: 'carlos',
       password: 'password',
-      properties: {},
+      properties: { profession: 'software engineer' },
     });
 
     expect(res).toBeTruthy();
