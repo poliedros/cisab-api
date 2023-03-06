@@ -55,7 +55,9 @@ describe('User Service', () => {
 
     findOneMockFn.mockReturnValue(Promise.resolve(user));
 
-    const expectedUser = await service.findOne({ email: 'carlos@czar.dev' });
+    const expectedUser = await service.findOneOrReturnNull({
+      email: 'carlos@czar.dev',
+    });
 
     expect(expectedUser).toEqual(user);
   });
@@ -158,7 +160,9 @@ describe('User Service', () => {
     findOneMockFn.mockImplementation(() => {
       throw new Error();
     });
-    const res = await service.findOne({ email: 'crazyemail@undefined.com' });
+    const res = await service.findOneOrReturnNull({
+      email: 'crazyemail@undefined.com',
+    });
 
     expect(res).toBeNull();
   });
@@ -307,5 +311,23 @@ describe('User Service', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(Error);
     }
+  });
+
+  it('should find one user', async () => {
+    const user = {
+      _id: '1',
+      email: 'carlos@czar.dev',
+      password: 'changeme',
+      roles: [Role.Cisab],
+      properties: new Map<string, string>(),
+    };
+
+    findOneMockFn.mockReturnValue(Promise.resolve(user));
+
+    const expectedUser = await service.findOne({
+      email: 'carlos@czar.dev',
+    });
+
+    expect(expectedUser).toEqual(user);
   });
 });

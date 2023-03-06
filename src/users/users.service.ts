@@ -19,7 +19,7 @@ export class UsersService {
 
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async findOne(filterQuery: FilterQuery<User>) {
+  async findOneOrReturnNull(filterQuery: FilterQuery<User>) {
     try {
       const user = await this.usersRepository.findOne(filterQuery);
 
@@ -30,6 +30,10 @@ export class UsersService {
     } catch (err) {
       return null;
     }
+  }
+
+  async findOne(filterQuery: FilterQuery<User>) {
+    return this.usersRepository.findOne(filterQuery);
   }
 
   async find(filterQuery: FilterQuery<User>) {

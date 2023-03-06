@@ -28,7 +28,7 @@ export class ForgetPasswordService {
     const session = await this.forgetPasswordRepository.startTransaction();
 
     try {
-      const user = await this.usersService.findOne({ email });
+      const user = await this.usersService.findOneOrReturnNull({ email });
 
       if (!user) throw new NotFoundException();
 
@@ -69,7 +69,7 @@ export class ForgetPasswordService {
 
     await this.validateForgetPassword(forgetPassword);
 
-    const user = await this.usersService.findOne({
+    const user = await this.usersService.findOneOrReturnNull({
       _id: forgetPassword.userId,
     });
 

@@ -8,7 +8,6 @@ import { CartsCacheRepository } from './carts.cache.repository';
 import { CartsMongoRepository } from './carts.mongo.repository';
 import { CartDto, CartProductDto, CartProductIdDto } from './dto/cart.dto';
 import { CartsRequest } from './dto/request/carts-request.dto';
-import { GetCartResponse } from './dto/response/get-cart-response.dto';
 
 @Injectable()
 export class CartsService {

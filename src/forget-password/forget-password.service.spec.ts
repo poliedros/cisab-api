@@ -9,7 +9,7 @@ describe('ForgetPasswordService', () => {
   let service: ForgetPasswordService;
   const startTransactionMockFn = jest.fn();
 
-  const findOneMockFn = jest.fn();
+  const findOneOrReturnNullMockFn = jest.fn();
   const createMockFn = jest.fn();
   const emitMockFn = jest.fn();
   const findOneForgetPasswordMockFn = jest.fn();
@@ -32,7 +32,7 @@ describe('ForgetPasswordService', () => {
         {
           provide: UsersService,
           useValue: {
-            findOne: findOneMockFn,
+            findOneOrReturnNull: findOneOrReturnNullMockFn,
             update: updateMockFn,
           },
         },
@@ -59,7 +59,7 @@ describe('ForgetPasswordService', () => {
   });
 
   it('should run forget password use case', async () => {
-    findOneMockFn.mockReturnValue(
+    findOneOrReturnNullMockFn.mockReturnValue(
       Promise.resolve({ _id: '12', email: 'contact@czar.dev' }),
     );
 
@@ -73,7 +73,7 @@ describe('ForgetPasswordService', () => {
   it('should throw exception in forget password', async () => {
     class TestError extends Error {}
 
-    findOneMockFn.mockImplementation(() => {
+    findOneOrReturnNullMockFn.mockImplementation(() => {
       throw new TestError();
     });
 
@@ -116,7 +116,7 @@ describe('ForgetPasswordService', () => {
       Promise.resolve({ _id: '1a', userId: 'b1' }),
     );
 
-    findOneMockFn.mockReturnValue(
+    findOneOrReturnNullMockFn.mockReturnValue(
       Promise.resolve({ password: 'password', email: 'contact@czar.dev' }),
     );
 
@@ -146,7 +146,7 @@ describe('ForgetPasswordService', () => {
       Promise.resolve({ _id: '1a', userId: 'b1' }),
     );
 
-    findOneMockFn.mockReturnValue(Promise.resolve());
+    findOneOrReturnNullMockFn.mockReturnValue(Promise.resolve());
     sortMockFn.mockReturnValue(Promise.resolve([]));
 
     try {
@@ -163,7 +163,7 @@ describe('ForgetPasswordService', () => {
       Promise.resolve({ _id: '1a', userId: 'b1' }),
     );
 
-    findOneMockFn.mockReturnValue(
+    findOneOrReturnNullMockFn.mockReturnValue(
       Promise.resolve({ password: 'password', email: 'contact@czar.dev' }),
     );
 
@@ -187,7 +187,7 @@ describe('ForgetPasswordService', () => {
       Promise.resolve(forgetPassword),
     );
 
-    findOneMockFn.mockReturnValue(
+    findOneOrReturnNullMockFn.mockReturnValue(
       Promise.resolve({ password: 'password', email: 'contact@czar.dev' }),
     );
 
@@ -208,7 +208,7 @@ describe('ForgetPasswordService', () => {
       Promise.resolve(forgetPassword),
     );
 
-    findOneMockFn.mockReturnValue(
+    findOneOrReturnNullMockFn.mockReturnValue(
       Promise.resolve({ password: 'password', email: 'contact@czar.dev' }),
     );
 

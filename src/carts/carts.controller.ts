@@ -14,12 +14,14 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Role } from '../auth/role.enum';
 import { Roles } from '../auth/roles.decorator';
 import { CartsRequest } from './dto/request/carts-request.dto';
-import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetCartResponse } from './dto/response/get-cart-response.dto';
 import { CartsService } from './carts.service';
-import { Payload } from 'src/auth/auth.service';
+import { Payload } from '../auth/auth.service';
+import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 
 @Controller('carts')
+@ApiTags('carts')
 export class CartsController {
   private readonly logger = new Logger(CartsController.name);
 
@@ -49,7 +51,7 @@ export class CartsController {
   @Roles(Role.Employee, Role.Manager)
   @Get(':demand_id')
   getCart(
-    @Param('demand_id') demandId: string,
+    @Param('demand_id', ParseObjectIdPipe) demandId: string,
     @Request() req,
   ): Promise<GetCartResponse> {
     try {
@@ -68,7 +70,10 @@ export class CartsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Employee, Role.Manager)
   @Post(':demand_id/close')
-  closeCart(@Param('demand_id') demandId: string, @Request() req) {
+  closeCart(
+    @Param('demand_id', ParseObjectIdPipe) demandId: string,
+    @Request() req,
+  ) {
     try {
       const userPayload = req.user as Payload;
       return this.cartsService.close(userPayload.county_id, demandId);
