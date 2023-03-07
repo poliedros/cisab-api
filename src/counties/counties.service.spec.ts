@@ -295,7 +295,7 @@ describe('CountiesService', () => {
     expect(res).toBeTruthy();
   });
 
-  it('should update manager password', async () => {
+  it('should update manager attributes', async () => {
     const idString = '63599affb40135010840911b';
     const idStub = new Types.ObjectId(idString);
     const user = {
@@ -306,9 +306,15 @@ describe('CountiesService', () => {
       roles: [Role.Manager],
       properties: new Map<string, string>(),
     };
+    user.properties.set('profession', 'software engineer');
 
     findOneOrReturnNullEmployeeMock.mockReturnValue(Promise.resolve(user));
-    const res = await service.updateManagerPassword(idStub, 'password');
+    const res = await service.updateManagerAttributes(idStub, {
+      name: 'carlos',
+      surname: 'carlos',
+      password: 'password',
+      properties: user.properties,
+    });
 
     expect(res).toBeTruthy();
   });
@@ -321,7 +327,12 @@ describe('CountiesService', () => {
       throw new Error();
     });
 
-    const res = await service.updateManagerPassword(idStub, 'password');
+    const res = await service.updateManagerAttributes(idStub, {
+      name: 'carlos',
+      surname: 'carlos',
+      password: 'password',
+      properties: new Map<string, string>(),
+    });
 
     expect(res).toBeFalsy();
   });

@@ -214,10 +214,26 @@ export class CountiesService {
     return false;
   }
 
-  async updateManagerPassword(userId: Types.ObjectId, password: string) {
+  async updateManagerAttributes(
+    userId: Types.ObjectId,
+    attributes: {
+      name: string;
+      surname: string;
+      password: string;
+      properties: Map<string, string>;
+    },
+  ) {
     try {
-      const { _id, name, surname, email, roles, properties } =
+      const { name, surname, password, properties: newProperties } = attributes;
+
+      const { _id, email, roles, properties } =
         await this.usersService.findOneOrReturnNull({ _id: userId });
+
+      // just copy what we already have on properties and add new ones.
+
+      for (const keyValue of newProperties) {
+        properties.set(keyValue[0], keyValue[1]);
+      }
 
       await this.usersService.update({
         _id,
@@ -231,6 +247,7 @@ export class CountiesService {
 
       return true;
     } catch (err) {
+      this.logger.error(err);
       return false;
     }
   }

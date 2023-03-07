@@ -28,7 +28,7 @@ import { UpdateEmployeeRequest } from './dto/request/update-employee-request.dto
 import { CreateManagerRequest } from './dto/request/create-manager-request.dto';
 import { CreateManagerResponse } from './dto/response/create-manager-response.dto';
 import { Types } from 'mongoose';
-import { UpdateManagerPasswordRequest } from './dto/request/update-manager-password-request.dto';
+import { UpdateManagerFirstAccessRequest } from './dto/request/update-manager-first-access-request.dto';
 import { Payload } from 'src/auth/auth.service';
 
 @ApiTags('counties')
@@ -246,22 +246,27 @@ export class CountiesController {
   }
 
   @ApiOperation({
-    summary: 'Update manager password',
+    summary: 'Manager first access, update attributes',
     description: 'forbidden',
   })
   @Post('/manager/:id')
-  async updateManagerPassword(
+  async managerFirstAccessUpdateAttributes(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId,
-    @Body() request: UpdateManagerPasswordRequest,
+    @Body() request: UpdateManagerFirstAccessRequest,
   ) {
     if (await this.countiesService.isManagerActive(id)) {
       throw new UnauthorizedException();
     }
 
-    const res = await this.countiesService.updateManagerPassword(
-      id,
-      request.password,
-    );
+    const properties = new Map<string, string>();
+    for (const property in request.properties) {
+      properties.set(property, request.properties[property]);
+    }
+
+    const res = await this.countiesService.updateManagerAttributes(id, {
+      ...request,
+      properties,
+    });
 
     return res;
   }
