@@ -7,6 +7,23 @@ import { GetProductResponse } from './dto/response/get-product-response.dto';
 import { ProductsRepository } from './products.repository';
 import { ProductsService } from './products.service';
 
+function buildCreateProductRequest() {
+  return {
+    name: 'string',
+    measurements: [
+      {
+        name: 'width',
+        value: '3',
+        unit: 'cm',
+      },
+    ],
+    accessory_ids: ['ab'],
+    categories: ['ab'],
+    code: 'ab',
+    norms: ['ab'],
+    notes: 'notes about product',
+  };
+}
 describe('ProductsService', () => {
   let service: ProductsService;
   const findOneUnitMockFn = jest.fn();
@@ -52,20 +69,7 @@ describe('ProductsService', () => {
   });
 
   it('should create product', async () => {
-    const request: CreateProductRequest = {
-      name: 'string',
-      measurements: [
-        {
-          name: 'width',
-          value: '3',
-          unit: 'cm',
-        },
-      ],
-      accessory_ids: ['ab'],
-      categories: ['ab'],
-      code: 'ab',
-      norms: ['ab'],
-    };
+    const request: CreateProductRequest = buildCreateProductRequest();
 
     findOneUnitMockFn.mockReturnValue(Promise.resolve());
 
@@ -91,20 +95,7 @@ describe('ProductsService', () => {
   });
 
   it('should abort if create breaks', async () => {
-    const request: CreateProductRequest = {
-      name: 'string',
-      measurements: [
-        {
-          name: 'width',
-          value: '3',
-          unit: 'cm',
-        },
-      ],
-      accessory_ids: ['ab'],
-      categories: ['ab'],
-      code: 'ab',
-      norms: ['ab'],
-    };
+    const request: CreateProductRequest = buildCreateProductRequest();
 
     findOneUnitMockFn.mockReturnValue(Promise.resolve());
 
@@ -121,20 +112,7 @@ describe('ProductsService', () => {
   });
 
   it('should throw a bad request if unit doesnt exist', async () => {
-    const request: CreateProductRequest = {
-      name: 'string',
-      measurements: [
-        {
-          name: 'width',
-          value: '3',
-          unit: 'cm',
-        },
-      ],
-      accessory_ids: ['ab'],
-      categories: ['ab'],
-      code: 'ab',
-      norms: ['ab'],
-    };
+    const request: CreateProductRequest = buildCreateProductRequest();
 
     findOneUnitMockFn.mockImplementation(() => {
       throw new Error();
@@ -149,20 +127,7 @@ describe('ProductsService', () => {
   });
 
   it('should throw a bad request if unit doesnt exist', async () => {
-    const request: CreateProductRequest = {
-      name: 'string',
-      measurements: [
-        {
-          name: 'width',
-          value: '3',
-          unit: 'cm',
-        },
-      ],
-      accessory_ids: ['ab'],
-      categories: ['ab'],
-      code: 'ab',
-      norms: ['ab'],
-    };
+    const request: CreateProductRequest = buildCreateProductRequest();
 
     findOneUnitMockFn.mockImplementation(() => {
       throw new Error();
@@ -176,20 +141,7 @@ describe('ProductsService', () => {
     }
   });
   it('should throw a bad request if unit doesnt exist', async () => {
-    const request: CreateProductRequest = {
-      name: 'string',
-      measurements: [
-        {
-          name: 'width',
-          value: '3',
-          unit: 'cm',
-        },
-      ],
-      accessory_ids: ['ab'],
-      categories: ['ab'],
-      code: 'ab',
-      norms: ['ab'],
-    };
+    const request: CreateProductRequest = buildCreateProductRequest();
 
     findOneUnitMockFn.mockImplementation(() => {
       throw new Error();
@@ -204,20 +156,7 @@ describe('ProductsService', () => {
   });
 
   it('should throw a bad request if category doesnt exist', async () => {
-    const request: CreateProductRequest = {
-      name: 'string',
-      measurements: [
-        {
-          name: 'width',
-          value: '3',
-          unit: 'cm',
-        },
-      ],
-      accessory_ids: ['ab'],
-      categories: ['ab'],
-      code: 'ab',
-      norms: ['ab'],
-    };
+    const request: CreateProductRequest = buildCreateProductRequest();
 
     findOneCategoryMockFn.mockImplementation(() => {
       throw new Error();
@@ -232,20 +171,7 @@ describe('ProductsService', () => {
   });
 
   it('should throw a bad request if accessory id doesnt exist', async () => {
-    const request: CreateProductRequest = {
-      name: 'string',
-      measurements: [
-        {
-          name: 'width',
-          value: '3',
-          unit: 'cm',
-        },
-      ],
-      accessory_ids: ['ab'],
-      categories: ['ab'],
-      code: 'ab',
-      norms: ['ab'],
-    };
+    const request: CreateProductRequest = buildCreateProductRequest();
 
     findOneProductMockFn.mockImplementation(() => {
       throw new Error();
@@ -289,23 +215,7 @@ describe('ProductsService', () => {
   });
 
   it('should filter products with ids', async () => {
-    const products = [
-      {
-        _id: '1',
-        name: 'string',
-        measurements: [
-          {
-            name: 'width',
-            value: '3',
-            unit: 'cm',
-          },
-        ],
-        accessory_ids: ['ab'],
-        categories: ['ab'],
-        code: 'ab',
-        norms: ['ab'],
-      },
-    ];
+    const products = [buildCreateProductRequest()];
 
     findProductMockFn.mockReturnValue(Promise.resolve(products));
 
@@ -319,22 +229,7 @@ describe('ProductsService', () => {
   });
 
   it('should return products without filter', async () => {
-    const products = [
-      {
-        name: 'string',
-        measurements: [
-          {
-            name: 'width',
-            value: '3',
-            unit: 'cm',
-          },
-        ],
-        accessory_ids: ['ab'],
-        categories: ['ab'],
-        code: 'ab',
-        norms: ['ab'],
-      },
-    ];
+    const products = [buildCreateProductRequest()];
 
     findProductMockFn.mockReturnValue(Promise.resolve(products));
 
@@ -359,6 +254,7 @@ describe('ProductsService', () => {
       code: 'ab',
       norms: ['ab'],
       photo_url: 'https://ab1',
+      notes: 'notes about product',
     };
 
     findOneProductMockFn.mockReturnValue(Promise.resolve(request));

@@ -32,4 +32,7 @@ export class CreateProductRequest {
 
   @ApiProperty()
   categories: string[];
+
+  @ApiProperty()
+  notes: string;
 }

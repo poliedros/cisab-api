@@ -9,6 +9,7 @@ type ProductSchemaFactoryProps = {
   code: string;
   accessory_ids: string[];
   categories: string[];
+  notes: string;
 };
 
 export class ProductSchemaFactory {
@@ -20,6 +21,7 @@ export class ProductSchemaFactory {
     code,
     accessory_ids,
     categories,
+    notes,
   }: ProductSchemaFactoryProps): Product {
     return {
       _id: id,
@@ -29,6 +31,7 @@ export class ProductSchemaFactory {
       code,
       accessory_ids,
       categories,
+      notes,
     } as Product;
   }
 }
