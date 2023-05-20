@@ -14,6 +14,7 @@ export class ProductEntity {
     public code: string,
     public accessory_ids: string[],
     public categories: string[],
+    public notes: string,
   ) {
     this._measurements = measurements;
   }

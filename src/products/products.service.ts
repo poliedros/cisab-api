@@ -24,6 +24,7 @@ export class ProductsService {
     categories,
     code,
     norms,
+    notes,
   }: CreateProductRequest) {
     const productEntity = new ProductEntity(
       name,
@@ -32,6 +33,7 @@ export class ProductsService {
       code,
       accessory_ids,
       categories,
+      notes,
     );
 
     for (const measure of productEntity.measurements) {

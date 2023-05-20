@@ -32,6 +32,9 @@ export class Product extends AbstractDocument {
 
   @Prop()
   photo_url: string;
+
+  @Prop()
+  notes: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

@@ -45,6 +45,7 @@ describe('ProductsController', () => {
       categories: ['ab'],
       code: 'ab',
       norms: ['ab'],
+      notes: 'notes about product',
     };
 
     const resService = {
@@ -81,6 +82,7 @@ describe('ProductsController', () => {
       categories: ['ab'],
       code: 'ab',
       norms: ['ab'],
+      notes: 'notes about product',
     };
 
     class TestException extends Error {}
@@ -113,6 +115,7 @@ describe('ProductsController', () => {
         code: 'ab',
         norms: ['ab'],
         photo_url: 'https://a1',
+        notes: 'notes about product',
       },
     ];
 
@@ -140,6 +143,7 @@ describe('ProductsController', () => {
         categories: ['ab'],
         code: 'ab',
         norms: ['ab'],
+        notes: 'notes about product',
       }),
     );
 
