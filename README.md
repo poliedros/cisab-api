@@ -3,9 +3,15 @@
 <a></a><img src="https://img.shields.io/github/actions/workflow/status/poliedros/cisab-api/docker-image.yml?branch=main" alt="Github Actions" /></a>
 <a>[![Coverage Status](https://coveralls.io/repos/github/poliedros/cisab-api/badge.svg?branch=main)](https://coveralls.io/github/poliedros/cisab-api?branch=main)</a>
 
-## Description
+# Description
 
-Cisab api
+Cisab API is the main gateway to the outside. All requests will be handled by this project and then eventually distributed inside the system.
+
+There is workers and consumers.
+
+Workers are cronjobs. Consumers consume events dispatched by cisab-api project.
+
+# Modules
 
 ## Auth
 
@@ -35,40 +41,46 @@ Health module is used to check if the API itself is up and running and to check 
 
 ## Users
 
-Module to keep users' data saved. It can be used with whatever database the project requires.
+Users handlers.
 
-## Architecture
+# Architecture
 
 ![Solution architecture](/docs/assets/architecture.png 'Solution architecture')
 
-## Installation
+# Installation
 
 ```bash
-$ npm install
+$ yarn install
 ```
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+$ yarn run start
 
 # watch mode
-$ npm run start:dev
+$ yarn run start:dev
 
 # production mode
-$ npm run start:prod
+$ yarn run start:prod
 ```
 
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+$ yarn run test
 
 # e2e tests
-$ npm run test:e2e
+$ yarn run test:e2e
 
 # test coverage
-$ npm run test:cov
+$ yarn run test:cov
 ```
+
+# Swagger
+
+Swagger is installed in this project. Access it through:
+
+http://localhost:3000/swagger
