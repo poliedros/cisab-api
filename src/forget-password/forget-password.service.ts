@@ -43,7 +43,7 @@ export class ForgetPasswordService {
 
       const message = {
         to: user.email,
-        body: `Para resetar sua senha clique <a href=${process.env.WEBSITE_URL}/forget-password/${forgetPasswordId}></a>aqui.`,
+        body: `Para resetar sua senha clique <a href=${process.env.WEBSITE_URL}/forget-password/${forgetPasswordId}>aqui</a>.`,
         subject: `Cisab - Recuperação de senha`,
       };
 
