@@ -93,7 +93,7 @@ export class CountiesController {
   @ApiBody({ type: UpdateCountyRequest })
   @ApiResponse({ type: GetCountyResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab)
+  @Roles(Role.Cisab, Role.Manager)
   @Put(':id')
   update(
     @Param('id', ParseObjectIdPipe) id: Types.ObjectId | string,
@@ -177,7 +177,7 @@ export class CountiesController {
   @ApiBody({ type: UpdateEmployeeRequest })
   @ApiResponse({ type: GetEmployeeResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab, Role.Employee)
+  @Roles(Role.Cisab, Role.Manager, Role.Employee)
   @Put(':id/users')
   async updateEmployee(
     @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
