@@ -43,8 +43,8 @@ export class ForgetPasswordService {
 
       const message = {
         to: user.email,
-        body: `If you requested to change your password, click <a href=${process.env.WEBSITE_URL}/forget-password/${forgetPasswordId}>here</a>`,
-        subject: `Cisab - Recovery password`,
+        body: `Para resetar sua senha clique <a href=${process.env.WEBSITE_URL}/forget-password/${forgetPasswordId}></a>aqui.`,
+        subject: `Cisab - Recuperação de senha`,
       };
 
       this.logger.log(`sending email to: ${user.email}`);
@@ -97,8 +97,8 @@ export class ForgetPasswordService {
 
       const message = {
         to: user.email,
-        body: `Your password was updated. If it was not you, contact immediately the administrator.`,
-        subject: `Cisab - Recovery password`,
+        body: `Sua senha foi atualizada.`,
+        subject: `Cisab - Recuperação de senha`,
       };
       this.notifierService.emit({ type: 'forget-password', message });
 
