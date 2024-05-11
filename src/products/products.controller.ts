@@ -123,7 +123,7 @@ export class ProductsController {
     try {
       return await this.productsService.suggest(suggestProductDto, userPayload);
     } catch (err) {
-      throw err;
+      throw new BadRequestException();
     }
   }
 }

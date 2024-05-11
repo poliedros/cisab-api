@@ -11,6 +11,7 @@ describe('ProductsController', () => {
   const findAllMockFn = jest.fn();
   const findOneMockFn = jest.fn();
   const removeMockFn = jest.fn();
+  const suggestMockFn = jest.fn();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -23,6 +24,7 @@ describe('ProductsController', () => {
             findAll: findAllMockFn,
             findOne: findOneMockFn,
             remove: removeMockFn,
+            suggest: suggestMockFn,
           },
         },
       ],
@@ -169,6 +171,27 @@ describe('ProductsController', () => {
 
     try {
       await controller.remove('ab');
+      expect(true).toBeFalsy();
+    } catch (err) {
+      expect(err).toBeInstanceOf(BadRequestException);
+    }
+  });
+
+  it('should suggest a new product', async () => {
+    suggestMockFn.mockReturnValue(Promise.resolve('suggest'));
+
+    const res = await controller.suggest({}, {});
+
+    expect(res).toEqual('suggest');
+  });
+
+  it('should throw bad request in suggesting a product', async () => {
+    suggestMockFn.mockImplementation(() => {
+      throw new Error();
+    });
+
+    try {
+      await controller.suggest({}, {});
       expect(true).toBeFalsy();
     } catch (err) {
       expect(err).toBeInstanceOf(BadRequestException);

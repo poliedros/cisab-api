@@ -166,7 +166,6 @@ export class ProductsService {
       `,
       subject: `Sugestão de produto`,
     };
-    console.log(message);
     this.logger.log(`sending email to: ${process.env.ADMIN_EMAIL}`);
     this.notifierService.emit({ type: 'send_email', message });
   }
