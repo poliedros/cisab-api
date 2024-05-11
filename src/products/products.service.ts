@@ -6,6 +6,9 @@ import { ProductSchemaFactory } from './factories/product-schema.factory';
 import { ProductsRepository } from './products.repository';
 import { UnitsService } from '../units/units.service';
 import { CategoriesService } from '../categories/categories.service';
+import { SuggestProductRequest } from './dto/request/suggest-product-request.dto';
+import { NotifierService } from '../notifier/notifier.service';
+import { Payload } from 'src/auth/auth.service';
 
 @Injectable()
 export class ProductsService {
@@ -15,6 +18,7 @@ export class ProductsService {
     private readonly productsRepository: ProductsRepository,
     private readonly unitsService: UnitsService,
     private readonly categoriesService: CategoriesService,
+    private readonly notifierService: NotifierService,
   ) {}
 
   async create({
@@ -110,5 +114,59 @@ export class ProductsService {
     product.photo_url = 'https://i.ibb.co/6tmJqXm/SEM-IMAGEM.png';
 
     await this.productsRepository.upsert({ _id: id }, product);
+  }
+
+  async suggest(
+    {
+      name,
+      measurements,
+      accessory_ids,
+      categories,
+      code,
+      norms,
+      notes,
+    }: SuggestProductRequest,
+    userPayload: Payload,
+  ) {
+    let categories_string = '';
+    for (let i = 0; i < categories.length; i++) {
+      categories_string += categories[i].concat('<br>');
+    }
+
+    let norms_string = '';
+    for (let i = 0; i < norms.length; i++) {
+      norms_string += norms[i].concat('<br>');
+    }
+
+    let measurements_string = '';
+    for (let i = 0; i < measurements.length; i++) {
+      measurements_string += measurements[i].name.concat(
+        ' ',
+        measurements[i].value,
+        ' ',
+        measurements[i].unit,
+        '<br>',
+      );
+    }
+
+    let accessories_string = '';
+    for (let i = 0; i < accessory_ids.length; i++) {
+      const product = await this.findOne(accessory_ids[i]);
+      accessories_string += product.name.concat('<br>');
+    }
+
+    const message = {
+      to: `${process.env.ADMIN_EMAIL}`,
+      body: `<strong>Nome do produto</strong>: ${name} <br><br>
+      <strong>Medidas</strong>: <br> ${measurements_string} <br>
+      <strong>Acessórios</strong>: <br> ${accessories_string} <br>
+      <strong>Categorias</strong>: <br> ${categories_string} <br>
+      <strong>Normas</strong>: <br> ${norms_string} <br>
+      <br> Sugerido por: ${userPayload.email}
+      `,
+      subject: `Sugestão de produto`,
+    };
+    this.logger.log(`sending email to: ${process.env.ADMIN_EMAIL}`);
+    this.notifierService.emit({ type: 'send_email', message });
   }
 }

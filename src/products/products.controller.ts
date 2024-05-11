@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Body,
+  Request,
   Patch,
   Param,
   Delete,
@@ -20,6 +21,7 @@ import { Express } from 'express';
 import { ProductsService } from './products.service';
 import { CreateProductRequest } from './dto/request/create-product-request.dto';
 import { UpdateProductRequest } from './dto/request/update-product-request.dto';
+import { SuggestProductRequest } from './dto/request/suggest-product-request.dto';
 import { GetProductResponse } from './dto/response/get-product-response.dto';
 import { ParseObjectIdPipe } from '../pipes/parse-objectid.pipe';
 import { Roles } from '../auth/roles.decorator';
@@ -105,5 +107,23 @@ export class ProductsController {
     await this.productsService.uploadImage(id, file);
 
     return `File size: ${file.size} bytes`;
+  }
+
+  @ApiOperation({ summary: 'Suggest new product', description: 'forbidden' })
+  @ApiBody({ type: SuggestProductRequest })
+  @ApiResponse({ type: GetProductResponse })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Employee, Role.Manager)
+  @Post('/suggest')
+  async suggest(
+    @Body() suggestProductDto: SuggestProductRequest,
+    @Request() req,
+  ) {
+    const userPayload = req.user;
+    try {
+      return await this.productsService.suggest(suggestProductDto, userPayload);
+    } catch (err) {
+      throw new BadRequestException();
+    }
   }
 }

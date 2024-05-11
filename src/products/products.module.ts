@@ -6,12 +6,14 @@ import { Product, ProductSchema } from './schemas/product.schema';
 import { ProductsRepository } from './products.repository';
 import { UnitsModule } from '../units/units.module';
 import { CategoriesModule } from '../categories/categories.module';
+import { NotifierModule } from '../notifier/notifier.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
     UnitsModule,
     CategoriesModule,
+    NotifierModule,
   ],
   controllers: [ProductsController],
   providers: [ProductsService, ProductsRepository],

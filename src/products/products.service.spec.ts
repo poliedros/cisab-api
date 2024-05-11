@@ -6,6 +6,10 @@ import { CreateProductRequest } from './dto/request/create-product-request.dto';
 import { GetProductResponse } from './dto/response/get-product-response.dto';
 import { ProductsRepository } from './products.repository';
 import { ProductsService } from './products.service';
+import { NotifierService } from './../notifier/notifier.service';
+import { SuggestProductRequest } from './dto/request/suggest-product-request.dto';
+import { Payload } from '../auth/auth.service';
+import { Role } from '../auth/role.enum';
 
 function buildCreateProductRequest() {
   return {
@@ -33,6 +37,7 @@ describe('ProductsService', () => {
   const startTransactionMockFn = jest.fn();
   const findProductMockFn = jest.fn();
   const deleteOneMockFn = jest.fn();
+  const emitMockFn = jest.fn();
 
   beforeEach(async () => {
     jest.resetAllMocks();
@@ -61,6 +66,10 @@ describe('ProductsService', () => {
         {
           provide: CategoriesService,
           useValue: { findOne: findOneCategoryMockFn },
+        },
+        {
+          provide: NotifierService,
+          useValue: { emit: emitMockFn },
         },
       ],
     }).compile();
@@ -271,5 +280,34 @@ describe('ProductsService', () => {
     const res = await service.remove('ab');
 
     expect(res).toEqual('deleteone');
+  });
+
+  it('should emit a message with suggestion product', async () => {
+    findOneProductMockFn.mockReturnValue(Promise.resolve({ name: 'product' }));
+    const suggestedProduct: SuggestProductRequest = {
+      name: 'string',
+      measurements: [
+        {
+          name: 'width',
+          value: '3',
+          unit: 'cm',
+        },
+      ],
+      accessory_ids: ['ab'],
+      categories: ['ab'],
+      code: 'ab',
+      norms: ['ab'],
+      notes: 'notes about product',
+    };
+
+    const userPayload: Payload = {
+      email: 'cisab@cisab.com',
+      roles: [Role.Admin],
+      sub: '1234',
+    };
+
+    await service.suggest(suggestedProduct, userPayload);
+
+    expect(emitMockFn).toBeCalledTimes(1);
   });
 });
