@@ -73,6 +73,7 @@ export class AuthService {
       roles: user.roles,
       name: user.name,
       surname: user.surname,
+      county_id: payload.county_id,
     };
   }
 }
