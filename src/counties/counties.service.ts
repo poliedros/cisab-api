@@ -161,6 +161,28 @@ export class CountiesService {
     } as GetEmployeeResponse;
   }
 
+  async updateManager(
+    countyId: string,
+    updateEmployeeRequest: UpdateEmployeeRequest,
+  ): Promise<GetEmployeeResponse> {
+    updateEmployeeRequest.properties['county_id'] = countyId;
+
+    const serviceRequest = updateEmployeeRequest as UpdateEmployeeRequest;
+    serviceRequest.properties = new Map(
+      Object.entries(updateEmployeeRequest.properties),
+    );
+    serviceRequest.roles = [Role.Manager];
+    const user = await this.usersService.update(serviceRequest);
+
+    return {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      surname: user.surname,
+      properties: user.properties,
+    } as GetEmployeeResponse;
+  }
+
   async removeEmployee(employeeId: string) {
     return await this.usersService.remove(employeeId);
   }
