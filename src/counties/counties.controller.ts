@@ -177,13 +177,39 @@ export class CountiesController {
   @ApiBody({ type: UpdateEmployeeRequest })
   @ApiResponse({ type: GetEmployeeResponse })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Cisab, Role.Manager, Role.Employee)
+  @Roles(Role.Cisab, Role.Employee)
   @Put(':id/users')
   async updateEmployee(
     @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
     @Body() updateEmployeeRequest: UpdateEmployeeRequest,
   ): Promise<GetEmployeeResponse> {
     const employee = await this.countiesService.updateEmployee(
+      countyId.toString(),
+      updateEmployeeRequest,
+    );
+
+    const response: GetEmployeeResponse = {
+      _id: employee._id,
+      email: employee.email,
+      name: employee.name,
+      surname: employee.surname,
+      properties: employee.properties,
+    };
+
+    return response;
+  }
+
+  @ApiOperation({ summary: 'Update manager', description: 'forbidden' })
+  @ApiBody({ type: UpdateEmployeeRequest })
+  @ApiResponse({ type: GetEmployeeResponse })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Cisab, Role.Manager)
+  @Put(':id/managers')
+  async updateManager(
+    @Param('id', ParseObjectIdPipe) countyId: Types.ObjectId | string,
+    @Body() updateEmployeeRequest: UpdateEmployeeRequest,
+  ): Promise<GetEmployeeResponse> {
+    const employee = await this.countiesService.updateManager(
       countyId.toString(),
       updateEmployeeRequest,
     );
